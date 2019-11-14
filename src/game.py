@@ -4,6 +4,9 @@ import pygame
 from src.ball import Ball
 from src.board import Board
 from src.constants import Color
+from src.tuple import Tuple
+from src.vector import Vector
+from src.field import Field
 
 
 class Game:
@@ -20,6 +23,8 @@ class Game:
         for i in range(5):
             self.objects.append(Ball(self))
         self.objects.append(Board(self))
+        field = Field(self, Vector(0, 0), Tuple(7, 5), Tuple(100, 100))
+        self.objects.append(field)
 
     def library_init(self):
         pygame.init()  # Инициализация библиотеки
