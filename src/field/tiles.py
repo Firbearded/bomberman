@@ -2,7 +2,6 @@ class Tile:
     pass
     # Код (ход) гения
 
-
 class EmptyTile:
     line_width = 2
 

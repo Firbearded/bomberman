@@ -4,9 +4,9 @@ import pygame
 from src.ball import Ball
 from src.board import Board
 from src.constants import Color
-from src.tuple import Tuple
-from src.vector import Vector
-from src.field import Field
+from src.supporting_classes.tuple import Tuple
+from src.supporting_classes.vector import Vector
+from src.field.field import Field
 
 
 class Game:

@@ -1,8 +1,8 @@
 import pygame
 from src.base_classes import DrawableObject
-from src.tiles import TILES
-from src.tuple import Tuple
-from src.vector import Vector
+from src.field.tiles import TILES
+from src.supporting_classes.tuple import Tuple
+from src.supporting_classes.vector import Vector
 from src.constants import Color
 
 '''
