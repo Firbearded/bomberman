@@ -1,12 +1,7 @@
 import sys
 import pygame
 
-from src.ball import Ball
-from src.board import Board
-from src.constants import Color
-from src.supporting_classes.tuple import Tuple
-from src.supporting_classes.vector import Vector
-from src.field.field import Field
+from src.utils.constants import Color
 
 
 class Game:
@@ -20,11 +15,6 @@ class Game:
 
     def create_game_objects(self):
         self.objects = []
-        for i in range(5):
-            self.objects.append(Ball(self))
-        self.objects.append(Board(self))
-        field = Field(self, Vector(0, 0), Tuple(7, 5), Tuple(100, 100))
-        self.objects.append(field)
 
     def library_init(self):
         pygame.init()  # Инициализация библиотеки
@@ -39,7 +29,7 @@ class Game:
         sys.exit(0)  # Выход из программы
 
     def process_draw(self):
-        self.screen.fill(Color.BLACK)  # Заливка цветом
+        self.screen.fill(Color.WHITE)  # Заливка цветом
         for item in self.objects:
             item.process_draw()
         pygame.display.flip()  # Double buffering
