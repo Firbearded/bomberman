@@ -20,8 +20,7 @@ class Vector:
         return Vector(self.x, self.y)
     
     def copy_from(self, vector):
-        self.x = vector.x
-        self.y = vector.y
+        self.x, self.y = vector
 
     @property
     def normalized(self):
