@@ -24,12 +24,17 @@ class Vector:
 
     @property
     def normalized(self):
-        return self.copy / self.length
+        ln = self.length
+        if ln == 0:
+            return Vector()
+        return self.copy / ln
 
     def normalize(self):
-        l = self.length
-        self.x /= l
-        self.y /= l
+        ln = self.length
+        if ln == 0:
+            return
+        self.x /= ln
+        self.y /= ln
 
     def __str__(self):
         return '{' + "{}; {}".format(*self.get) + '}'
@@ -37,8 +42,16 @@ class Vector:
     def __iter__(self):
         return self.get.__iter__()
 
-    def __getitem__(self, item):
-        return self.get[item]
+    def __getitem__(self, key):
+        return self.get[key]
+
+    def __setitem__(self, key, value):
+        if key not in (0, 1):
+            raise KeyError
+        if key == 0:
+            self.x = value
+        else:
+            self.y = value
 
     def __neg__(self):
         return Vector(-self.x, -self.y)
