@@ -66,20 +66,19 @@ def is_collide_rect(pos1, size1, pos2, size2, can_touch=(True, True)):
     w1, h1 = size1
     w2, h2 = size2
 
-    fx = False
-    fy = False
-
-    if can_touch[0]:
-        fx = (pos1.x <= pos2.x <= pos1.x + w1 <= pos2.x + w2 or pos2.x <= pos1.x <= pos2.x + w2 <= pos1.x + w1)
+    if not can_touch[0]:
+        if pos1.x > pos2.x + w2 or pos2.x > pos1.x + w1:
+            return False
     else:
-        fx = (pos1.x < pos2.x < pos1.x + w1 < pos2.x + w2 or pos2.x < pos1.x < pos2.x + w2 < pos1.x + w1)
-
-    if can_touch[1]:
-        fy = (pos1.y <= pos2.y <= pos1.y + h1 <= pos2.y + h2 or pos2.y <= pos1.y <= pos2.y + h2 <= pos1.y + h1)
+        if pos1.x >= pos2.x + w2 or pos2.x >= pos1.x + w1:
+            return False
+    if not can_touch[1]:
+        if pos1.y > pos2.y + h2 or pos2.y > pos1.y + h1:
+            return False
     else:
-        fy = (pos1.y < pos2.y < pos1.y + h1 < pos2.y + h2 or pos2.y < pos1.y < pos2.y + h2 < pos1.y + h1)
-
-    return fx and fy
+        if pos1.y >= pos2.y + h2 or pos2.y >= pos1.y + h1:
+            return False
+    return True
 
 
 def collide_rect(pos1, size1, pos2, size2):
@@ -101,25 +100,22 @@ def collide_rect(pos1, size1, pos2, size2):
     """
     w1, h1 = size1
     w2, h2 = size2
-    ans = False
-    raise NotImplementedError
-    if pos1.x < pos2.x < pos1.x + w1 < pos2.x + w2 and pos1.y < pos2.y < pos1.y + h1 < pos2.y + h2:
-        ans = True
-    elif pos2.x < pos1.x < pos2.x + w2 < pos1.x + w1 and pos2.y < pos1.y < pos2.y + h2 < pos1.y + h1:
-        ans = True
 
-    top = False
-    bottom = False
+    if not is_collide_rect(pos1, size1, pos2, size2):
+        return False, False, False, False,
+
     left = False
+    top = False
     right = False
-    if ans:
-        if pos2.x < pos1.x < pos2.x + w2:
-            left = True
-        if pos2.x < pos1.x + w1 < pos2.x + w2:
-            right = True
-        if pos2.y < pos1.y < h2:
-            top = True
-        if pos2.y < pos1.y + h1 < h2:
-            bottom = True
+    bottom = False
+
+    if pos2.x < pos1.x < pos2.x + w2:
+        left = True
+    if pos2.x < pos1.x + w1 < pos2.x + w2:
+        right = True
+    if pos2.y < pos1.y < pos2.y + h2:
+        top = True
+    if pos2.y < pos1.y + h1 < pos2.y + h2:
+        bottom = True
 
     return left, top, right, bottom
