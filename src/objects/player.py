@@ -1,9 +1,13 @@
-from math import floor
-
 import pygame
 from src.objects.entity import Entity
 from src.utils.vector import Vector, Point
-from src.utils.intersections import is_collide_rect, collide_rect
+from src.utils.intersections import collide_rect
+
+
+def sign(x):
+    if x == 0:
+        return 0
+    return 1 if x > 0 else -1
 
 
 class Player(Entity):
@@ -17,56 +21,68 @@ class Player(Entity):
     def __init__(self, field, pos: Point = (0, 0), size: tuple = (1, 1)):
         super().__init__(field, pos, size)
 
-    def process_logic(self):
-        # print("pos({:.4f}; {:.4f})".format(*self.pos))
-        speed_vector = Vector()
-        speed_vector.copy_from(self.speed_vector)
+    def corner_fixing(self, speed_vector):
+        tile_x, tile_y = self.tile
+        is_corner_fixing = 0  # Исправление застревания на углах
+        for i in range(2):
+            j = (i + 1) % 2
+            if speed_vector[j] == 0:
+                vec_dir = sign(speed_vector[i])
+                d = ((-1, 0, 1), (vec_dir, vec_dir, vec_dir))
+                up, nx, dn = [self.field.grid[tile_y + d[i][k]][tile_x + d[j][k]] != 0 for k in
+                              range(3)]  # TODO: tile == 0
+                if not nx:
+                    if (speed_vector[i] > 0 and (self.right, self.bottom)[i] == (tile_x + 1, tile_y + 1)[i]) or \
+                            (speed_vector[i] < 0 and (self.left, self.top)[i] == (tile_x, tile_y)[i]):
+                        if up and self.center[j] < self.tile[j] + .5:
+                            is_corner_fixing = 1
+                            speed_vector[i] = 0
+                            speed_vector[j] = 1
+                        elif dn and self.center[j] > self.tile[j] + .5:
+                            is_corner_fixing = 1
+                            speed_vector[i] = 0
+                            speed_vector[j] = -1
         speed_vector = speed_vector.normalized * self.speed_value  # self.speed_vector - всего лишь вектор для
         # направления, тут я делаю, чтобы длина самого вектора была равна self.speed_value
+        if is_corner_fixing:  # Если мы исправляем застревания на углах,
+            for i in range(2):  # то проверяем, чтобы подойти ровно в клетку
+                if abs(self.pos[i] - round(self.pos[i])) < \
+                        abs((self.pos[i] + speed_vector[i]) - round(self.pos[i] + speed_vector[i])):
+                    speed_vector[i] = round(self.pos[i]) - self.pos[i]
+        return speed_vector, is_corner_fixing
 
-        for i in range(2):  # страшный код на проверку и исправления коллизий  # TODO: исправить застревание на углах
+    def wall_collisions(self, speed_vector):
+        tile_x, tile_y = self.tile
+        for i in range(2):  # страшный код на проверку и исправления коллизий
             if speed_vector[i] == 0:
                 continue
             tmp_speed_vector = Vector()
             tmp_speed_vector[i] = speed_vector[i]
             new_pos = self.pos + tmp_speed_vector
 
-            tile_x, tile_y = self.tile
-            for dx in range(-max(1, round(self.size[0])), max(1, round(self.size[0])) + 1):
-                for dy in range(-max(1, round(self.size[1])), max(1, round(self.size[1])) + 1):
-                    if dx == dy == 0:
-                        continue
+            for dx in (-1, 0, 1):  # range(-max(1, round(self.size[0])), max(1, round(self.size[0])) + 1):
+                for dy in (-1, 0, 1):  # range(-max(1, round(self.size[1])), max(1, round(self.size[1])) + 1):
+                    # Проверка на то, подходит ли нам клетка для проверки
+                    if dx == dy == 0: continue
+                    if self.field.grid[tile_y + dy][tile_x + dx] == 0: continue
                     fw, fh = self.field.size
-                    if not (0 <= tile_y + dy < fh and 0 <= tile_x + dx < fw):
-                        continue
-                    if self.field.grid[tile_y + dy][tile_x + dx] == 0:
-                        continue
+                    if not (0 <= tile_y + dy < fh and 0 <= tile_x + dx < fw): continue
 
                     l, t, r, b = collide_rect(new_pos, self.size, Point(tile_x + dx, tile_y + dy), (1, 1))
 
-                    if (l, t)[i]:
-                        speed_vector[i] = self.tile[i] - self.pos[i]  # (tile_x + dx, tile_y + dy)[i] - self.pos[i]
-                        print("first Collide detected! {} {} {} {}".format(tile_x + dx, tile_y + dy, dx, dy))
-                        print("Fixing shift({}) = {} ({} - {})".format("xy"[i], round(self.pos[i]) - self.pos[i], round(self.pos[i]), self.pos[i]))
+                    if (l, t)[i]:  # Проверка на коллизии и подгонка скорости, чтобы мы встали в ровные координаты
+                        speed_vector[i] = self.tile[i] - self.pos[i]
                     if (r, b)[i]:
-                        speed_vector[i] = self.tile[i] + 1 - (self.pos[i] + self.size[i])  # (tile_x + dx, tile_y + dy)[i] - self.pos[i]
-                        print("second Collide detected! {} {} {} {}".format(tile_x + dx, tile_y + dy, dx, dy))
-                        print("Fixing shift({}) = {} ({} - {}) {}".format("xy"[i], int(self.pos[i]) - (self.pos[i] - self.size[i]), int(self.pos[i]), self.pos[i], self.size[i]))
+                        speed_vector[i] = self.tile[i] + 1 - (self.pos[i] + self.size[i])
+        return speed_vector
 
-                    if 0 in (dx, dy):
-                        continue
+    def process_logic(self):
+        normalized_speed_vector, is_fixing = self.corner_fixing(Vector(*self.speed_vector))
 
-                    if speed_vector[i] == 0:
-                        continue
+        if not is_fixing:
+            normalized_speed_vector = self.wall_collisions(normalized_speed_vector)
 
-                    if speed_vector[i] > 0:
-                        if (dx, dy) not in (((1, -1), (1, 1)), ((-1, 1), (1, 1)))[i]:
-                            continue
-                    else:
-                        if (dx, dy) not in (((-1, 1), (-1, -1)), ((1, -1), (-1, -1)))[i]:
-                            continue
-
-        self.pos = self.pos + speed_vector
+        self.pos = self.pos + normalized_speed_vector
 
     def process_event(self, event):
         if event.type == pygame.KEYDOWN:

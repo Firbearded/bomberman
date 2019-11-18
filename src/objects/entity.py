@@ -52,12 +52,12 @@ class Entity(DrawableObject):
 
     @property
     def center(self):
-        return self.left + self.width / 2, self.top + self.height / 2
+        return Point(self.left + self.width / 2, self.top + self.height / 2)
 
     @property
     def tile(self):
         x, y = self.center
-        return int(x), int(y)
+        return Point(int(x), int(y))
 
     @property
     def real_pos(self):
