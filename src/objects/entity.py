@@ -6,7 +6,7 @@ from src.utils.vector import Vector, Point
 class Entity(DrawableObject):
     SPEED_VALUE = 0.02
 
-    def __init__(self, field, pos: Point, size: tuple):
+    def __init__(self, field, pos: Point, size: tuple = (1, 1)):
         super().__init__(field.game_object)
         self.field = field
 
@@ -52,12 +52,12 @@ class Entity(DrawableObject):
 
     @property
     def center(self):
-        return self.left + self.width / 2, self.top + self.height / 2
+        return Point(self.left + self.width / 2, self.top + self.height / 2)
 
     @property
     def tile(self):
         x, y = self.center
-        return int(x), int(y)
+        return Point(int(x), int(y))
 
     @property
     def real_pos(self):
