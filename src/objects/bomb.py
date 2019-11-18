@@ -19,9 +19,18 @@ class Bomb(Entity):
     def __init__(self, player_object, pos: Point, time, power):
         super().__init__(player_object.field, pos, (1, 1))
         self.player_object = player_object
-        self.field = player_object.field
 
-        self.pos = Point()
-        self.pos.copy_from(pos)
         self.power = power
         self.time = time
+        self.is_detonated = False
+        self.timer = pygame.time.get_ticks()
+
+    def detonate(self):
+        self.is_detonated = True
+
+    def process_logic(self):
+        if (not self.is_detonated) and (pygame.time.get_ticks() - self.timer >= self.time):
+            self.detonale()
+
+    def process_draw(self):
+        pygame.draw.circle(self.game_object, (0, 0, 0), (self.real_pos, self.real_size), self.real_size)
