@@ -9,5 +9,5 @@ class GameScene(Scene):
         self.objects.append(f)
 
         p = Player(f, (1, 1))
-        self.objects.append(p)
+        p.speed_value = .1
         f.rand_fill(2, 30)

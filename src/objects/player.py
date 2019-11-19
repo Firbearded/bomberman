@@ -1,5 +1,6 @@
 import pygame
 from src.objects.entity import Entity
+from src.utils.animation import SimpleAnimation
 from src.utils.vector import Vector, Point
 from src.utils.intersections import collide_rect
 
@@ -12,7 +13,6 @@ def sign(x):
 
 class Player(Entity):
     IMAGE_CATEGORY = "bomberman_sprites"
-    IMAGE_NAME = "bomberman"
     #           keys; sp_vector[{}]; *({})
     KEYS_MOV = (((pygame.K_LEFT, pygame.K_a,), 0, -1),
                 ((pygame.K_RIGHT, pygame.K_d,), 0, 1),
@@ -22,12 +22,25 @@ class Player(Entity):
 
     def __init__(self, field, pos: Point = (0, 0), size: tuple = (1, 1)):
         super().__init__(field, pos, size)
-        self.image = self.game_object.images[Player.IMAGE_CATEGORY][Player.IMAGE_NAME]
-        w, h = self.image.get_rect().size
+
+        standing_image = self.game_object.images[Player.IMAGE_CATEGORY]['bomberman']
+        w, h = standing_image.get_rect().size
         k = w / self.real_size[0]
         new_size = (int(w // k), int(h // k))
         self.image_size = new_size
-        self.image = pygame.transform.scale(self.image, new_size)
+        standing_image = pygame.transform.scale(standing_image, new_size)
+
+        moving_image = self.game_object.images[Player.IMAGE_CATEGORY]['bombermanwalk1']
+        w, h = moving_image.get_rect().size
+        k = w / self.real_size[0]
+        new_size = (int(w // k), int(h // k))
+        self.image_size = new_size
+        moving_image = pygame.transform.scale(moving_image, new_size)
+
+        d = {'standing': (0, (standing_image,)),
+             'moving': (150, (standing_image, moving_image))}
+
+        self.anim = SimpleAnimation(d, 'standing')
 
     def corner_fixing(self, speed_vector):
         tile_x, tile_y = self.tile
@@ -85,12 +98,17 @@ class Player(Entity):
         return speed_vector
 
     def process_logic(self):
+        self.anim.process_logic()
         normalized_speed_vector, is_fixing = self.corner_fixing(Vector(*self.speed_vector))
 
         if not is_fixing:
             normalized_speed_vector = self.wall_collisions(normalized_speed_vector)
 
         self.pos = self.pos + normalized_speed_vector
+        if normalized_speed_vector:
+            self.anim.set_state('moving')
+        else:
+            self.anim.set_state('standing')
 
     def process_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -109,4 +127,4 @@ class Player(Entity):
     def process_draw(self):
         p = Point(*self.real_pos)
         rect = (p.x, p.y - (self.image_size[1] - self.real_size[1])), self.image_size
-        self.game_object.screen.blit(self.image, rect)
+        self.game_object.screen.blit(self.anim.current_image, rect)

@@ -68,5 +68,8 @@ class Vector:
     def __truediv__(self, n):
         return Vector(self.x / n, self.y / n)
 
+    def __bool__(self):
+        return self.x != 0 or self.y != 0
+
 
 Point = Vector

@@ -9,6 +9,7 @@ class Entity(DrawableObject):
     def __init__(self, field, pos: Point, size: tuple = (1, 1)):
         super().__init__(field.game_object)
         self.field = field
+        field.entities.append(self)
 
         self.pos = Point()
         self.pos.copy_from(pos)
