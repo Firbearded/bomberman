@@ -5,6 +5,7 @@ from src.scenes.game_over_scene import GameoverScene
 from src.scenes.game_scene import GameScene
 from src.scenes.highscore_scene import HighscoreScene
 from src.scenes.menu_scene import MenuScene
+from src.utils.loader import load_textures
 
 
 class Game:
@@ -13,14 +14,15 @@ class Game:
     GAMEOVER_SCENE_INDEX = 2
     HIGHSCORE_SCENE_INDEX = 3
 
-    def __init__(self, window_size=(840, 600), title='pygame window'):
+    def __init__(self, window_size=(50 * 21, 50 * 15), title='pygame window'):
         self.width, self.height = window_size
         self.title = title
 
+        self.init()
+
         self.scenes = [MenuScene(self), GameScene(self), GameoverScene(self), HighscoreScene(self)]
         self.current_scene = 0
-
-        self.init()
+        self.images = None
 
     @property
     def size(self):
@@ -31,6 +33,7 @@ class Game:
         pygame.font.init()
         self.screen = pygame.display.set_mode(self.size)  # Создание окна (установка размера)
         pygame.display.set_caption(self.title)
+        self.images = load_textures()
 
     def main_loop(self):
         self.game_over = False

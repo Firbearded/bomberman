@@ -11,6 +11,8 @@ def sign(x):
 
 
 class Player(Entity):
+    IMAGE_CATEGORY = "bomberman_sprites"
+    IMAGE_NAME = "bomberman"
     #           keys; sp_vector[{}]; *({})
     KEYS_MOV = (((pygame.K_LEFT, pygame.K_a,), 0, -1),
                 ((pygame.K_RIGHT, pygame.K_d,), 0, 1),
@@ -20,6 +22,12 @@ class Player(Entity):
 
     def __init__(self, field, pos: Point = (0, 0), size: tuple = (1, 1)):
         super().__init__(field, pos, size)
+        self.image = self.game_object.images[Player.IMAGE_CATEGORY][Player.IMAGE_NAME]
+        w, h = self.image.get_rect().size
+        k = w / self.real_size[0]
+        new_size = (int(w // k), int(h // k))
+        self.image_size = new_size
+        self.image = pygame.transform.scale(self.image, new_size)
 
     def corner_fixing(self, speed_vector):
         tile_x, tile_y = self.tile
@@ -97,3 +105,8 @@ class Player(Entity):
                 if key in keys:
                     self.speed_vector[i] += (-m)
                     break
+
+    def process_draw(self):
+        p = Point(*self.real_pos)
+        rect = (p.x, p.y - (self.image_size[1] - self.real_size[1])), self.image_size
+        self.game_object.screen.blit(self.image, rect)

@@ -5,8 +5,9 @@ from src.objects.field import Field
 
 class GameScene(Scene):
     def create_objects(self):
-        f = Field(self.game, (0, 0), (21, 15), (40, 40))
+        f = Field(self.game, (0, 0), (21, 15), (50, 50))
         self.objects.append(f)
 
         p = Player(f, (1, 1))
         self.objects.append(p)
+        f.rand_fill(2, 30)

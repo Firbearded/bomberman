@@ -1,8 +1,9 @@
+from random import randint
+
 import pygame
 from src.objects.base_classes import DrawableObject
 from src.objects.tiles import TILES
 from src.utils.vector import Point
-from src.utils.constants import Color
 
 
 class Field(DrawableObject):
@@ -11,6 +12,7 @@ class Field(DrawableObject):
     grid - двумерный список для статичных объектов,
     остальное - entities.
     """
+    DRAW_GRID = None
     LINE_WIDTH = 1  # ширина линии при отрисовки
 
     def __init__(self, game_object, pos: Point, field_size: tuple, tile_size: tuple):
@@ -34,7 +36,9 @@ class Field(DrawableObject):
 
         self.entities = []  # Список сущностей, принадлежащих этому полю
         self.grid = None   # Двумерный список — типы клеток
+        self.tile_images = {}  # Словарь для маштабированных изображений
 
+        self.load_images()
         self.grid_init()
 
     @property
@@ -66,22 +70,41 @@ class Field(DrawableObject):
             self.grid[j][0] = 1
             self.grid[j][-1] = 1
 
-        # Создание стен через однуф
+        # Создание стен через одну
         for i in range(2, self.height, 2):
             for j in range(2, self.width, 2):
                 self.grid[i][j] = 1
+
+    def rand_fill(self, type_=2, n=20):  # TODO: переработать
+        c = 0
+        while c < n:
+            i = randint(1, self.height - 1)
+            j = randint(1, self.width - 1)
+            if self.grid[i][j] == 0:
+                c += 1
+                self.grid[i][j] = type_
 
     def process_draw_tiles(self):
         """
         Отрисовка самого поля, те его клеток.
         """
         for i in range(len(self.grid)):
-            for j in range(len(self.grid[i])):
-                # TODO Временное решение:
+            for j in range(len(self.grid[i])):  # TODO Временное решение:
                 tile_pos = [self.pos[k] + (j, i)[k] * self.tile_size[k] for k in range(2)]
                 rect = tile_pos, self.tile_size
-                pygame.draw.rect(self.game_object.screen, TILES[self.grid[i][j]].color, rect, 0)
-                pygame.draw.rect(self.game_object.screen, Color.BLACK, rect, Field.LINE_WIDTH)
+                tile_index = self.grid[i][j]
+
+                self.game_object.screen.blit(self.tile_images[TILES[0].image_name], rect)  # Траву сзади всех рисуем
+                if tile_index == 0: continue
+
+                tile = TILES[tile_index]
+                if tile.image_name:
+                    self.game_object.screen.blit(self.tile_images[tile.image_name], rect)
+                else:
+                    pygame.draw.rect(self.game_object.screen, tile.color, rect, 0)
+
+                if Field.DRAW_GRID:
+                    pygame.draw.rect(self.game_object.screen, (0, 0, 0), rect, Field.LINE_WIDTH)
 
     def process_draw_entities(self):
         """
@@ -101,3 +124,9 @@ class Field(DrawableObject):
     def process_event(self, event):
         for e in self.entities:
             e.process_event(event)
+
+    def load_images(self):
+        category = "tile_textures"
+        for key in self.game_object.images[category]:
+            self.tile_images[key] = pygame.transform.scale(self.game_object.images[category][key], self.tile_size)
+            print("FIELD: resized '{}'".format(key))
