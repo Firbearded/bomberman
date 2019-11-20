@@ -2,6 +2,7 @@ import pygame
 from src.objects.entity import Entity
 from src.utils.vector import Vector, Point
 from src.utils.intersections import collide_rect
+from src.objects.bomb import Bomb  # REMOVE
 
 
 def sign(x):
@@ -97,3 +98,7 @@ class Player(Entity):
                 if key in keys:
                     self.speed_vector[i] += (-m)
                     break
+        # TODO: Сделать нормальную установку бомбы игроком
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                self.field.entities.append(Bomb(self, Point(self.tile[0], self.tile[1]), 5))

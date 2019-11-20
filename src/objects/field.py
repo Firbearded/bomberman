@@ -94,9 +94,9 @@ class Field(DrawableObject):
         self.process_draw_tiles()
         self.process_draw_entities()
 
-    def process_step(self):
+    def process_logic(self):
         for e in self.entities:
-            e.process_step()
+            e.process_logic()
 
     def process_event(self, event):
         for e in self.entities:
