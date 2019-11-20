@@ -22,7 +22,7 @@ class Enemy(Entity):
         if len(possible_directions) == 0:
             return target_direction
 
-        direction_number = random.randint(1, len(possible_directions))
+        direction_number = random.randint(1, len(possible_directions)) - 1
         target_direction.x = possible_directions[direction_number].x
         target_direction.y = possible_directions[direction_number].y
         return target_direction
