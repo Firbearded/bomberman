@@ -22,7 +22,6 @@ class Game:
 
         self.scenes = [MenuScene(self), GameScene(self), GameoverScene(self), HighscoreScene(self)]
         self.current_scene = 0
-        self.images = None
         self.game_over = False
         self.start_time = self.end_time = pygame.time.get_ticks()
         self.delta_time = 0

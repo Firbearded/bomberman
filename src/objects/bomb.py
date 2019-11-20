@@ -1,5 +1,6 @@
 import pygame
 from src.objects.entity import Entity
+from src.utils.animation import SimpleAnimation
 from src.utils.vector import Vector, Point
 
 
@@ -44,13 +45,14 @@ class Fire(Entity):
         self.next_fire()
 
     def possible_to_spread(self, pos):
-        if self.field.grid[pos.y][pos.x] == 0:
+        tile_type = self.field.grid[pos.y][pos.x]
+        if tile_type == 0:
             return True
-        if self.field.grid[pos.y][pos.x] == 1:
-            return False
-        # TODO: Добавить в field метод взрыва разрушаемой стены
-        # self.field.destroy_wall(pos.x, pos.y)
         return False
+
+    def try_to_break(self, pos):
+        if self.field.grid[pos.y][pos.x] == 2:
+            self.field.destroy_wall(pos.x, pos.y)
 
     def next_fire(self):
         if self.fire_type == self.FIRE_CENTRAL:
@@ -62,8 +64,10 @@ class Fire(Entity):
                     new_fire_pos = self.pos + v
                     if self.possible_to_spread(new_fire_pos):
                         spreading = True
-                        new_fire = Fire(self.bomb_object, new_fire_pos, self.power - 1, self.delay, self.FIRE_MIDDLE, v)
-                        self.field.entities.append(new_fire)
+                        Fire(self.bomb_object, new_fire_pos, self.power - 1, self.delay, self.FIRE_MIDDLE, v)
+                    else:
+                        self.try_to_break(new_fire_pos)
+
             if not spreading or self.power == 0:
                 self.fire_type = self.FIRE_SMALL
 
@@ -72,18 +76,18 @@ class Fire(Entity):
             # Если не получается, меняем тип на конечный
             new_fire_pos = self.pos + self.direction
             if self.possible_to_spread(new_fire_pos) and self.power > 0:
-                new_fire = Fire(self.bomb_object, new_fire_pos, self.power - 1, self.delay, self.FIRE_MIDDLE, self.direction)
-                self.field.entities.append(new_fire)
+                Fire(self.bomb_object, new_fire_pos, self.power - 1, self.delay, self.FIRE_MIDDLE, self.direction)
             else:
                 self.fire_type = self.FIRE_END
 
     def process_logic(self):
         if self.enabled and (pygame.time.get_ticks() - self.start_time >= self.delay):
             self.enabled = False
+            self.field.delete_entity(self)
 
     def process_draw(self):
-        if not self.enabled:
-            return
+        if not self.enabled: return
+        # TODO: анимации
         if self.fire_type == self.FIRE_CENTRAL:
             fire_color = (150, 0, 0)
         elif self.fire_type == self.FIRE_MIDDLE:
@@ -95,7 +99,6 @@ class Fire(Entity):
         pygame.draw.rect(self.game_object.screen, fire_color, (self.real_pos, self.real_size), 0)
 
 
-
 class Bomb(Entity):
     """
     Класс Bomb - собственно бомба в игре bomberman.
@@ -103,8 +106,9 @@ class Bomb(Entity):
     Висит на поле некоторое время, а потом взрывается, распространяя огонь.
     """
     DELAY = 2000
+    POWER = 1
 
-    def __init__(self, player_object, pos: Point, power=0, time=DELAY):
+    def __init__(self, player_object, pos: Point, power=POWER, time=DELAY):
         """
         :param player_object: ссылка на объект игрока, установившего бомбу
         :param pos: позиция бомбы на игровом поле
@@ -124,16 +128,33 @@ class Bomb(Entity):
         self.enabled = True
         self.start_time = pygame.time.get_ticks()
 
+        imgs = []
+        for n in ['bomb', 'bomb1', 'bomb2']:
+            print(self.game_object.images)
+            i = self.game_object.images['bomb_sprites'][n]
+            w, h = i.get_rect().size
+            k = w / self.real_size[0]
+            new_size = (int(w // k), int(h // k))
+            self.image_size = new_size
+            imgs += [pygame.transform.scale(i, new_size)]
+
+        anim_dict = {'burning': (100, imgs)}
+        self.anim = SimpleAnimation(anim_dict, 'burning')
+
     def detonate(self):
-        self.field.entities.append(Fire(self, self.pos, self.power))
+        Fire(self, self.pos, self.power)
         self.enabled = False
+        self.field.delete_entity(self)
 
     def process_logic(self):
+        self.anim.process_logic()
         if self.enabled and (pygame.time.get_ticks() - self.start_time >= self.time):
             self.detonate()
 
     def process_draw(self):
-        if not self.enabled:
-            return
-        center_pos = (round(self.real_pos[0] + self.real_size[0] / 2), round(self.real_pos[1] + self.real_size[0] / 2))
-        pygame.draw.circle(self.game_object.screen, (0, 0, 0), center_pos, int(self.real_size[0] / 2))
+        if not self.enabled: return
+        # TODO: анимации
+        #center_pos = (round(self.real_pos[0] + self.real_size[0] / 2), round(self.real_pos[1] + self.real_size[0] / 2))
+        #pygame.draw.circle(self.game_object.screen, (0, 0, 0), center_pos, int(self.real_size[0] / 2))
+        rect = self.real_pos, self.image_size
+        self.game_object.screen.blit(self.anim.current_image, rect)

@@ -1,4 +1,6 @@
 import pygame
+
+from src.objects.bomb import Bomb
 from src.objects.entity import Entity
 from src.utils.animation import SimpleAnimation
 from src.utils.vector import Vector, Point
@@ -123,8 +125,13 @@ class Player(Entity):
                 if key in keys:
                     self.speed_vector[i] += (-m)
                     break
+        # TODO: Сделать нормальную установку бомбы игроком
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                Bomb(self, self.tile)
 
     def process_draw(self):
         p = Point(*self.real_pos)
         rect = (p.x, p.y - (self.image_size[1] - self.real_size[1])), self.image_size
         self.game_object.screen.blit(self.anim.current_image, rect)
+

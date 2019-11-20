@@ -17,6 +17,32 @@
 			<key>sourceSize</key>
 			<string>{200,200}</string>
 		</dict>
+		<key>bomb1.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{204,2},{200,200}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{200,200}}</string>
+			<key>sourceSize</key>
+			<string>{200,200}</string>
+		</dict>
+		<key>bomb2.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{204,204},{200,200}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{200,200}}</string>
+			<key>sourceSize</key>
+			<string>{200,200}</string>
+		</dict>
 	</dict>
 	<key>metadata</key>
 	<dict>
@@ -25,7 +51,7 @@
 		<key>realTextureFileName</key>
 		<string>test_image0.png</string>
 		<key>size</key>
-		<string>{256,256}</string>
+		<string>{512,512}</string>
 		<key>textureFileName</key>
 		<string>test_image0.png</string>
 	</dict>

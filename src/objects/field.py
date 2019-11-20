@@ -12,7 +12,7 @@ class Field(DrawableObject):
     grid - двумерный список для статичных объектов,
     остальное - entities.
     """
-    DRAW_GRID = None
+    DRAW_GRID = False
     LINE_WIDTH = 1  # ширина линии при отрисовки
 
     def __init__(self, game_object, pos: Point, field_size: tuple, tile_size: tuple):
@@ -35,7 +35,7 @@ class Field(DrawableObject):
         self.tile_size = tuple(tile_size)
 
         self.entities = []  # Список сущностей, принадлежащих этому полю
-        self.grid = None   # Двумерный список — типы клеток
+        self.grid = None  # Двумерный список — типы клеток
         self.tile_images = {}  # Словарь для маштабированных изображений
 
         self.load_images()
@@ -110,7 +110,7 @@ class Field(DrawableObject):
         """
         Отрисовка всех сущностей, принадлежащих этому полю
         """
-        for e in self.entities:
+        for e in reversed(self.entities):
             e.process_draw()
 
     def process_draw(self):
@@ -124,6 +124,16 @@ class Field(DrawableObject):
     def process_event(self, event):
         for e in self.entities:
             e.process_event(event)
+
+    def add_entity(self, entity):
+        self.entities.append(entity)
+
+    def delete_entity(self, entity):
+        self.entities.remove(entity)
+
+    def destroy_wall(self, x, y):
+        # TODO: анимации разрушения стены
+        self.grid[y][x] = 0
 
     def load_images(self):
         category = "tile_textures"
