@@ -4,7 +4,7 @@ from src.utils.vector import Vector, Point
 
 
 class Entity(DrawableObject):
-    SPEED_VALUE = 0.05
+    SPEED_VALUE = 1  # клеток в секунду
 
     def __init__(self, field, pos: Point, size: tuple = (1, 1)):
         super().__init__(field.game_object)

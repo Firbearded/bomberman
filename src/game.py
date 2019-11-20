@@ -23,6 +23,9 @@ class Game:
         self.scenes = [MenuScene(self), GameScene(self), GameoverScene(self), HighscoreScene(self)]
         self.current_scene = 0
         self.images = None
+        self.game_over = False
+        self.start_time = self.end_time = pygame.time.get_ticks()
+        self.delta_time = 0
 
     @property
     def size(self):
@@ -36,8 +39,8 @@ class Game:
         self.images = load_textures()
 
     def main_loop(self):
-        self.game_over = False
         while not self.game_over:  # Основной цикл работы программы
+            self.start_time = pygame.time.get_ticks()
             eventlist = pygame.event.get()
             for event in eventlist:
                 if event.type == pygame.QUIT:
@@ -46,6 +49,9 @@ class Game:
                 break
 
             self.scenes[self.current_scene].process_frame(eventlist)
+
+            self.delta_time = (pygame.time.get_ticks() - self.start_time) / 1000
+
         sys.exit(0)  # Выход из программы
 
     def set_scene(self, index):

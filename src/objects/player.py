@@ -63,7 +63,7 @@ class Player(Entity):
                             is_corner_fixing = 1
                             speed_vector[i] = 0
                             speed_vector[j] = -1
-        speed_vector = speed_vector.normalized * self.speed_value  # self.speed_vector - всего лишь вектор для
+        speed_vector = speed_vector.normalized * self.speed_value * self.game_object.delta_time  # self.speed_vector - всего лишь вектор для
         # направления, тут я делаю, чтобы длина самого вектора была равна self.speed_value
         if is_corner_fixing:  # Если мы исправляем застревания на углах,
             for i in range(2):  # то проверяем, чтобы подойти ровно в клетку
