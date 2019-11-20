@@ -29,7 +29,8 @@ class Enemy(Entity):
 
 
     def process_logic(self):
-        pass
+        normalized_speed_vector = self.speed_vector.normalize() * self.speed_value
+        self.pos = self.pos + normalized_speed_vector
 
 
 
