@@ -46,7 +46,7 @@ class Fire(Entity):
     def possible_to_spread(self, pos):
         if self.field.grid[pos.y][pos.x] == 0:
             return True
-        if self.field.grid[pos.y][pos.x] == 2:
+        if self.field.grid[pos.y][pos.x] == 1:
             return False
         # TODO: Добавить в field метод взрыва разрушаемой стены
         # self.field.destroy_wall(pos.x, pos.y)
