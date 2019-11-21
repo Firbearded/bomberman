@@ -1,27 +1,40 @@
 import pygame
 from src.objects.entity import Entity
+from src.objects.tiles import TILES
 from src.utils.animation import SimpleAnimation
+from src.utils.intersections import is_collide_rect
 from src.utils.vector import Vector, Point
 
 
 class Fire(Entity):
     """
     Класс Fire - огонь, испускаемый бомбой.
-    Создается объектом бомбы в field.entities. Нужно удалить извне, когда enabled станет False.
+    Создается объектом бомбы.
     Висит на поле некоторое время, а потом исчезает.
     """
     DELAY = 2000
-    DIR_DELTA = (Vector(1, 0), Vector(0, 1), Vector(-1, 0), Vector(0, -1))
-    FIRE_CENTRAL, FIRE_MIDDLE, FIRE_END, FIRE_SMALL = 0, 1, 2, 3
+    FIRE_CENTRAL = 0
+    FIRE_MIDDLE = 1
+    FIRE_END = 2
+    FIRE_SMALL = 3
 
-    def __init__(self, bomb_object, pos: Point, power=0, delay=DELAY, fire_type=FIRE_CENTRAL, direction=Vector(0, 0)):
+    SPRITE_CATEGORY = "fire_sprites"
+    SPRITE_NAMES = (
+        ('fire_wave_start',),
+        ('fire_wave', 'fire_wave1'),
+        ('fire_wave_end',),
+        ('points',)
+    )
+
+    def __init__(self, bomb_object, pos: Point, power=0, delay=DELAY, fire_type=FIRE_CENTRAL, direction=Vector(0, 0),
+                 start_time=None):
         """
         :param bomb_object: ссылка на объект бомбы (бомба удалится вскоре после испускания огня, но ничего, ведь огонь
             сразу при создании запросит всю нужную информацию)
         :param pos: позиция на игровом поле
         :param power: дальность распространения огня
         :param delay: задержка в миллисекундах (по умолчанию DELAY)
-        :param fire_type: тип огненного потока (по умолчанию центральный)
+        :param fire_type: тип огненного потока (по умолчанию FIRE_CENTRAL)
         :param direction: направление распространения (имеет смысл для серединного и конечного типов)
         :type bomb_object: Bomb
         :type pos: Point
@@ -30,148 +43,139 @@ class Fire(Entity):
         :type fire_type: int
         :type direction: Vector
         """
-        super().__init__(bomb_object.field, pos, (1, 1))
+        if power <= 0:
+            return
+        super().__init__(bomb_object.field_object, pos)
         self.bomb_object = bomb_object
 
-        self.pos = Point()
-        self.pos.copy_from(pos)
+        self.pos = Point(pos)
         self.power = power
         self.delay = delay
         self.fire_type = fire_type
-        self.direction = direction
+        self.direction = Vector(direction)
 
-        self.enabled = True
-        self.start_time = pygame.time.get_ticks()
+        self.start_time = start_time
+        if start_time is None:
+            self.start_time = pygame.time.get_ticks()
+
         self.next_fire()
 
-    def possible_to_spread(self, pos):
-        tile_type = self.field.grid[pos.y][pos.x]
+    def is_possible_to_spread(self, pos):
+        tile_type = self.field_object.grid[pos.y][pos.x]
         if tile_type == 0:
             return True
         return False
 
     def try_to_break(self, pos):
-        if self.field.grid[pos.y][pos.x] == 2:
-            self.field.destroy_wall(pos.x, pos.y, self.delay)
+        if TILES[self.field_object.grid[pos.y][pos.x]].breakable:
+            self.field_object.destroy_wall(pos.x, pos.y, self.delay)
 
     def next_fire(self):  # TODO: детонация остальных бомб на пути
+        i = Vector(1, 0)
+        j = Vector(0, 1)
+        all_directions = (i, j, -i, -j)
         if self.fire_type == self.FIRE_CENTRAL:
             # Если огонь центральный, пробуем распространиться в стороны
             # Если не получается, меняем тип на маленький
             spreading = False
-            if self.power > 0:
-                for v in self.DIR_DELTA:
-                    new_fire_pos = self.pos + v
-                    if self.possible_to_spread(new_fire_pos):
+            if self.power > 1:
+                for direction in all_directions:
+                    new_pos = self.pos + direction
+                    if self.is_possible_to_spread(new_pos):
                         spreading = True
-                        Fire(self.bomb_object, new_fire_pos, self.power - 1, self.delay, self.FIRE_MIDDLE, v)
+                        Fire(self.bomb_object, new_pos, self.power - 1, self.delay, self.FIRE_MIDDLE, direction,
+                             self.start_time)
                     else:
-                        self.try_to_break(new_fire_pos)
+                        self.try_to_break(new_pos)
 
-            if not spreading or self.power == 0:
+            if not spreading or self.power == 1:
                 self.fire_type = self.FIRE_SMALL
 
         if self.fire_type == self.FIRE_MIDDLE:
-            # Если огонь распространяющийся (серединный), пробуем распространиться
+            # Если огонь распространяющийся (серединный (не центральный)), пробуем распространиться
             # Если не получается, меняем тип на конечный
-            new_fire_pos = self.pos + self.direction
-            if self.possible_to_spread(new_fire_pos) and self.power > 0:
-                Fire(self.bomb_object, new_fire_pos, self.power - 1, self.delay, self.FIRE_MIDDLE, self.direction)
+            new_pos = self.pos + self.direction
+            if self.is_possible_to_spread(new_pos) and self.power > 1:
+                Fire(self.bomb_object, new_pos, self.power - 1, self.delay, self.FIRE_MIDDLE, self.direction)
             else:
-                if self.power > 0:
-                    self.try_to_break(new_fire_pos)
+                if self.power > 1:
+                    self.try_to_break(new_pos)
                 self.fire_type = self.FIRE_END
 
-        self.anim = self.create_anim()
+        self.animation = self.create_animation()
 
-    def process_logic(self):
-        self.anim.process_logic()
-        if self.enabled and (pygame.time.get_ticks() - self.start_time >= self.delay):
-            self.enabled = False
-            self.field.delete_entity(self)
+    def additional_logic(self):
+        from src.objects.player import Player
+        if pygame.time.get_ticks() - self.start_time >= self.delay:
+            self.disable()
+            self.field_object.delete_entity(self)
 
-    def process_draw(self):
-        if not self.enabled: return
-        # TODO: анимации
-        self.game_object.screen.blit(self.anim.current_image, (self.real_pos, self.real_size))
-        # if self.fire_type == self.FIRE_CENTRAL:
-        #     fire_color = (150, 0, 0)
-        # elif self.fire_type == self.FIRE_MIDDLE:
-        #     fire_color = (255, 0, 0)
-        # elif self.fire_type == self.FIRE_END:
-        #     fire_color = (255, 100, 0)
-        # elif self.fire_type == self.FIRE_SMALL:
-        #     fire_color = (255, 255, 0)
-        # pygame.draw.rect(self.game_object.screen, fire_color, (self.real_pos, self.real_size), 0)
+        for e in self.field_object.entities:  # Проверка на коллизии с бомбами и игроками
+            if e.is_enabled:
+                if type(e) is Bomb:
+                    if is_collide_rect(self.pos, self.size, e.pos, e.size):
+                        e.on_timeout()
+                if type(e) is Player:
+                    if is_collide_rect(self.pos, self.size, e.pos, e.size):
+                        e.on_game_over()
 
-    def create_anim(self):
-        imgs = [('fire_wave_start', ), ('fire_wave', 'fire_wave1'), ('fire_wave_end',), ('points', )][self.fire_type]
-        imgs = [pygame.transform.scale(self.game_object.images['fire_sprites'][i], self.real_size) for i in imgs]
+    def create_animation(self):
+        sprites = [pygame.transform.scale(self.game_object.images[self.SPRITE_CATEGORY][i], self.real_size) for i in
+                   self.SPRITE_NAMES[self.fire_type]]
         if self.fire_type in (1, 2):
             angle = {(1, 0): 0, (0, 1): 270, (-1, 0): 180, (0, -1): 90}[tuple(self.direction)]
-            imgs = [pygame.transform.rotate(i, angle) for i in imgs]
-        dl = 250
-        anim_dict = {'burning': (dl, imgs)}
-        return SimpleAnimation(anim_dict, 'burning')
-        # fire_sprites
+            sprites = [pygame.transform.rotate(i, angle) for i in sprites]
+        animation_delay = 200  # TODO: скорость анимаций для огня
+        animation_dict = {'burning': (animation_delay, sprites)}
+        return SimpleAnimation(animation_dict, 'burning')
 
 
 class Bomb(Entity):
     """
     Класс Bomb - собственно бомба в игре bomberman.
-    Должна создаваться объектом игрока в field.entities. Нужно удалить извне, когда enabled станет False.
+    Должна создаваться объектом игрока.
     Висит на поле некоторое время, а потом взрывается, распространяя огонь.
     """
     DELAY = 2000
-    POWER = 1
+    POWER = 2
 
-    def __init__(self, player_object, pos: Point, power=POWER, time=DELAY):
+    SPRITE_CATEGORY = "bomb_sprites"
+    SPRITE_NAMES = ('bomb', 'bomb1', 'bomb2')
+
+    def __init__(self, player_object, pos: Point, power=POWER, delay=DELAY):
         """
         :param player_object: ссылка на объект игрока, установившего бомбу
         :param pos: позиция бомбы на игровом поле
         :param power: радиус распространения огня (сила бомбы; сила 0 - радиус 1 клетка)
-        :param time: время в миллисекундах, через которое бомба взорвется (по умолчанию DELAY)
+        :param delay: время в миллисекундах, через которое бомба взорвется (по умолчанию DELAY)
         :type player_object: Player
         :type pos: Point
         :type power: int
-        :type time: int
+        :type delay: int
         """
-        super().__init__(player_object.field, pos, (1, 1))
+        super().__init__(player_object.field_object, pos)
         self.player_object = player_object
 
         self.power = power
-        self.time = time
+        self.delay = delay
 
-        self.enabled = True
         self.start_time = pygame.time.get_ticks()
 
-        imgs = []
-        for n in ['bomb', 'bomb1', 'bomb2']:
-            print(self.game_object.images)
-            i = self.game_object.images['bomb_sprites'][n]
-            w, h = i.get_rect().size
-            k = w / self.real_size[0]
-            new_size = (int(w // k), int(h // k))
-            self.image_size = new_size
-            imgs += [pygame.transform.scale(i, new_size)]
+        self.animation = self.create_animation()
 
-        anim_dict = {'burning': (100, imgs)}
-        self.anim = SimpleAnimation(anim_dict, 'burning')
+    def create_animation(self):
+        sprites = [pygame.transform.scale(self.game_object.images[self.SPRITE_CATEGORY][i], self.real_size) for i in
+                   self.SPRITE_NAMES]
+        animation_delay = 100  # TODO: скорость анимаций для бомб
+        animation_dict = {'detonating': (animation_delay, sprites)}
+        return SimpleAnimation(animation_dict, 'detonating')
 
-    def detonate(self):
+    def on_timeout(self):
         Fire(self, self.pos, self.power)
-        self.enabled = False
-        self.field.delete_entity(self)
+        self.player_object.bombs_number -= 1
+        self.disable()
+        self.field_object.delete_entity(self)
 
-    def process_logic(self):
-        self.anim.process_logic()
-        if self.enabled and (pygame.time.get_ticks() - self.start_time >= self.time):
-            self.detonate()
-
-    def process_draw(self):
-        if not self.enabled: return
-        # TODO: анимации
-        # center_pos = (round(self.real_pos[0] + self.real_size[0] / 2), round(self.real_pos[1] + self.real_size[0] / 2))
-        # pygame.draw.circle(self.game_object.screen, (0, 0, 0), center_pos, int(self.real_size[0] / 2))
-        rect = self.real_pos, self.image_size
-        self.game_object.screen.blit(self.anim.current_image, rect)
+    def additional_logic(self):
+        if pygame.time.get_ticks() - self.start_time >= self.delay:
+            self.on_timeout()

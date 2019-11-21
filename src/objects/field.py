@@ -19,6 +19,11 @@ class Field(DrawableObject):
     DRAW_GRID = False
     LINE_WIDTH = 1  # ширина линии при отрисовки
 
+    TILE_EMPTY = 0
+    TILE_WALL = 1
+    TILE_BREAKABLE_WALL = 2
+    TILE_UNREACHABLE_EMPTY = 3
+
     def __init__(self, game_object, pos: Point, field_size: tuple, tile_size: tuple):
         """
         Создание поля.
@@ -33,8 +38,7 @@ class Field(DrawableObject):
         """
         super().__init__(game_object)
 
-        self.pos = Point()
-        self.pos.copy_from(pos)
+        self.pos = Point(pos)
         self.field_size = tuple(field_size)
         self.tile_size = tuple(tile_size)
 
@@ -59,27 +63,27 @@ class Field(DrawableObject):
 
     def grid_init(self):
         """
-        Заполнение стенами границы и остальное через одну клетку
-        0 - пустота, 1 - стена...
+        Заполнение неразрущаемыми стенами границы и остальное через одну клетку
+        0 - пустота, 1 - стена
         """
         # Создание двумерного списка, заполненного нулями:
-        self.grid = [[0] * self.width for _ in range(self.height)]
+        self.grid = [[Field.TILE_EMPTY] * self.width for _ in range(self.height)]
 
         # Создание стен по границам
         for i in range(0, self.width):
-            self.grid[0][i] = 1
-            self.grid[-1][i] = 1
+            self.grid[0][i] = Field.TILE_WALL
+            self.grid[-1][i] = Field.TILE_WALL
 
         for j in range(0, self.height):
-            self.grid[j][0] = 1
-            self.grid[j][-1] = 1
+            self.grid[j][0] = Field.TILE_WALL
+            self.grid[j][-1] = Field.TILE_WALL
 
         # Создание стен через одну
         for i in range(2, self.height, 2):
             for j in range(2, self.width, 2):
-                self.grid[i][j] = 1
+                self.grid[i][j] = Field.TILE_WALL
 
-    def rand_fill(self, type_=2, n=20):  # TODO: переработать
+    def rand_fill(self, type_=TILE_BREAKABLE_WALL, n=20):  # TODO: переработать
         c = 0
         while c < n:
             i = randint(1, self.height - 1)
@@ -90,18 +94,19 @@ class Field(DrawableObject):
 
     def process_draw_tiles(self):
         """
-        Отрисовка самого поля, те его клеток.
+        Отрисовка самого поля, т.е. его клеток.
         """
         for i in range(len(self.grid)):
             for j in range(len(self.grid[i])):  # TODO Временное решение:
-                tile_pos = [self.pos[k] + (j, i)[k] * self.tile_size[k] for k in range(2)]
-                rect = tile_pos, self.tile_size
-                tile_index = self.grid[i][j]
+                tile_real_pos = [self.pos[k] + (j, i)[k] * self.tile_size[k] for k in range(2)]
+                rect = tile_real_pos, self.tile_size
 
-                self.game_object.screen.blit(self.tile_images[TILES[0].image_name], rect)  # Траву сзади всех рисуем
-                if tile_index == 0: continue
+                tile_type = self.grid[i][j]
 
-                tile = TILES[tile_index]
+                self.game_object.screen.blit(self.tile_images[TILES[0].image_name], rect)  # Пол сзади всех рисуем
+                if tile_type == Field.TILE_EMPTY: continue
+
+                tile = TILES[tile_type]
                 if tile.image_name:
                     self.game_object.screen.blit(self.tile_images[tile.image_name], rect)
                 else:
@@ -115,7 +120,8 @@ class Field(DrawableObject):
         Отрисовка всех сущностей, принадлежащих этому полю
         """
         for e in reversed(self.entities):
-            e.process_draw()
+            if e.is_enabled:
+                e.process_draw()
 
     def process_draw(self):
         self.process_draw_tiles()
@@ -123,11 +129,13 @@ class Field(DrawableObject):
 
     def process_logic(self):
         for e in self.entities:
-            e.process_logic()
+            if e.is_enabled:
+                e.process_logic()
 
     def process_event(self, event):
         for e in self.entities:
-            e.process_event(event)
+            if e.is_enabled:
+                e.process_event(event)
 
     def add_entity(self, entity):
         self.entities.append(entity)
@@ -136,8 +144,10 @@ class Field(DrawableObject):
         self.entities.remove(entity)
 
     def destroy_wall(self, x, y, delay):
-        # TODO: анимации разрушения стены
-        self.grid[y][x] = 3
+        """
+        Запускает уничтожение клетки (x, y) за delay миллисекунд
+        """
+        self.grid[y][x] = Field.TILE_UNREACHABLE_EMPTY
         BreakingWall(self, Point(x, y), delay)
 
     def load_images(self):
@@ -151,30 +161,45 @@ class Field(DrawableObject):
     def __setitem__(self, key, value):
         return self.grid.__setitem__
 
+    def at(self, *args):
+        x, y = 0, 0
+        if len(args) == 1:
+            x, y = args[0]
+        elif len(args) == 2:
+            x, y = args
+        return self.grid[y][x]
+
 
 class BreakingWall(Entity):
-    def __init__(self, field, pos: Point, delay):
+    """
+    Сущность уничтожающейся стены.
+    Нужна для анимации разрушения.
+    """
+    SPRITE_NAMES = ('break_wall', 'break_wall1', 'break_wall2', 'break_wall3')
+
+    def __init__(self, field_object, pos: Point, delay):
         x, y = pos
-        super().__init__(field, Point(int(x), int(y)), (1, 1))
+        super().__init__(field_object, Point(int(x), int(y)))
         self.delay = delay
 
-        self.anim = self.create_anim()
+        self.animation = self.create_animation()
         self.start_time = pygame.time.get_ticks()
 
-    def create_anim(self):
-        imgs = ['break_wall', 'break_wall1', 'break_wall2', 'break_wall3']
-        imgs = [self.field.tile_images[i] for i in imgs]
-        dl = ceil(self.delay / len(imgs))
-        anim_dict = {'breaking': (dl, imgs)}
-        return SimpleAnimation(anim_dict, 'breaking')
+    def create_animation(self):
+        sprites = [self.field_object.tile_images[i] for i in BreakingWall.SPRITE_NAMES]
+        animation_delay = ceil(self.delay / len(sprites))
+        animation_dict = {'breaking': (animation_delay, sprites)}
+        return SimpleAnimation(animation_dict, 'breaking')
+
+    def on_timeout(self):
+        self.disable()
+        x, y = self.pos
+        self.field_object.grid[y][x] = Field.TILE_EMPTY
+        self.field_object.delete_entity(self)
 
     def process_draw(self):
-        self.game_object.screen.blit(self.anim.current_image, (self.real_pos, self.real_size))
+        self.game_object.screen.blit(self.animation.current_image, (self.real_pos, self.real_size))
 
-    def process_logic(self):
-        self.anim.process_logic()
+    def additional_logic(self):
         if pygame.time.get_ticks() - self.start_time >= self.delay:
-            self.enabled = False
-            x, y = self.pos
-            self.field.grid[y][x] = 0
-            self.field.delete_entity(self)
+            self.on_timeout()

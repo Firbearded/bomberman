@@ -1,14 +1,20 @@
-from src.objects.player import Player
 from src.scenes.base_scene import Scene
 from src.objects.field import Field
+from src.objects.player import Player
+from src.utils.vector import Point
 
 
 class GameScene(Scene):
     def create_objects(self):
-        f = Field(self.game, (0, 0), (21, 15), (50, 50))
-        self.objects.append(f)
-        self.game.resize_screen((21 * 50, 50 * 15))
+        pos = Point(0, 0)
+        field_size = 21, 15
+        tile_size = 50, 50
 
-        p = Player(f, (1, 1))
+        f = Field(self.game, pos, field_size, tile_size)
+        self.objects.append(f)
+        self.game.resize_screen(Point(field_size) * Point(tile_size))
+
+        p = Player(f, Point(1, 1))
         p.speed_value = 2
+
         f.rand_fill(2, 30)

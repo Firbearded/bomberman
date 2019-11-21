@@ -4,7 +4,7 @@
 <dict>
 	<key>frames</key>
 	<dict>
-		<key>bomberman.png</key>
+		<key>bb_standing_down.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{2,2},{148,267}}</string>
@@ -17,10 +17,101 @@
 			<key>sourceSize</key>
 			<string>{148,267}</string>
 		</dict>
-		<key>bombermanwalk1.png</key>
+		<key>bb_standing_horizontal.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{2,271},{148,267}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{148,267}}</string>
+			<key>sourceSize</key>
+			<string>{148,267}</string>
+		</dict>
+		<key>bb_standing_up.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{2,540},{148,267}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{148,267}}</string>
+			<key>sourceSize</key>
+			<string>{148,267}</string>
+		</dict>
+		<key>bb_walking1_down.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{152,540},{148,267}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{148,267}}</string>
+			<key>sourceSize</key>
+			<string>{148,267}</string>
+		</dict>
+		<key>bb_walking1_horizontal.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{152,2},{148,267}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{148,267}}</string>
+			<key>sourceSize</key>
+			<string>{148,267}</string>
+		</dict>
+		<key>bb_walking1_up.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{152,271},{148,267}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{148,267}}</string>
+			<key>sourceSize</key>
+			<string>{148,267}</string>
+		</dict>
+		<key>bb_walking2.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{302,271},{148,267}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{148,267}}</string>
+			<key>sourceSize</key>
+			<string>{148,267}</string>
+		</dict>
+		<key>bb_walking2_horizontal.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{302,2},{148,267}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{148,267}}</string>
+			<key>sourceSize</key>
+			<string>{148,267}</string>
+		</dict>
+		<key>bb_walking2_up.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{452,2},{148,267}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -38,7 +129,7 @@
 		<key>realTextureFileName</key>
 		<string>test_image0.png</string>
 		<key>size</key>
-		<string>{512,512}</string>
+		<string>{1024,1024}</string>
 		<key>textureFileName</key>
 		<string>test_image0.png</string>
 	</dict>
