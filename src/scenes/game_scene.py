@@ -7,6 +7,7 @@ class GameScene(Scene):
     def create_objects(self):
         f = Field(self.game, (0, 0), (21, 15), (50, 50))
         self.objects.append(f)
+        self.game.resize_screen((21 * 50, 50 * 15))
 
         p = Player(f, (1, 1))
         p.speed_value = 2

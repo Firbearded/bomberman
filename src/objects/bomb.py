@@ -52,9 +52,9 @@ class Fire(Entity):
 
     def try_to_break(self, pos):
         if self.field.grid[pos.y][pos.x] == 2:
-            self.field.destroy_wall(pos.x, pos.y)
+            self.field.destroy_wall(pos.x, pos.y, self.delay)
 
-    def next_fire(self):
+    def next_fire(self):  # TODO: детонация остальных бомб на пути
         if self.fire_type == self.FIRE_CENTRAL:
             # Если огонь центральный, пробуем распространиться в стороны
             # Если не получается, меняем тип на маленький
@@ -78,9 +78,14 @@ class Fire(Entity):
             if self.possible_to_spread(new_fire_pos) and self.power > 0:
                 Fire(self.bomb_object, new_fire_pos, self.power - 1, self.delay, self.FIRE_MIDDLE, self.direction)
             else:
+                if self.power > 0:
+                    self.try_to_break(new_fire_pos)
                 self.fire_type = self.FIRE_END
 
+        self.anim = self.create_anim()
+
     def process_logic(self):
+        self.anim.process_logic()
         if self.enabled and (pygame.time.get_ticks() - self.start_time >= self.delay):
             self.enabled = False
             self.field.delete_entity(self)
@@ -88,15 +93,27 @@ class Fire(Entity):
     def process_draw(self):
         if not self.enabled: return
         # TODO: анимации
-        if self.fire_type == self.FIRE_CENTRAL:
-            fire_color = (150, 0, 0)
-        elif self.fire_type == self.FIRE_MIDDLE:
-            fire_color = (255, 0, 0)
-        elif self.fire_type == self.FIRE_END:
-            fire_color = (255, 100, 0)
-        elif self.fire_type == self.FIRE_SMALL:
-            fire_color = (255, 255, 0)
-        pygame.draw.rect(self.game_object.screen, fire_color, (self.real_pos, self.real_size), 0)
+        self.game_object.screen.blit(self.anim.current_image, (self.real_pos, self.real_size))
+        # if self.fire_type == self.FIRE_CENTRAL:
+        #     fire_color = (150, 0, 0)
+        # elif self.fire_type == self.FIRE_MIDDLE:
+        #     fire_color = (255, 0, 0)
+        # elif self.fire_type == self.FIRE_END:
+        #     fire_color = (255, 100, 0)
+        # elif self.fire_type == self.FIRE_SMALL:
+        #     fire_color = (255, 255, 0)
+        # pygame.draw.rect(self.game_object.screen, fire_color, (self.real_pos, self.real_size), 0)
+
+    def create_anim(self):
+        imgs = [('fire_wave_start', ), ('fire_wave', 'fire_wave1'), ('fire_wave_end',), ('points', )][self.fire_type]
+        imgs = [pygame.transform.scale(self.game_object.images['fire_sprites'][i], self.real_size) for i in imgs]
+        if self.fire_type in (1, 2):
+            angle = {(1, 0): 0, (0, 1): 270, (-1, 0): 180, (0, -1): 90}[tuple(self.direction)]
+            imgs = [pygame.transform.rotate(i, angle) for i in imgs]
+        dl = 250
+        anim_dict = {'burning': (dl, imgs)}
+        return SimpleAnimation(anim_dict, 'burning')
+        # fire_sprites
 
 
 class Bomb(Entity):
@@ -154,7 +171,7 @@ class Bomb(Entity):
     def process_draw(self):
         if not self.enabled: return
         # TODO: анимации
-        #center_pos = (round(self.real_pos[0] + self.real_size[0] / 2), round(self.real_pos[1] + self.real_size[0] / 2))
-        #pygame.draw.circle(self.game_object.screen, (0, 0, 0), center_pos, int(self.real_size[0] / 2))
+        # center_pos = (round(self.real_pos[0] + self.real_size[0] / 2), round(self.real_pos[1] + self.real_size[0] / 2))
+        # pygame.draw.circle(self.game_object.screen, (0, 0, 0), center_pos, int(self.real_size[0] / 2))
         rect = self.real_pos, self.image_size
         self.game_object.screen.blit(self.anim.current_image, rect)

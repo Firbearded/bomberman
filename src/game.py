@@ -14,7 +14,7 @@ class Game:
     GAMEOVER_SCENE_INDEX = 2
     HIGHSCORE_SCENE_INDEX = 3
 
-    def __init__(self, window_size=(50 * 21, 50 * 15), title='pygame window'):
+    def __init__(self, window_size=(800, 600), title='pygame window'):
         self.width, self.height = window_size
         self.title = title
 
@@ -23,7 +23,6 @@ class Game:
         self.scenes = [MenuScene(self), GameScene(self), GameoverScene(self), HighscoreScene(self)]
         self.current_scene = 0
         self.game_over = False
-        self.start_time = self.end_time = pygame.time.get_ticks()
         self.delta_time = 0
 
     @property
@@ -37,9 +36,18 @@ class Game:
         pygame.display.set_caption(self.title)
         self.images = load_textures()
 
+    def resize_screen(self, size):
+        self.width, self.height = size
+        self.screen = pygame.display.set_mode(self.size)
+
+    def _update_title(self, fps):  # TODO
+        pygame.display.set_caption("{} — {} FPS".format(self.title, fps))
+
     def main_loop(self):
+        fps_start_time = pygame.time.get_ticks()
+        fps = 0
         while not self.game_over:  # Основной цикл работы программы
-            self.start_time = pygame.time.get_ticks()
+            start_time = pygame.time.get_ticks()
             eventlist = pygame.event.get()
             for event in eventlist:
                 if event.type == pygame.QUIT:
@@ -48,8 +56,13 @@ class Game:
                 break
 
             self.scenes[self.current_scene].process_frame(eventlist)
-
-            self.delta_time = (pygame.time.get_ticks() - self.start_time) / 1000
+            end_time = pygame.time.get_ticks()
+            self.delta_time = (end_time - start_time) / 1000
+            fps += 1
+            if end_time - fps_start_time >= 1000:
+                fps_start_time = end_time - (end_time - fps_start_time) % 1000
+                self._update_title(fps)
+                fps = 0
 
         sys.exit(0)  # Выход из программы
 

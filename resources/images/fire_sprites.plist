@@ -4,7 +4,7 @@
 <dict>
 	<key>frames</key>
 	<dict>
-		<key>fire_wall.png</key>
+		<key>fire_wave.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{2,2},{200,200}}</string>
@@ -17,10 +17,49 @@
 			<key>sourceSize</key>
 			<string>{200,200}</string>
 		</dict>
-		<key>point.png</key>
+		<key>fire_wave1.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{204,2},{200,200}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{200,200}}</string>
+			<key>sourceSize</key>
+			<string>{200,200}</string>
+		</dict>
+		<key>fire_wave_end.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{204,204},{200,200}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{200,200}}</string>
+			<key>sourceSize</key>
+			<string>{200,200}</string>
+		</dict>
+		<key>fire_wave_start.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{2,204},{200,200}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{200,200}}</string>
+			<key>sourceSize</key>
+			<string>{200,200}</string>
+		</dict>
+		<key>points.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{2,406},{200,200}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -38,7 +77,7 @@
 		<key>realTextureFileName</key>
 		<string>test_image0.png</string>
 		<key>size</key>
-		<string>{512,512}</string>
+		<string>{1024,1024}</string>
 		<key>textureFileName</key>
 		<string>test_image0.png</string>
 	</dict>

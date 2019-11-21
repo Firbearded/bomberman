@@ -128,7 +128,7 @@ class Player(Entity):
         # TODO: Сделать нормальную установку бомбы игроком
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                Bomb(self, self.tile)
+                Bomb(self, self.tile, 3)
 
     def process_draw(self):
         p = Point(*self.real_pos)

@@ -1,9 +1,10 @@
 CATEGORY = "tile_textures"
 
 
-class Tile:  # TODO: добавить текстуры
+class Tile:
     color = (0, 0, 0)
     image_name = None
+
 
 # Tiles:
 
@@ -20,7 +21,12 @@ class TileWall(Tile):
 
 class TileBreakableWall(Tile):
     color = (160, 160, 160)
-    image_name = "breakable_wall"
+    image_name = "break_wall"
+
+
+class TileUnreachableEmpty(Tile):
+    color = (220, 220, 220)
+    image_name = "grass"
 
 
 # class TileBomb(Tile):
@@ -39,5 +45,5 @@ class TileBreakableWall(Tile):
 
 
 TILES = [
-    TileEmpty, TileWall, TileBreakableWall, # TileBomb, TilePoints, TileFirewave
+    TileEmpty, TileWall, TileBreakableWall, TileUnreachableEmpty  # TileBomb, TilePoints, TileFirewave
 ]

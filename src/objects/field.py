@@ -1,8 +1,12 @@
+from math import ceil
 from random import randint
 
 import pygame
+
 from src.objects.base_classes import DrawableObject
-from src.objects.tiles import TILES
+from src.objects.entity import Entity
+from src.objects.tiles import TILES, CATEGORY
+from src.utils.animation import SimpleAnimation
 from src.utils.vector import Point
 
 
@@ -131,12 +135,46 @@ class Field(DrawableObject):
     def delete_entity(self, entity):
         self.entities.remove(entity)
 
-    def destroy_wall(self, x, y):
+    def destroy_wall(self, x, y, delay):
         # TODO: анимации разрушения стены
-        self.grid[y][x] = 0
+        self.grid[y][x] = 3
+        BreakingWall(self, Point(x, y), delay)
 
     def load_images(self):
-        category = "tile_textures"
-        for key in self.game_object.images[category]:
-            self.tile_images[key] = pygame.transform.scale(self.game_object.images[category][key], self.tile_size)
+        for key in self.game_object.images[CATEGORY]:
+            self.tile_images[key] = pygame.transform.scale(self.game_object.images[CATEGORY][key], self.tile_size)
             print("FIELD: resized '{}'".format(key))
+
+    def __getitem__(self, item):
+        return self.grid.__getitem__
+
+    def __setitem__(self, key, value):
+        return self.grid.__setitem__
+
+
+class BreakingWall(Entity):
+    def __init__(self, field, pos: Point, delay):
+        x, y = pos
+        super().__init__(field, Point(int(x), int(y)), (1, 1))
+        self.delay = delay
+
+        self.anim = self.create_anim()
+        self.start_time = pygame.time.get_ticks()
+
+    def create_anim(self):
+        imgs = ['break_wall', 'break_wall1', 'break_wall2', 'break_wall3']
+        imgs = [self.field.tile_images[i] for i in imgs]
+        dl = ceil(self.delay / len(imgs))
+        anim_dict = {'breaking': (dl, imgs)}
+        return SimpleAnimation(anim_dict, 'breaking')
+
+    def process_draw(self):
+        self.game_object.screen.blit(self.anim.current_image, (self.real_pos, self.real_size))
+
+    def process_logic(self):
+        self.anim.process_logic()
+        if pygame.time.get_ticks() - self.start_time >= self.delay:
+            self.enabled = False
+            x, y = self.pos
+            self.field.grid[y][x] = 0
+            self.field.delete_entity(self)
