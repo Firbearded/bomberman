@@ -36,13 +36,6 @@ def load_textures(directory=DIR, filenames=FILENAMES):
             if frame['rotated']:
                 result_image = result_image.transpose(Image.ROTATE_90)
 
-            # if not os.path.isdir(filename):
-            #     os.mkdir(filename)
-            # outfile = (filename + '/' + name).replace('gift_', '')
-            # if not outfile.endswith('.png'):
-            #     outfile += '.png'
-            # result_image.save(outfile)
-
             mode = result_image.mode
             size = result_image.size
             data = result_image.tobytes()
