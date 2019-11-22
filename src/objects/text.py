@@ -30,19 +30,19 @@ class Text(DrawableObject):
         """
         return pixels * 5 / 6
 
-    def __init__(self, game_object, pos, text, font_name=None, font_size=12, color=Color.BLACK, antialiasing=False):
+    def __init__(self, game_object, text, pos=Point(0, 0), font_name=None, font_size=12, color=Color.BLACK, antialiasing=False):
         """
 
         :param game_object: Объект класса Game
-        :param pos: Координаты левой верхней точки
         :param text: Сам текст
+        :param pos: Координаты левой верхней точки
         :param font_name: Имя шрифта (None => стандартный
         :param font_size: Размер шрифта
         :param color: Цвет (R, G, B)
         :param antialiasing: Сглаживание
         :type game_object: Game
-        :type pos: Point, tuple
         :type text: str
+        :type pos: Point, tuple
         :type font_name: str
         :type font_size: int
         :type color: tuple из (0..255, 0..255, 0..255)
@@ -97,7 +97,7 @@ class Text(DrawableObject):
         if name: self.font_name = name
         if size: self.font_size = size
 
-        self.font = pygame.font.SysFont(self.font_name, self.font_size)
+        self.font = pygame.font.Font(self.font_name, self.font_size)
         self.update_surface()
 
     def update_surface(self):

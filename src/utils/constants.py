@@ -6,8 +6,13 @@ class Directory:
 
     IMAGE_DIR = join(RESOURCES_DIR, "images")
     SOUNDS_DIR = join(RESOURCES_DIR, "sounds")
+    FONT_DIR = join(RESOURCES_DIR, "fonts")
 
     TEXTURES_DIR = IMAGE_DIR
+
+
+FONT_OLD = join(Directory.FONT_DIR, "arcade-classic.ttf")
+FONT_NEW = join(Directory.FONT_DIR, "bm.ttf")
 
 
 class Color:
@@ -16,4 +21,3 @@ class Color:
     RED = (255, 0, 0)
     GREEN = (0, 255, 0)
     BLUE = (0, 0, 255)
-
