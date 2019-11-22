@@ -15,6 +15,5 @@ class GameScene(Scene):
         self.game.resize_screen(Point(field_size) * Point(tile_size))
 
         p = Player(f, Point(1, 1))
-        p.speed_value = 2
 
         f.rand_fill(2, 30)
