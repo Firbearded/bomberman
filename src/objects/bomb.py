@@ -116,7 +116,7 @@ class Fire(Entity):
                     if is_collide_rect(self.pos, self.size, e.pos, e.size):
                         e.on_timeout()
                 if type(e) is Player:
-                    if is_collide_rect(self.pos, self.size, e.pos, e.size):
+                    if self.pos == e.tile:
                         e.on_game_over()
 
     def create_animation(self):

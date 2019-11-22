@@ -15,6 +15,7 @@ class Game:
     HIGHSCORE_SCENE_INDEX = 3
 
     def __init__(self, window_size=(800, 600), title='pygame window'):
+        self._start_time = pygame.time.get_ticks()
         self.size = self.width, self.height = window_size
         self.title = title
 
@@ -43,6 +44,7 @@ class Game:
         pygame.display.set_caption("{} — {} FPS".format(self.title, fps))
 
     def main_loop(self):
+        print("LOADING COMPLETE IN {} s".format((pygame.time.get_ticks() - self._start_time) / 1000))
         self.running = True
         fps_start_time = pygame.time.get_ticks()
         fps = 0
