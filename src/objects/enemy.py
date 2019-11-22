@@ -41,7 +41,6 @@ class Enemy(Entity):
             self.growing *= -1                                                      #в dist_from_center до 0.52, 0.2 надо вычесть
 
     def process_logic(self):
-        self.death()
         past_tile = self.tile # Клетка, в которой мы либо остаёмся, либо из которой выходим
         if not self.is_stable:
             normalized_speed_vector = self.speed_vector.normalized * self.speed_value

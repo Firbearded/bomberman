@@ -8,5 +8,5 @@ class GameScene(Scene):
         f = Field(self.game, (0, 0), (21, 15), (40, 40))
         self.objects.append(f)
 
-        e = Enemy(f, (1, 1))
-        self.objects.append(e)
+        #e = Enemy(f, (1, 1))
+        #self.objects.append(e)
