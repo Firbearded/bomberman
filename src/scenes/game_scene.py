@@ -1,3 +1,4 @@
+from src.objects.item import Item
 from src.scenes.base_scene import Scene
 from src.objects.field import Field
 from src.objects.player import Player
@@ -16,5 +17,7 @@ class GameScene(Scene):
 
         p = Player(f, Point(1, 1))
         p.speed_value = 2
+
+        item = Item(f,Point(1,2),(1,1))
 
         f.rand_fill(2, 30)
