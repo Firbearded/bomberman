@@ -1,11 +1,12 @@
 import sys
+
 import pygame
 
 from src.scenes.game_over_scene import GameoverScene
 from src.scenes.game_scene import GameScene
 from src.scenes.highscore_scene import HighscoreScene
 from src.scenes.menu_scene import MenuScene
-from src.utils.loader import load_textures
+from src.utils.loader import load_textures, load_sounds
 
 
 class Game:
@@ -34,6 +35,7 @@ class Game:
         pygame.display.set_caption(self.title)
 
         self.images = load_textures()
+        self.sounds = load_sounds()
 
     def resize_screen(self, size):
         self.size = self.width, self.height = tuple(size)

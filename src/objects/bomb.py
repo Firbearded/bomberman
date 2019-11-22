@@ -1,4 +1,5 @@
 import pygame
+
 from src.objects.entity import Entity
 from src.objects.tiles import TILES
 from src.utils.animation import SimpleAnimation
@@ -142,6 +143,8 @@ class Bomb(Entity):
     SPRITE_CATEGORY = "bomb_sprites"
     SPRITE_NAMES = ('bomb', 'bomb1', 'bomb2')
 
+    SOUND_BOMB = 'explosion'
+
     def __init__(self, player_object, pos: Point, power=POWER, delay=DELAY):
         """
         :param player_object: ссылка на объект игрока, установившего бомбу
@@ -171,6 +174,7 @@ class Bomb(Entity):
         return SimpleAnimation(animation_dict, 'detonating')
 
     def on_timeout(self):
+        self.game_object.sounds['effect'][self.SOUND_BOMB].play()
         Fire(self, self.pos, self.power)
         self.player_object.bombs_number -= 1
         self.disable()

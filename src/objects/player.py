@@ -3,8 +3,8 @@ import pygame
 from src.objects.bomb import Bomb
 from src.objects.entity import Entity
 from src.utils.animation import SimpleAnimation
-from src.utils.vector import Vector, Point
 from src.utils.intersections import collide_rect
+from src.utils.vector import Vector, Point
 
 
 def sign(x):
@@ -27,6 +27,10 @@ class Player(Entity):
             'horizontal': ('bb_walking1_horizontal', 'bb_walking2_horizontal',),
         }
     }
+
+    SOUND_START = 'start'
+    SOUND_BOMB = 'setbomb'
+
     TEMP_DIR = {(1, 0): 'right',
                 (0, 1): 'down',
                 (-1, 0): 'left',
@@ -58,6 +62,7 @@ class Player(Entity):
         self.is_moving = False
 
         self.animation = self.create_animation()
+        self.game_object.sounds['effect'][self.SOUND_START].play()
 
     def get_state(self):
         state = 'walking' if self.is_moving else 'standing'
@@ -186,6 +191,7 @@ class Player(Entity):
             if event.key in self.KEYS_BOMB:
                 if self.bombs_number < self.max_bombs_number:
                     self.bombs_number += 1
+                    self.game_object.sounds['effect'][self.SOUND_BOMB].play()
                     Bomb(self, self.tile)
 
     def process_draw(self):
