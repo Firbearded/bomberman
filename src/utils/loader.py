@@ -1,14 +1,24 @@
-import pygame
 from os.path import exists, join, splitext
 from xml.etree import ElementTree
+
+import pygame
 from PIL import Image
+
 from src.utils.constants import Directory
 
-FILENAMES = ("tile_textures", "bomberman_sprites", "fire_sprites", "bomb_sprites")
-DIR = Directory.TEXTURES_DIR
+TEXTURE_FILENAMES = ("tile_textures", "bomberman_sprites", "fire_sprites", "bomb_sprites")
+TEXTURE_DIR = Directory.TEXTURES_DIR
+
+SOUND_FILENAMES = {
+    "background":
+        ('bg1', 'bg2', 'bg3', 'bg4'),
+    "effect":
+        ('explosion', 'lose', 'menu', 'setbomb', 'start', 'item', 'win', 'gamewin'),
+}
+SOUND_DIR = Directory.SOUNDS_DIR
 
 
-def load_textures(directory=DIR, filenames=FILENAMES):
+def load_textures(directory=TEXTURE_DIR, filenames=TEXTURE_FILENAMES):
     result = {}
     for filename in filenames:
         data_filename = join(directory, filename + '.plist')
@@ -111,3 +121,21 @@ def frames_from_data(data_filename):
                 int((real_sizelist[1] + height) / 2 - offset_y)
             )
     return frames
+
+
+def load_sounds():
+    result = {}
+    ex = '.ogg'
+
+    for dir2 in SOUND_FILENAMES:
+        sounds = {}
+        for filename in SOUND_FILENAMES[dir2]:
+            path = join(SOUND_DIR, dir2, filename + ex)
+
+            sound = pygame.mixer.Sound(path)
+            sounds[splitext(filename)[0]] = sound
+            print("SOUND LOADING: from '{}' loaded '{}'".format(path, sound))
+
+        result[dir2] = sounds
+
+    return result
