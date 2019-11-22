@@ -2,9 +2,12 @@ import pygame
 
 from src.objects.bomb import Bomb
 from src.objects.entity import Entity
+from src.objects.tiles import TILES
 from src.utils.animation import SimpleAnimation
-from src.utils.vector import Vector, Point
+from src.utils.constants import Color
+from src.utils.decorators import protect
 from src.utils.intersections import collide_rect
+from src.utils.vector import Vector, Point
 
 
 def sign(x):
@@ -41,6 +44,8 @@ class Player(Entity):
                 )
     KEYS_BOMB = (pygame.K_SPACE, )
 
+    COLOR = Color.BLUE
+
     SPEED_VALUE = 2
     START_LIVES = 3
     BOMBS_POWER = 2
@@ -54,6 +59,8 @@ class Player(Entity):
         self.bombs_power = self.BOMBS_POWER
         self.bombs_number, self.max_bombs_number = 0, self.MAX_BOMBS_NUMBER
 
+        self.score = 0
+
         self.direction = Vector(0, 1)
         self.is_moving = False
 
@@ -64,7 +71,10 @@ class Player(Entity):
         direction = self.TEMP_DIR[tuple(self.direction)]
         return '{}_{}'.format(state, direction)
 
+    @protect
     def create_animation(self):
+        if not self.game_object.images: return
+
         animation_dict = {}
         animation_delay = 150
 
@@ -108,7 +118,7 @@ class Player(Entity):
             if speed_vector[j] == 0:
                 vec_dir = sign(speed_vector[i])
                 d = ((-1, 0, 1), (vec_dir, vec_dir, vec_dir))
-                up, nx, dn = [self.field_object.grid[tile_y + d[i][k]][tile_x + d[j][k]] != 0 for k in
+                up, nx, dn = [not TILES[self.field_object.grid[tile_y + d[i][k]][tile_x + d[j][k]]].walkable for k in
                               range(3)]  # TODO: tile == 0
                 if not nx:
                     if (speed_vector[i] > 0 and (self.right, self.bottom)[i] == (tile_x + 1, tile_y + 1)[i]) or \
@@ -143,7 +153,7 @@ class Player(Entity):
                 for dy in (-1, 0, 1):  # range(-max(1, round(self.size[1])), max(1, round(self.size[1])) + 1):
                     # Проверка на то, подходит ли нам клетка для проверки
                     if dx == dy == 0: continue
-                    if self.field_object.grid[tile_y + dy][tile_x + dx] == 0: continue
+                    if TILES[self.field_object.grid[tile_y + dy][tile_x + dx]].walkable: continue
                     fw, fh = self.field_object.size
                     if not (0 <= tile_y + dy < fh and 0 <= tile_x + dx < fw): continue
 
@@ -163,10 +173,11 @@ class Player(Entity):
 
         self.pos = self.pos + normalized_speed_vector
 
-        self.is_moving = bool(normalized_speed_vector)
-        if self.is_moving:
-            self.direction = normalized_speed_vector.united
-        self.animation.set_state(self.get_state())
+        if self.animation:
+            self.is_moving = bool(normalized_speed_vector)
+            if self.is_moving:
+                self.direction = normalized_speed_vector.united
+            self.animation.set_state(self.get_state())
 
     def process_event(self, event):  # TODO: пересмотреть
         if event.type == pygame.KEYDOWN:
@@ -188,11 +199,11 @@ class Player(Entity):
                     self.bombs_number += 1
                     Bomb(self, self.tile)
 
-    def process_draw(self):
+    def process_draw_animation(self):
         p = Point(self.real_pos)
         rect = (p.x, p.y - (self.image_size[1] - self.real_size[1])), self.image_size
         self.game_object.screen.blit(self.animation.current_image, rect)
 
-    def on_game_over(self):
+    def on_hurt(self, from_enemy):
         self.lives = max(0, self.lives - 1)
         print("GAME_OVER: lives left {}".format(self.lives))

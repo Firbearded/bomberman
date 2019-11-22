@@ -1,7 +1,9 @@
-import pygame
 from os.path import exists, join, splitext
 from xml.etree import ElementTree
+
+import pygame
 from PIL import Image
+
 from src.utils.constants import Directory
 
 FILENAMES = ("tile_textures", "bomberman_sprites", "fire_sprites", "bomb_sprites")

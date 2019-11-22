@@ -1,5 +1,7 @@
 import pygame
+
 from src.objects.base_classes import DrawableObject
+from src.utils.constants import Color
 from src.utils.vector import Vector, Point
 
 
@@ -13,6 +15,10 @@ class Entity(DrawableObject):
     `speed_value` — скорость (клеток в секунду)
     """
     SPEED_VALUE = 1  # клеток в секунду
+    COLOR = Color.BLACK
+
+    # необходимо ли методам (event, logic, draw), чтобы self.enabled был включён
+    NEED_ENABLED = 1, 1, 0
 
     def __init__(self, field_object, pos: Point, size: tuple = (1, 1)):
         """
@@ -164,10 +170,17 @@ class Entity(DrawableObject):
         """
         self.enabled = bool(b)
 
+    def destroy(self):
+        self.disable()
+        self.field_object.delete_entity(self)
+
     def create_animation(self):
         """
         Метод для создания анимаций.
         """
+        pass
+
+    def additional_event(self, event):
         pass
 
     def additional_logic(self):
@@ -178,17 +191,31 @@ class Entity(DrawableObject):
 
         self.pos = self.pos + (speed_vector.normalized * self.speed_value)
 
+    def process_draw_animation(self):
+        """
+        В этом методе писать отрисовку анимаций сущности.
+        """
+        self.game_object.screen.blit(self.animation.current_image, (self.real_pos, self.real_size))
+
+    def process_draw_reserve(self):
+        """
+        Метод запасной отрисовки.
+        """
+        pygame.draw.rect(self.game_object.screen, self.COLOR, (self.real_pos, self.real_size), 0)
+
+    def process_event(self, event):
+        if not (self.NEED_ENABLED[0] and self.is_disabled):
+            self.additional_event(event)
+
     def process_logic(self):
-        if self.animation is not None:
-            self.animation.process_logic()
-        self.additional_logic()
+        if not (self.NEED_ENABLED[1] and self.is_disabled):
+            if self.animation is not None:
+                self.animation.process_logic()
+            self.additional_logic()
 
     def process_draw(self):
-        """
-        В этом методе писать отрисовку сущности.
-        Пример тут.
-        """
-        if self.animation is not None:
-            self.game_object.screen.blit(self.animation.current_image, (self.real_pos, self.real_size))
-        else:
-            pygame.draw.rect(self.game_object.screen, (0, 0, 0), (self.real_pos, self.real_size), 0)
+        if not (self.NEED_ENABLED[2] and self.is_disabled):
+            if self.animation is not None:
+                self.process_draw_animation()
+            else:
+                self.process_draw_reserve()

@@ -7,6 +7,7 @@ from src.objects.base_classes import DrawableObject
 from src.objects.entity import Entity
 from src.objects.tiles import TILES, CATEGORY
 from src.utils.animation import SimpleAnimation
+from src.utils.decorators import protect
 from src.utils.vector import Point
 
 
@@ -103,11 +104,9 @@ class Field(DrawableObject):
 
                 tile_type = self.grid[i][j]
 
-                self.game_object.screen.blit(self.tile_images[TILES[0].image_name], rect)  # Пол сзади всех рисуем
-                if tile_type == Field.TILE_EMPTY: continue
-
                 tile = TILES[tile_type]
-                if tile.image_name:
+                if self.tile_images and tile.image_name and TILES[0].image_name:
+                    self.game_object.screen.blit(self.tile_images[TILES[0].image_name], rect)
                     self.game_object.screen.blit(self.tile_images[tile.image_name], rect)
                 else:
                     pygame.draw.rect(self.game_object.screen, tile.color, rect, 0)
@@ -120,8 +119,7 @@ class Field(DrawableObject):
         Отрисовка всех сущностей, принадлежащих этому полю
         """
         for e in reversed(self.entities):
-            if e.is_enabled:
-                e.process_draw()
+            e.process_draw()
 
     def process_draw(self):
         self.process_draw_tiles()
@@ -129,13 +127,11 @@ class Field(DrawableObject):
 
     def process_logic(self):
         for e in self.entities:
-            if e.is_enabled:
-                e.process_logic()
+            e.process_logic()
 
     def process_event(self, event):
         for e in self.entities:
-            if e.is_enabled:
-                e.process_event(event)
+            e.process_event(event)
 
     def add_entity(self, entity):
         self.entities.append(entity)
@@ -151,9 +147,10 @@ class Field(DrawableObject):
         BreakingWall(self, Point(x, y), delay)
 
     def load_images(self):
-        for key in self.game_object.images[CATEGORY]:
-            self.tile_images[key] = pygame.transform.scale(self.game_object.images[CATEGORY][key], self.tile_size)
-            print("FIELD: resized '{}'".format(key))
+        if self.game_object.images:
+            for key in self.game_object.images[CATEGORY]:
+                self.tile_images[key] = pygame.transform.scale(self.game_object.images[CATEGORY][key], self.tile_size)
+                print("FIELD: resized '{}'".format(key))
 
     def __getitem__(self, item):
         return self.grid.__getitem__
@@ -176,6 +173,7 @@ class BreakingWall(Entity):
     Нужна для анимации разрушения.
     """
     SPRITE_NAMES = ('break_wall', 'break_wall1', 'break_wall2', 'break_wall3')
+    COLOR = TILES[Field.TILE_BREAKABLE_WALL].color
 
     def __init__(self, field_object, pos: Point, delay):
         x, y = pos
@@ -185,7 +183,10 @@ class BreakingWall(Entity):
         self.animation = self.create_animation()
         self.start_time = pygame.time.get_ticks()
 
+    @protect
     def create_animation(self):
+        if not self.game_object.images: return
+
         sprites = [self.field_object.tile_images[i] for i in BreakingWall.SPRITE_NAMES]
         animation_delay = ceil(self.delay / len(sprites))
         animation_dict = {'breaking': (animation_delay, sprites)}
@@ -197,7 +198,7 @@ class BreakingWall(Entity):
         self.field_object.grid[y][x] = Field.TILE_EMPTY
         self.field_object.delete_entity(self)
 
-    def process_draw(self):
+    def process_draw_animation(self):
         self.game_object.screen.blit(self.animation.current_image, (self.real_pos, self.real_size))
 
     def additional_logic(self):

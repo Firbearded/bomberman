@@ -1,7 +1,10 @@
 import pygame
+
 from src.objects.entity import Entity
 from src.objects.tiles import TILES
 from src.utils.animation import SimpleAnimation
+from src.utils.constants import Color
+from src.utils.decorators import protect
 from src.utils.intersections import is_collide_rect
 from src.utils.vector import Vector, Point
 
@@ -25,6 +28,8 @@ class Fire(Entity):
         ('fire_wave_end',),
         ('points',)
     )
+
+    COLOR = ((150, 0, 0), (255, 0, 0), (255, 100, 0), (255, 255, 0))
 
     def __init__(self, bomb_object, pos: Point, power=0, delay=DELAY, fire_type=FIRE_CENTRAL, direction=Vector(0, 0),
                  start_time=None):
@@ -62,7 +67,7 @@ class Fire(Entity):
 
     def is_possible_to_spread(self, pos):
         tile_type = self.field_object.grid[pos.y][pos.x]
-        if tile_type == 0:
+        if TILES[tile_type].walkable:
             return True
         return False
 
@@ -106,20 +111,23 @@ class Fire(Entity):
 
     def additional_logic(self):
         from src.objects.player import Player
+        from src.objects.enemy import Enemy
         if pygame.time.get_ticks() - self.start_time >= self.delay:
-            self.disable()
-            self.field_object.delete_entity(self)
+            self.destroy()
 
         for e in self.field_object.entities:  # Проверка на коллизии с бомбами и игроками
             if e.is_enabled:
                 if type(e) is Bomb:
                     if is_collide_rect(self.pos, self.size, e.pos, e.size):
                         e.on_timeout()
-                if type(e) is Player:
-                    if is_collide_rect(self.pos, self.size, e.pos, e.size):
-                        e.on_game_over()
+                if type(e) in (Enemy, Player):
+                    if self.tile == e.tile:
+                        e.on_hurt(self)
 
+    @protect
     def create_animation(self):
+        if not self.game_object.images: return
+
         sprites = [pygame.transform.scale(self.game_object.images[self.SPRITE_CATEGORY][i], self.real_size) for i in
                    self.SPRITE_NAMES[self.fire_type]]
         if self.fire_type in (1, 2):
@@ -128,6 +136,9 @@ class Fire(Entity):
         animation_delay = 200  # TODO: скорость анимаций для огня
         animation_dict = {'burning': (animation_delay, sprites)}
         return SimpleAnimation(animation_dict, 'burning')
+
+    def process_draw_reserve(self):
+        pygame.draw.rect(self.game_object.screen, self.COLOR[self.fire_type], (self.real_pos, self.real_size), 0)
 
 
 class Bomb(Entity):
@@ -141,6 +152,8 @@ class Bomb(Entity):
 
     SPRITE_CATEGORY = "bomb_sprites"
     SPRITE_NAMES = ('bomb', 'bomb1', 'bomb2')
+
+    COLOR = Color.GREEN
 
     def __init__(self, player_object, pos: Point, power=POWER, delay=DELAY):
         """
@@ -163,7 +176,9 @@ class Bomb(Entity):
 
         self.animation = self.create_animation()
 
+    @protect
     def create_animation(self):
+        if not self.game_object.images: return
         sprites = [pygame.transform.scale(self.game_object.images[self.SPRITE_CATEGORY][i], self.real_size) for i in
                    self.SPRITE_NAMES]
         animation_delay = 100  # TODO: скорость анимаций для бомб
@@ -173,8 +188,7 @@ class Bomb(Entity):
     def on_timeout(self):
         Fire(self, self.pos, self.power)
         self.player_object.bombs_number -= 1
-        self.disable()
-        self.field_object.delete_entity(self)
+        self.destroy()
 
     def additional_logic(self):
         if pygame.time.get_ticks() - self.start_time >= self.delay:

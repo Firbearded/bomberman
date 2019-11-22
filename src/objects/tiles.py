@@ -29,7 +29,7 @@ class TileBreakableWall(Tile):
 
 
 class TileUnreachableEmpty(TileEmpty):
-    pass
+    walkable = False
 
 # TODO: удалить
 # class TileBomb(Tile):
