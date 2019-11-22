@@ -107,8 +107,13 @@ class Text(DrawableObject):
         """
         self.textsurface = self.font.render(self.text, self.antialiasing, self.color)
 
-    def process_draw(self):
+    def process_draw(self, pos=None):
         """
-        Отрисовка текста
+        Отрисовка текста.
+        :param pos: Позиция левого верхнего угла текста
+        :type pos: Point
         """
-        self.game_object.screen.blit(self.textsurface, tuple(self.pos))
+        if not pos:
+            pos = self.pos
+
+        self.game_object.screen.blit(self.textsurface, tuple(pos))
