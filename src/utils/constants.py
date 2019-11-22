@@ -7,6 +7,8 @@ class Directory:
     IMAGE_DIR = join(RESOURCES_DIR, "images")
     SOUNDS_DIR = join(RESOURCES_DIR, "sounds")
 
+    TEXTURES_DIR = IMAGE_DIR
+
 
 class Color:
     WHITE = (255, 255, 255)
