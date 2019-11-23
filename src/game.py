@@ -1,11 +1,11 @@
 import sys
-
 import pygame
 
 from src.scenes.game_over_scene import GameoverScene
 from src.scenes.game_scene import GameScene
 from src.scenes.highscore_scene import HighscoreScene
 from src.scenes.menu_scene import MenuScene
+from src.utils.decorators import timetest
 from src.utils.loader import load_textures, load_sounds
 
 
@@ -15,6 +15,7 @@ class Game:
     GAMEOVER_SCENE_INDEX = 2
     HIGHSCORE_SCENE_INDEX = 3
 
+    @timetest
     def __init__(self, window_size=(800, 600), title='pygame window'):
         self.size = self.width, self.height = window_size
         self.title = title
