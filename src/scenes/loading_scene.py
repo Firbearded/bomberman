@@ -1,7 +1,7 @@
 import pygame
 
 from src.objects.progress_bar import ProgressBar
-from src.objects.text import Text
+from src.objects.textobject import TextObject
 from src.scenes.base_scene import Scene
 from src.utils.constants import Color, FONT_OLD
 from src.utils.decorators import protect
@@ -22,7 +22,7 @@ class LoadingScene(Scene):
         self.pb = ProgressBar(self.game, pos, (w, h), Color.WHITE, Color.ORANGE, mx=mx)
 
         pos[1] += h + 10
-        self.text = Text(self.game, stage, pos, font_name=FONT_OLD)
+        self.text = TextObject(self.game, stage, font_name=FONT_OLD, pos=pos)
 
         self.objects.append(self.pb)
         self.objects.append(self.text)

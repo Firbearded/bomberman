@@ -15,6 +15,9 @@ class Scene:
     def create_objects(self):
         pass
 
+    def on_switch(self):
+        pass
+
     def process_frame(self, eventlist):
         self.process_all_events(eventlist)
         self.process_all_logic()

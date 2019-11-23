@@ -55,8 +55,9 @@ class Game:
         self.scenes = [MenuScene(self), GameScene(self), GameoverScene(self), HighscoreScene(self)]
         self.current_scene = 0
 
-    def resize_screen(self, size):
-        self.size = self.width, self.height = tuple(size)
+    def resize_screen(self, size=None):
+        if size is not None:
+            self.size = self.width, self.height = tuple(size)
         self.screen = pygame.display.set_mode(self.size)  # Создание окна (установка размера)
 
     def display_fps(self, fps):
@@ -89,6 +90,7 @@ class Game:
 
         sys.exit(0)  # Выход из программы
 
-    def set_scene(self, index):
+    def set_scene(self, index, delay=0, message=''):  # TODO: переход
         print("New scene: from {} to {}".format(self.current_scene, index))
         self.current_scene = int(index)
+        self.scenes[self.current_scene].on_switch()

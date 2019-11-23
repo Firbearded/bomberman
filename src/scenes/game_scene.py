@@ -7,14 +7,16 @@ from src.utils.vector import Point
 
 
 class GameScene(Scene):
+    def on_switch(self):
+        self.game.resize_screen(Point(self.field_size) * Point(self.tile_size))
+
     def create_objects(self):
         pos = Point(0, 0)
-        field_size = 21, 15
-        tile_size = 50, 50
+        self.field_size = 21, 15
+        self.tile_size = 50, 50
 
-        f = Field(self.game, pos, field_size, tile_size)
+        f = Field(self.game, pos, self.field_size, self.tile_size)
         self.objects.append(f)
-        self.game.resize_screen(Point(field_size) * Point(tile_size))
 
         p = Player(f, Point(1, 1))
 

@@ -5,7 +5,7 @@ from src.utils.constants import Color
 from src.utils.vector import Point
 
 
-class Text(DrawableObject):
+class TextObject(DrawableObject):
     """
     Класс для обработки и отрисовки текста
 
@@ -30,7 +30,8 @@ class Text(DrawableObject):
         """
         return pixels * 5 / 6
 
-    def __init__(self, game_object, text, pos=Point(0, 0), font_name=None, font_size=12, color=Color.BLACK, antialiasing=False):
+    def __init__(self, game_object, text, font_name=None, font_size=12, pos=Point(0, 0), color=Color.BLACK,
+                 antialiasing=False):
         """
 
         :param game_object: Объект класса Game
@@ -86,6 +87,11 @@ class Text(DrawableObject):
         """
         return self.textsurface.get_size()
 
+    @property
+    def copy(self):
+        return TextObject(self.game_object, self.text, self.font_name, self.font_size,
+                          self.pos, self.color, self.antialiasing)
+
     def update_font(self, name=None, size=None):
         """
         Исменение шрифта
@@ -111,6 +117,7 @@ class Text(DrawableObject):
         """
         Отрисовка текста.
         :param pos: Позиция левого верхнего угла текста
+        :param color: Цвет
         :type pos: Point
         """
         if not pos:

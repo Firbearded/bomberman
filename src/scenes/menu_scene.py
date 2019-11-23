@@ -1,35 +1,48 @@
 import sys
 
+from src.objects.menu.menu import Menu
+from src.objects.menu.menu_items.menu_item_button import MenuItemButton
+from src.objects.menu.menu_items.menu_item_label import MenuItemLabel
+from src.objects.textobject import TextObject
 from src.scenes.base_scene import Scene
-from src.objects.menu import MenuItem
-from src.objects.menu import Menu
-from src.objects.text import Text
-from src.utils.constants import Color
+from src.utils.constants import FONT_OLD, Color
+from src.utils.vector import Point
 
 
 class MenuScene(Scene):
+    def on_switch(self):
+        self.game.resize_screen()
 
     def create_objects(self):
         items = []
+        font_size = 25
+        font_name = FONT_OLD
+        color = Color.WHITE
+        color2 = Color.RED
+        aa = True
 
-        #создание MenuItem - start
-        text1 = Text(self.game, (0,0), 'Start', None, 50, Color.WHITE, True)
-        text2 = Text(self.game, (0,0), 'Start', None, 50, Color.RED, True)
-        items.append(MenuItem(text1, text2, self.Start))
-        #создание MenuItem - Exit
-        text1 = Text(self.game,(0,0), 'Exit', None, 50, Color.WHITE, True)
-        text2 = Text(self.game,(0,0), 'Exit', None, 50, Color.RED, True)
-        items.append(MenuItem(text1, text2, self.Exit))
+        to = TextObject(self.game, 'BOMBERMAN 2020', font_name, font_size + 20, color=color, antialiasing=aa)
+        lbl = MenuItemLabel(self.game, to)
+        lbl.interval_after = 100
 
-        #добавляем меню. Координаты menu нигде не используются на данный момент
-        self.objects.append(Menu(self.game, (0, 0), items))
+        items.append(lbl)
 
-    #функция для кнопки Start
-    def Start(self):
-        self.game.set_scene (self.game.GAME_SCENE_INDEX)
+        to = TextObject(self.game, 'Start game', font_name, font_size, color=color, antialiasing=aa)
+        items.append(MenuItemButton(self.game, to, '-Start game-', color2, self.start))
 
-    # функция для кнопки Exit
-    def Exit(self):
+        to = TextObject(self.game, 'Some useless button', font_name, font_size, color=color, antialiasing=aa)
+        items.append(MenuItemButton(self.game, to, '-SoMe uSeLeSs bUtToN-', color2))
+
+        to = TextObject(self.game, 'Exit', font_name, font_size, color=color, antialiasing=aa)
+        items.append(MenuItemButton(self.game, to, '-Exit-', color2, self.exit))
+
+        pos = Point(self.game.width / 2, 100)
+        self.objects.append(Menu(self.game, pos, items))
+
+    def start(self):
+        self.game.set_scene(self.game.GAME_SCENE_INDEX)
+
+    def exit(self):
         sys.exit(0)
 
 

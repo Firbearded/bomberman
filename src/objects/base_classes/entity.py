@@ -38,7 +38,7 @@ class Entity(DrawableObject):
         self.pos = Point(pos)
         self.size = tuple(size)
 
-        self.enabled = True
+        self._enabled = True
         self.speed_vector = Vector()  # Просто напровление, куда мы двигаемся
         self.speed_value = self.SPEED_VALUE
         self.animation = None
@@ -134,7 +134,7 @@ class Entity(DrawableObject):
         Активна ли сущность в данный момент.
         :rtype: bool
         """
-        return self.enabled
+        return self._enabled
 
     @property
     def is_disabled(self):
@@ -142,25 +142,25 @@ class Entity(DrawableObject):
         Не активна ли сущность в данный момент.
         :rtype: bool
         """
-        return not self.enabled
+        return not self._enabled
 
     def enable(self):
         """
         Активировать сущность
         """
-        self.enabled = True
+        self._enabled = True
 
     def disable(self):
         """
         Деактивировать сущность
         """
-        self.enabled = False
+        self._enabled = False
 
     def toggle(self):
         """
         Переключить состояние сущности на противоположное
         """
-        self.enabled = not self.enabled
+        self._enabled = not self._enabled
 
     def set_enabled(self, b):
         """
@@ -168,7 +168,7 @@ class Entity(DrawableObject):
         :param b: Состояние сущности
         :type b: bool
         """
-        self.enabled = bool(b)
+        self._enabled = bool(b)
 
     def destroy(self):
         self.disable()
