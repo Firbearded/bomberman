@@ -1,6 +1,6 @@
 import pygame
 
-from src.objects.entity import Entity
+from src.objects.base_classes.entity import Entity
 from src.objects.tiles import TILES
 from src.utils.animation import SimpleAnimation
 from src.utils.constants import Color
@@ -15,7 +15,7 @@ class Fire(Entity):
     Создается объектом бомбы.
     Висит на поле некоторое время, а потом исчезает.
     """
-    DELAY = 2000
+    DELAY = 1000
     FIRE_CENTRAL = 0
     FIRE_MIDDLE = 1
     FIRE_END = 2
@@ -111,7 +111,7 @@ class Fire(Entity):
 
     def additional_logic(self):
         from src.objects.player import Player
-        from src.objects.enemy import Enemy
+        from src.objects.base_classes.enemy import Enemy
         if pygame.time.get_ticks() - self.start_time >= self.delay:
             self.destroy()
 
@@ -120,7 +120,10 @@ class Fire(Entity):
                 if type(e) is Bomb:
                     if is_collide_rect(self.pos, self.size, e.pos, e.size):
                         e.on_timeout()
-                if type(e) in (Enemy, Player):
+                elif type(e) is Player:
+                    if self.tile == e.tile:
+                        e.on_hurt(self)
+                elif issubclass(type(e), Enemy):
                     if self.tile == e.tile:
                         e.on_hurt(self)
 

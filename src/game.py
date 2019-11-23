@@ -1,4 +1,5 @@
 import sys
+
 import pygame
 
 from src.scenes.game_over_scene import GameoverScene
@@ -20,7 +21,7 @@ class Game:
         self.size = self.width, self.height = window_size
         self.title = title
 
-        self.init()
+        self.init()  # TODO: progress bar
 
         self.scenes = [MenuScene(self), GameScene(self), GameoverScene(self), HighscoreScene(self)]
         self.current_scene = 0
@@ -42,7 +43,7 @@ class Game:
         self.size = self.width, self.height = tuple(size)
         self.screen = pygame.display.set_mode(self.size)  # Создание окна (установка размера)
 
-    def display_fps(self, fps):  # TODO
+    def display_fps(self, fps):
         pygame.display.set_caption("{} — {} FPS".format(self.title, fps))
 
     def main_loop(self):

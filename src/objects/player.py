@@ -1,7 +1,7 @@
 import pygame
 
+from src.objects.base_classes.entity import Entity
 from src.objects.bomb import Bomb
-from src.objects.entity import Entity
 from src.objects.tiles import TILES
 from src.utils.animation import SimpleAnimation
 from src.utils.constants import Color

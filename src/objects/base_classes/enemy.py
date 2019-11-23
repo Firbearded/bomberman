@@ -1,6 +1,6 @@
 from random import randint
 
-from src.objects.entity import Entity
+from src.objects.base_classes.entity import Entity
 from src.objects.player import Player
 from src.objects.tiles import TILES
 from src.utils.constants import Color
@@ -56,8 +56,11 @@ class Enemy(Entity):
             self.pos = new_pos
         else:
             self.pos = self.target
-            self.target = self.new_target()
-            self.speed_vector = self.new_target_direction()
+            if TILES[self.field_object.at(self.tile + self.speed_vector)].walkable:
+                self.target += self.speed_vector
+            else:
+                self.target = self.new_target()
+                self.speed_vector = self.new_target_direction()
 
         for e in self.field_object.entities:  # Проверка на коллизии и игроками
             if e.is_enabled:
@@ -68,13 +71,3 @@ class Enemy(Entity):
     def on_hurt(self, from_enemy):
         from_enemy.bomb_object.player_object.score += self.SCORE
         self.destroy()
-
-
-class Ballom(Enemy):
-    SPEED_VALUE = .5
-    SCORE = 100
-
-
-class Onil(Enemy):
-    SPEED_VALUE = 1
-    SCORE = 200

@@ -1,5 +1,5 @@
-from src.objects.enemy import Enemy
-from src.objects.item import Item
+from src.objects.base_classes.item import Item
+from src.objects.enemies import Onil, Ballom
 from src.objects.field import Field
 from src.objects.player import Player
 from src.scenes.base_scene import Scene
@@ -17,8 +17,10 @@ class GameScene(Scene):
         self.game.resize_screen(Point(field_size) * Point(tile_size))
 
         p = Player(f, Point(1, 1))
-        e = Enemy(f, Point(3, 3))
 
-        item = Item(f, Point(1, 2), (1, 1))
+        Ballom(f, Point(5, 5))
+        Onil(f, Point(5, 5))
+
+        Item(f, Point(1, 3), (.5, .5))
 
         f.rand_fill(2, 30)

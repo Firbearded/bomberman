@@ -1,6 +1,6 @@
 import pygame
 
-from src.objects.base_classes import DrawableObject
+from src.objects.base_classes.drawable_object import DrawableObject
 from src.utils.constants import Color
 from src.utils.vector import Point
 

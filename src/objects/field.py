@@ -3,8 +3,8 @@ from random import randint
 
 import pygame
 
-from src.objects.base_classes import DrawableObject
-from src.objects.entity import Entity
+from src.objects.base_classes.drawable_object import DrawableObject
+from src.objects.base_classes.entity import Entity
 from src.objects.tiles import TILES, CATEGORY
 from src.utils.animation import SimpleAnimation
 from src.utils.decorators import protect
