@@ -18,9 +18,14 @@ SOUND_FILENAMES = {
 SOUND_DIR = Directory.SOUNDS_DIR
 
 
-def load_textures(directory=TEXTURE_DIR, filenames=TEXTURE_FILENAMES):
+TOTAL_NUMBER = len(TEXTURE_FILENAMES) + sum([len(SOUND_FILENAMES[key]) for key in SOUND_FILENAMES])
+
+
+def load_textures(game_object, directory=TEXTURE_DIR, filenames=TEXTURE_FILENAMES):
     result = {}
     for filename in filenames:
+        game_object.loading.set_stage("Loading textures: {}".format(filename))
+
         data_filename = join(directory, filename + '.plist')
         png_filename = join(directory, filename + '.png')
 
@@ -54,6 +59,8 @@ def load_textures(directory=TEXTURE_DIR, filenames=TEXTURE_FILENAMES):
             result[filename][name] = pygame.image.fromstring(data, size, mode)
 
             print("TEXTURE LOADING: from '{}' loaded '{}' ".format(png_filename, name))
+
+        game_object.loading.next()
 
     return result
 
@@ -123,18 +130,21 @@ def frames_from_data(data_filename):
     return frames
 
 
-def load_sounds():
+def load_sounds(game_object, ):
     result = {}
     ex = '.ogg'
 
     for dir2 in SOUND_FILENAMES:
         sounds = {}
         for filename in SOUND_FILENAMES[dir2]:
+            game_object.loading.set_stage("Loading sounds: {}".format(filename))
+
             path = join(SOUND_DIR, dir2, filename + ex)
 
             sound = pygame.mixer.Sound(path)
             sounds[splitext(filename)[0]] = sound
             print("SOUND LOADING: from '{}' loaded '{}'".format(path, sound))
+            game_object.loading.next()
 
         result[dir2] = sounds
 

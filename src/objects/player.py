@@ -31,7 +31,6 @@ class Player(Entity):
         }
     }
 
-    SOUND_START = 'start'
     SOUND_BOMB = 'setbomb'
 
     TEMP_DIR = {(1, 0): 'right',
@@ -69,11 +68,13 @@ class Player(Entity):
         self.is_moving = False
 
         self.animation = self.create_animation()
-        self.game_object.sounds['effect'][self.SOUND_START].play()
 
     def get_state(self):
         state = 'walking' if self.is_moving else 'standing'
-        direction = self.TEMP_DIR[tuple(self.direction)]
+        d = list(self.direction)
+        if 0 not in d:
+            d[1] = 0
+        direction = self.TEMP_DIR[tuple(d)]
         return '{}_{}'.format(state, direction)
 
     @protect
@@ -175,6 +176,9 @@ class Player(Entity):
 
         if not is_fixing:
             normalized_speed_vector = self.wall_collisions(normalized_speed_vector)
+
+        if 0 not in tuple(normalized_speed_vector):
+            normalized_speed_vector[0] = 0
 
         self.pos = self.pos + normalized_speed_vector
 

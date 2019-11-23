@@ -107,7 +107,8 @@ class Field(DrawableObject):
                 tile = TILES[tile_type]
                 if self.tile_images and tile.image_name and TILES[0].image_name:
                     self.game_object.screen.blit(self.tile_images[TILES[0].image_name], rect)
-                    self.game_object.screen.blit(self.tile_images[tile.image_name], rect)
+                    if tile_type > 0:
+                        self.game_object.screen.blit(self.tile_images[tile.image_name], rect)
                 else:
                     pygame.draw.rect(self.game_object.screen, tile.color, rect, 0)
 

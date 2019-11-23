@@ -4,6 +4,8 @@ from src.utils.constants import Color
 
 
 class Scene:
+    BG_COLOR = Color.BLACK
+
     def __init__(self, game_object):
         self.game = game_object
 
@@ -19,8 +21,9 @@ class Scene:
         self.process_all_draw()
 
     def process_all_events(self, eventlist):
-        for event in eventlist:
-            self.process_current_event(event)
+        if eventlist is not None:
+            for event in eventlist:
+                self.process_current_event(event)
 
     def process_current_event(self, event):
         for item in self.objects:
@@ -33,7 +36,7 @@ class Scene:
         self.additional_logic()
 
     def process_all_draw(self):
-        self.game.screen.fill(Color.BLACK)
+        self.game.screen.fill(self.BG_COLOR)
         for item in self.objects:
             item.process_draw()
         self.additional_draw()

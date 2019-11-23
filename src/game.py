@@ -1,10 +1,12 @@
 import sys
+from threading import Thread
 
 import pygame
 
 from src.scenes.game_over_scene import GameoverScene
 from src.scenes.game_scene import GameScene
 from src.scenes.highscore_scene import HighscoreScene
+from src.scenes.loading_scene import LoadingScene
 from src.scenes.menu_scene import MenuScene
 from src.utils.decorators import timetest
 from src.utils.loader import load_textures, load_sounds
@@ -18,13 +20,19 @@ class Game:
 
     @timetest
     def __init__(self, window_size=(800, 600), title='pygame window'):
+        self._start_time = pygame.time.get_ticks()
         self.size = self.width, self.height = window_size
         self.title = title
 
-        self.init()  # TODO: progress bar
+        self.init()
 
-        self.scenes = [MenuScene(self), GameScene(self), GameoverScene(self), HighscoreScene(self)]
-        self.current_scene = 0
+        self.loading = LoadingScene(self)
+        self.loading_thread = Thread(target=self.loading.main_loop)
+        self.loading_thread.start()
+
+        self.load()
+
+        del self.loading
 
         self.running = False
         self.delta_time = 0
@@ -36,8 +44,12 @@ class Game:
         self.resize_screen(self.size)
         pygame.display.set_caption(self.title)
 
-        self.images = load_textures()
-        self.sounds = load_sounds()
+    def load(self):
+        self.images = load_textures(self)
+        self.sounds = load_sounds(self)
+
+        self.scenes = [MenuScene(self), GameScene(self), GameoverScene(self), HighscoreScene(self)]
+        self.current_scene = 0
 
     def resize_screen(self, size):
         self.size = self.width, self.height = tuple(size)
@@ -47,6 +59,7 @@ class Game:
         pygame.display.set_caption("{} — {} FPS".format(self.title, fps))
 
     def main_loop(self):
+        print("LOADING COMPLETE IN {} s".format((pygame.time.get_ticks() - self._start_time) / 1000))
         self.running = True
         fps_start_time = pygame.time.get_ticks()
         fps = 0
