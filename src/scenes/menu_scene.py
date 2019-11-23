@@ -1,3 +1,5 @@
+import sys
+
 from src.scenes.base_scene import Scene
 from src.objects.menu import MenuItem
 from src.objects.menu import Menu
@@ -7,20 +9,28 @@ from src.utils.constants import Color
 
 class MenuScene(Scene):
 
-    def additional_logic(self):
-        items = create_menu_items()
-        #self.game.set_scene(self.game.GAME_SCENE_INDEX)
-        menu = Menu(Scene.game, (0, 0), items)
-
-    def create_menu_items(self):
+    def create_objects(self):
         items = []
-        #start
-        text1 = MenuItem(Text(Scene.game, (0,0), 'Start', None, 20, Color.WHITE, True))
-        text2 = MenuItem(Text(Scene.game, (0,0), 'Start', None, 20, Color.RED, True))
-        items.append(MenuItem(text1, text2))
-        #Exit
-        text1 = MenuItem(Text(Scene.game,(0,0), 'Exit', None, 20, Color.WHITE, True))
-        text2 = MenuItem(Text(Scene.game,(0,0), 'Exit', None, 20, Color.RED, True))
-        items.append(MenuItem(text1, text2))
-        return items
+
+        #создание MenuItem - start
+        text1 = Text(self.game, (0,0), 'Start', None, 50, Color.WHITE, True)
+        text2 = Text(self.game, (0,0), 'Start', None, 50, Color.RED, True)
+        items.append(MenuItem(text1, text2, self.Start))
+        #создание MenuItem - Exit
+        text1 = Text(self.game,(0,0), 'Exit', None, 50, Color.WHITE, True)
+        text2 = Text(self.game,(0,0), 'Exit', None, 50, Color.RED, True)
+        items.append(MenuItem(text1, text2, self.Exit))
+
+        #добавляем меню. Координаты menu нигде не используются на данный момент
+        self.objects.append(Menu(self.game, (0, 0), items))
+
+    #функция для кнопки Start
+    def Start(self):
+        self.game.set_scene (self.game.GAME_SCENE_INDEX)
+
+    # функция для кнопки Exit
+    def Exit(self):
+        sys.exit(0)
+
+
 
