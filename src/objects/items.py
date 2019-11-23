@@ -13,3 +13,10 @@ class ItemLifeUp(Item):
 
     def on_take(self, player_object):
         player_object.lives += 1
+
+
+class BombNumberUp(Item):
+    SPRITE_NAMES = "count_up",
+
+    def on_take(self, player_object):
+        player_object.max_bombs_number += 1

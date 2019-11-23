@@ -11,6 +11,9 @@ class Enemy(Entity):
     SPEED_VALUE = .5
     SCORE = 100
 
+    SPRITE_CATEGORY = "enemy_sprites"
+    SPRITE_DELAY = 500
+
     COLOR = Color.MAGENTA
 
     def __init__(self, field, pos: Point = (0, 0), size: tuple = (1, 1)):
@@ -18,6 +21,8 @@ class Enemy(Entity):
 
         self.target = self.new_target()
         self.speed_vector = self.new_target_direction()
+
+        self.animation = self.create_animation()
 
     def new_target_direction(self):
         target_direction = self.target - self.pos

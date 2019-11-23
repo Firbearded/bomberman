@@ -28,6 +28,7 @@ class Fire(Entity):
         ('fire_wave_end',),
         ('points',)
     )
+    SPRITE_DELAY = 200
 
     COLOR = ((150, 0, 0), (255, 0, 0), (255, 100, 0), (255, 255, 0))
 
@@ -75,7 +76,7 @@ class Fire(Entity):
         if TILES[self.field_object.grid[pos.y][pos.x]].breakable:
             self.field_object.destroy_wall(pos.x, pos.y, self.delay)
 
-    def next_fire(self):  # TODO: детонация остальных бомб на пути
+    def next_fire(self):
         i = Vector(1, 0)
         j = Vector(0, 1)
         all_directions = (i, j, -i, -j)
@@ -136,7 +137,7 @@ class Fire(Entity):
         if self.fire_type in (1, 2):
             angle = {(1, 0): 0, (0, 1): 270, (-1, 0): 180, (0, -1): 90}[tuple(self.direction)]
             sprites = [pygame.transform.rotate(i, angle) for i in sprites]
-        animation_delay = 200  # TODO: скорость анимаций для огня
+        animation_delay = self.SPRITE_DELAY
         animation_dict = {'burning': (animation_delay, sprites)}
         return SimpleAnimation(animation_dict, 'burning')
 
@@ -155,6 +156,7 @@ class Bomb(Entity):
 
     SPRITE_CATEGORY = "bomb_sprites"
     SPRITE_NAMES = ('bomb', 'bomb1', 'bomb2')
+    SPRITE_DELAY = 100
 
     SOUND_BOMB = 'explosion'
 
@@ -180,15 +182,6 @@ class Bomb(Entity):
         self.start_time = pygame.time.get_ticks()
 
         self.animation = self.create_animation()
-
-    @protect
-    def create_animation(self):
-        if not self.game_object.images: return
-        sprites = [pygame.transform.scale(self.game_object.images[self.SPRITE_CATEGORY][i], self.real_size) for i in
-                   self.SPRITE_NAMES]
-        animation_delay = 100  # TODO: скорость анимаций для бомб
-        animation_dict = {'detonating': (animation_delay, sprites)}
-        return SimpleAnimation(animation_dict, 'detonating')
 
     def on_timeout(self):
         Fire(self, self.pos, self.power)

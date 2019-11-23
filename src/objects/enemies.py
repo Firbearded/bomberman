@@ -6,6 +6,8 @@ class Ballom(Enemy):
     SPEED_VALUE = .5
     SCORE = 100
     COLOR = Color.ORANGE
+    SPRITE_NAMES = "ballom1", "ballom2", "ballom3"
+    SPRITE_DELAY = 350
 
 
 class Onil(Enemy):

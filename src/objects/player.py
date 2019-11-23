@@ -125,7 +125,7 @@ class Player(Entity):
                 vec_dir = sign(speed_vector[i])
                 d = ((-1, 0, 1), (vec_dir, vec_dir, vec_dir))
                 up, nx, dn = [not TILES[self.field_object.grid[tile_y + d[i][k]][tile_x + d[j][k]]].walkable for k in
-                              range(3)]  # TODO: tile == 0
+                              range(3)]
                 if not nx:
                     if (speed_vector[i] > 0 and (self.right, self.bottom)[i] == (tile_x + 1, tile_y + 1)[i]) or \
                             (speed_vector[i] < 0 and (self.left, self.top)[i] == (tile_x, tile_y)[i]):

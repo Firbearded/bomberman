@@ -6,7 +6,8 @@ from PIL import Image
 
 from src.utils.constants import Directory
 
-TEXTURE_FILENAMES = ("tile_textures", "bomberman_sprites", "fire_sprites", "bomb_sprites", "item_sprites")
+TEXTURE_FILENAMES = "tile_textures", "bomberman_sprites", "fire_sprites", \
+                    "bomb_sprites", "item_sprites", "enemy_sprites"
 TEXTURE_DIR = Directory.TEXTURES_DIR
 
 SOUND_FILENAMES = {

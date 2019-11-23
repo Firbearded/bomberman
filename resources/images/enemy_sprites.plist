@@ -4,44 +4,44 @@
 <dict>
 	<key>frames</key>
 	<dict>
-		<key>count_up.png</key>
+		<key>ballom1.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{2,2},{50,50}}</string>
+			<string>{{2,2},{16,16}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
 			<false/>
 			<key>sourceColorRect</key>
-			<string>{{0,0},{50,50}}</string>
+			<string>{{0,0},{16,16}}</string>
 			<key>sourceSize</key>
-			<string>{50,50}</string>
+			<string>{16,16}</string>
 		</dict>
-		<key>life.png</key>
+		<key>ballom2.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{54,2},{50,50}}</string>
+			<string>{{20,2},{16,16}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
 			<false/>
 			<key>sourceColorRect</key>
-			<string>{{0,0},{50,50}}</string>
+			<string>{{0,0},{16,16}}</string>
 			<key>sourceSize</key>
-			<string>{50,50}</string>
+			<string>{16,16}</string>
 		</dict>
-		<key>power_up.png</key>
+		<key>ballom3.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{54,54},{50,50}}</string>
+			<string>{{38,2},{16,15}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
 			<false/>
 			<key>sourceColorRect</key>
-			<string>{{0,0},{50,50}}</string>
+			<string>{{0,0},{16,15}}</string>
 			<key>sourceSize</key>
-			<string>{50,50}</string>
+			<string>{16,15}</string>
 		</dict>
 	</dict>
 	<key>metadata</key>
@@ -49,11 +49,11 @@
 		<key>format</key>
 		<integer>2</integer>
 		<key>realTextureFileName</key>
-		<string>input/item_sprites.png</string>
+		<string>input\enemy_sprites0.png</string>
 		<key>size</key>
-		<string>{128,128}</string>
+		<string>{64,64}</string>
 		<key>textureFileName</key>
-		<string>input/item_sprites.png</string>
+		<string>input\enemy_sprites0.png</string>
 	</dict>
 </dict>
 </plist>

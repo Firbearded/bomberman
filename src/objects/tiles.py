@@ -31,22 +31,6 @@ class TileBreakableWall(Tile):
 class TileUnreachableEmpty(TileEmpty):
     walkable = False
 
-# TODO: удалить
-# class TileBomb(Tile):
-#     color = (0, 160, 0)
-#     image_name = "bomb"
-#
-#
-# class TilePoints(Tile):
-#     color = (160, 160, 0)
-#     image_name = "point"
-#
-#
-# class TileFirewave(Tile):
-#     color = (160, 0, 0)
-#     image_name = "fire_wall"
-
-
 TILES = [
     TileEmpty, TileWall, TileBreakableWall, TileUnreachableEmpty  # TileBomb, TilePoints, TileFirewave
 ]

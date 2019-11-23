@@ -1,7 +1,9 @@
 import pygame
 
 from src.objects.base_classes.drawable_object import DrawableObject
+from src.utils.animation import SimpleAnimation
 from src.utils.constants import Color
+from src.utils.decorators import protect
 from src.utils.vector import Vector, Point
 
 
@@ -16,6 +18,10 @@ class Entity(DrawableObject):
     """
     SPEED_VALUE = 1  # клеток в секунду
     COLOR = Color.BLACK
+
+    SPRITE_CATEGORY = None
+    SPRITE_NAMES = None
+    SPRITE_DELAY = None
 
     # необходимо ли методам (event, logic, draw), чтобы self.enabled был включён
     NEED_ENABLED = 1, 1, 0
@@ -174,11 +180,35 @@ class Entity(DrawableObject):
         self.disable()
         self.field_object.delete_entity(self)
 
+    @protect
     def create_animation(self):
         """
         Метод для создания анимаций.
         """
-        pass
+
+        if not self.game_object.images: return
+        if not self.SPRITE_CATEGORY: return
+        if not self.SPRITE_NAMES: return
+        if self.SPRITE_DELAY is None: return
+
+        animation_dict = {}
+        animation_delay = self.SPRITE_DELAY
+
+        if len(self.SPRITE_NAMES) == 1:
+            animation_delay = 0
+
+        sprites = []
+
+        w, h = self.real_size
+        w, h = round(w), round(h)
+
+        for sprite_name in self.SPRITE_NAMES:
+            sprite = self.game_object.images[self.SPRITE_CATEGORY][sprite_name]
+            sprite = pygame.transform.scale(sprite, (w, h))
+            sprites.append(sprite)
+
+        animation_dict['standard'] = animation_delay, sprites
+        return SimpleAnimation(animation_dict, 'standard')
 
     def additional_event(self, event):
         pass
@@ -208,9 +238,9 @@ class Entity(DrawableObject):
             self.additional_event(event)
 
     def process_logic(self):
+        if self.animation is not None:
+            self.animation.process_logic()
         if not (self.NEED_ENABLED[1] and self.is_disabled):
-            if self.animation is not None:
-                self.animation.process_logic()
             self.additional_logic()
 
     def process_draw(self):
