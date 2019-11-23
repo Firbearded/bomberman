@@ -27,12 +27,16 @@ class Game:
         self.init()
 
         self.loading = LoadingScene(self)
-        self.loading_thread = Thread(target=self.loading.main_loop)
-        self.loading_thread.start()
+        loading_thread = Thread(target=self.loading.main_loop)
+        loading_thread.start()
 
-        self.load()
+        self.load_resurces()
 
+        self.loading.running = False
         del self.loading
+        del loading_thread
+
+        self.create_scenes()
 
         self.running = False
         self.delta_time = 0
@@ -44,10 +48,11 @@ class Game:
         self.resize_screen(self.size)
         pygame.display.set_caption(self.title)
 
-    def load(self):
+    def load_resurces(self):
         self.images = load_textures(self)
         self.sounds = load_sounds(self)
 
+    def create_scenes(self):
         self.scenes = [MenuScene(self), GameScene(self), GameoverScene(self), HighscoreScene(self)]
         self.current_scene = 0
 
