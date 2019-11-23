@@ -1,6 +1,6 @@
-from src.objects.base_classes.item import Item
 from src.objects.enemies import Onil, Ballom
 from src.objects.field import Field
+from src.objects.items import ItemPowerUp, ItemLifeUp
 from src.objects.player import Player
 from src.scenes.base_scene import Scene
 from src.utils.vector import Point
@@ -21,6 +21,7 @@ class GameScene(Scene):
         Ballom(f, Point(5, 5))
         Onil(f, Point(5, 5))
 
-        Item(f, Point(1, 3), (.5, .5))
+        ItemPowerUp(f, Point(1, 3), (.5, .5))
+        ItemLifeUp(f, Point(3, 1), (.5, .5))
 
         f.rand_fill(2, 30)

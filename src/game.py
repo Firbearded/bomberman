@@ -19,7 +19,7 @@ class Game:
     HIGHSCORE_SCENE_INDEX = 3
 
     @timetest
-    def __init__(self, window_size=(800, 600), title='pygame window'):
+    def __init__(self, window_size=(800, 600), title='Bomberman'):
         self.size = self.width, self.height = window_size
         self.title = title
 

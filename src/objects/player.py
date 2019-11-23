@@ -207,7 +207,7 @@ class Player(Entity):
                 if self.bombs_number < self.max_bombs_number:
                     self.bombs_number += 1
                     self.game_object.sounds['effect'][self.SOUND_BOMB].play()
-                    Bomb(self, self.tile)
+                    Bomb(self, self.tile, self.bombs_power)
 
     def process_draw_animation(self):
         p = Point(self.real_pos)
