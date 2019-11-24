@@ -41,6 +41,7 @@ class Game:
 
         self.running = False
         self.delta_time = 0
+        self.minimalistic_mode = False
 
     def init(self):
         pygame.init()  # Инициализация библиотеки
@@ -102,3 +103,12 @@ class Game:
         else:
             self.current_scene = int(index)
             self.scenes[self.current_scene].on_switch(*args, **kwargs)
+
+    def toggle_minimalistic_mode(self):
+        if not self.minimalistic_mode:
+            self.minimalistic_mode = True
+            self._images = self.images  # TODO: for e in entities: e.reload_textures()
+            self.images = None
+        else:
+            self.minimalistic_mode = False
+            self.images = self._images

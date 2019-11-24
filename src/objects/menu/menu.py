@@ -84,6 +84,7 @@ class Menu(DrawableObject):
 
             if event.key in self.KEYS['enter']:
                 self.selected_item.press()
+                self.update_item_positions(self.interval)  # TODO
 
     def process_draw(self):
         for index in range(len(self.items)):
