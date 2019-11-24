@@ -175,6 +175,7 @@ class Player(Entity):
                 for dy in (-1, 0, 1):  # range(-max(1, round(self.size[1])), max(1, round(self.size[1])) + 1):
                     # Проверка на то, подходит ли нам клетка для проверки
                     if dx == dy == 0: continue
+                    if (dx, dy)[i] != sign(tmp_speed_vector[i]): continue
                     if TILES[self.field_object.grid[tile_y + dy][tile_x + dx]].walkable: continue
                     fw, fh = self.field_object.size
                     if not (0 <= tile_y + dy < fh and 0 <= tile_x + dx < fw): continue
@@ -237,9 +238,10 @@ class Player(Entity):
         if event.type == pygame.KEYDOWN:
             if event.key in self.KEYS_BOMB:
                 if self.bombs_number < self.max_bombs_number:
-                    self.bombs_number += 1
-                    self.game_object.sounds['effect'][self.SOUND_BOMB].play()
-                    Bomb(self, self.tile, self.bombs_power)
+                    if self.field_object.empty_at(tuple(self.tile)):
+                        self.bombs_number += 1
+                        self.game_object.sounds['effect'][self.SOUND_BOMB].play()
+                        Bomb(self, self.tile, self.bombs_power)
 
     def process_draw_animation(self):
         p = Point(self.real_pos)

@@ -34,8 +34,9 @@ class Game:
         self.load_resurces()
 
         self.loading.running = False
-        del self.loading
-        del loading_thread
+        if self.loading.lock.acquire():
+            del self.loading
+            del loading_thread
 
         self.create_scenes()
 
@@ -58,6 +59,7 @@ class Game:
         self.scenes = [MenuScene(self), GameScene(self), GameoverScene(self), HighscoreScene(self),
                        TransitionScene(self)]
         self.current_scene = 0
+        self.scenes[self.current_scene].on_switch()
 
     def resize_screen(self, size=None):
         if size is not None:

@@ -11,5 +11,8 @@ class MenuItemLabel(MenuBaseItemUnselectable):
     def size(self):
         return self.text_object.size
 
+    def set_text(self, text):
+        self.text_object.set_text(text)
+
     def process_draw(self, pos):
         self.text_object.process_draw(pos)

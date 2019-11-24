@@ -15,7 +15,7 @@ class Fire(Entity):
     Создается объектом бомбы.
     Висит на поле некоторое время, а потом исчезает.
     """
-    DELAY = 1000
+    DELAY = 500
     FIRE_CENTRAL = 0
     FIRE_MIDDLE = 1
     FIRE_END = 2
@@ -28,7 +28,7 @@ class Fire(Entity):
         ('fire_wave_end',),
         ('points',)
     )
-    SPRITE_DELAY = 200
+    SPRITE_DELAY = 100
 
     COLOR = ((150, 0, 0), (255, 0, 0), (255, 100, 0), (255, 255, 0))
 
@@ -51,14 +51,14 @@ class Fire(Entity):
         """
         if power <= 0:
             return
+        self.fire_type = fire_type
+        self.direction = Vector(direction)
         super().__init__(bomb_object.field_object, pos)
         self.bomb_object = bomb_object
 
         self.pos = Point(pos)
         self.power = power
         self.delay = delay
-        self.fire_type = fire_type
-        self.direction = Vector(direction)
 
         self.start_time = start_time
         if start_time is None:
@@ -108,7 +108,7 @@ class Fire(Entity):
                     self.try_to_break(new_pos)
                 self.fire_type = self.FIRE_END
 
-        self.animation = self.create_animation()
+        self.reload_animations()
 
     def additional_logic(self):
         from src.objects.player import Player
@@ -180,12 +180,14 @@ class Bomb(Entity):
         self.delay = delay
 
         self.start_time = pygame.time.get_ticks()
-
-        self.animation = self.create_animation()
+        x, y = self.pos
+        self.field_object.grid[y][x] = self.field_object.TILE_UNREACHABLE_EMPTY
 
     def on_timeout(self):
         Fire(self, self.pos, self.power)
         self.player_object.bombs_number -= 1
+        x, y = self.tile
+        self.field_object.grid[y][x] = self.field_object.TILE_EMPTY
         self.destroy()
 
     def additional_logic(self):

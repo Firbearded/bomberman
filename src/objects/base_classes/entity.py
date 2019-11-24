@@ -47,7 +47,7 @@ class Entity(DrawableObject):
         self._enabled = True
         self.speed_vector = Vector()  # Просто напровление, куда мы двигаемся
         self.speed_value = self.SPEED_VALUE
-        self.animation = None
+        self.reload_animations()
 
     @property
     def x(self):
@@ -209,6 +209,9 @@ class Entity(DrawableObject):
 
         animation_dict['standard'] = animation_delay, sprites
         return SimpleAnimation(animation_dict, 'standard')
+
+    def reload_animations(self):
+        self.animation = self.create_animation()
 
     def additional_event(self, event):
         pass

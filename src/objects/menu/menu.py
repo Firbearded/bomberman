@@ -32,7 +32,9 @@ class Menu(DrawableObject):
         self.update_selectable_item_indexes()
         self.update_item_positions(self.interval)
 
-    def update_item_positions(self, interval):
+    def update_item_positions(self, interval=None):
+        if interval is None:
+            interval = self.interval
         self._items_positions = []
         for index in range(len(self.items)):
             x = self.pos[0] - self.items[index].size[0] // 2

@@ -4,19 +4,19 @@ from xml.etree import ElementTree
 import pygame
 from PIL import Image
 
-from src.utils.constants import Directory
+from src.utils.constants import Path
 
 TEXTURE_FILENAMES = "tile_textures", "bomberman_sprites", "fire_sprites", \
                     "bomb_sprites", "item_sprites", "enemy_sprites"
-TEXTURE_DIR = Directory.TEXTURES_DIR
+TEXTURE_DIR = Path.TEXTURES_DIR
 
 SOUND_FILENAMES = {
     "background":
         ('bg1', 'bg2', 'bg3', 'bg4'),
     "effect":
-        ('explosion', 'lose', 'menu', 'setbomb', 'start', 'item', 'win', 'gamewin'),
+        ('explosion', 'lose', 'menu', 'setbomb', 'start', 'item', 'win', 'gamewin', 'timeout'),
 }
-SOUND_DIR = Directory.SOUNDS_DIR
+SOUND_DIR = Path.SOUNDS_DIR
 
 
 TOTAL_NUMBER = len(TEXTURE_FILENAMES) + sum([len(SOUND_FILENAMES[key]) for key in SOUND_FILENAMES])
@@ -25,7 +25,7 @@ TOTAL_NUMBER = len(TEXTURE_FILENAMES) + sum([len(SOUND_FILENAMES[key]) for key i
 def load_textures(game_object, directory=TEXTURE_DIR, filenames=TEXTURE_FILENAMES):
     result = {}
     for filename in filenames:
-        game_object.loading.set_stage("Loading textures: {}".format(filename))
+        game_object.loading.set_stage("textures '{}'".format(filename))
 
         data_filename = join(directory, filename + '.plist')
         png_filename = join(directory, filename + '.png')
@@ -138,7 +138,7 @@ def load_sounds(game_object, ):
     for dir2 in SOUND_FILENAMES:
         sounds = {}
         for filename in SOUND_FILENAMES[dir2]:
-            game_object.loading.set_stage("Loading sounds: {}".format(filename))
+            game_object.loading.set_stage("sounds '{}'".format(filename))
 
             path = join(SOUND_DIR, dir2, filename + ex)
 

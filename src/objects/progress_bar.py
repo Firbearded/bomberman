@@ -9,7 +9,7 @@ class ProgressBar(DrawableObject):
     LINE_WIDTH = 1
     LINE_COLOR = Color.BLACK
 
-    def __init__(self, game_object, pos, size, color1, color2, mn=0, mx=100, val=0):
+    def __init__(self, game_object, pos, size, color1, color2, mn=0, mx=100, val=0, line_width=LINE_WIDTH, line_color=LINE_COLOR):
         super().__init__(game_object)
 
         self.pos = Point(pos)
@@ -20,6 +20,8 @@ class ProgressBar(DrawableObject):
 
         self.set_limit(mn, mx)
         self.set_value(val)
+        self.line_width = line_width
+        self.line_color = line_color
 
     @property
     def is_empty(self):
@@ -56,5 +58,5 @@ class ProgressBar(DrawableObject):
 
         pygame.draw.rect(self.game_object.screen, self.color1, rect1)
         pygame.draw.rect(self.game_object.screen, self.color2, rect2)
-        if self.LINE_WIDTH > 0:
-            pygame.draw.rect(self.game_object.screen, self.LINE_COLOR, rect1, self.LINE_WIDTH)
+        if self.line_width > 0:
+            pygame.draw.rect(self.game_object.screen, self.line_color, rect1, self.line_width)

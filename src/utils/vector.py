@@ -155,6 +155,6 @@ class Vector:
         :type other: Vector
         :rtype: bool
         """
-        return self.get == other.get
+        return tuple(self) == tuple(other)
 
 Point = Vector

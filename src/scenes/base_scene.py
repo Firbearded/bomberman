@@ -1,3 +1,5 @@
+from time import time
+
 import pygame
 
 from src.utils.constants import Color
@@ -5,12 +7,14 @@ from src.utils.constants import Color
 
 class Scene:
     BG_COLOR = Color.BLACK
+    MAX_FPS = 120
 
     def __init__(self, game_object):
         self.game = game_object
 
         self.objects = []
         self.create_objects()
+        self._delta_time = 0
 
     def create_objects(self):
         pass
@@ -19,9 +23,13 @@ class Scene:
         pass
 
     def process_frame(self, eventlist):
+        if self.MAX_FPS > 0:
+            start_time = time()
         self.process_all_events(eventlist)
         self.process_all_logic()
         self.process_all_draw()
+        if self.MAX_FPS > 0:
+            self._delta_time = time() - start_time
 
     def process_all_events(self, eventlist):
         if eventlist is not None:
@@ -44,7 +52,11 @@ class Scene:
             item.process_draw()
         self.additional_draw()
         pygame.display.flip()  # double buffering
-        # pygame.time.wait(10)  # подождать 10 миллисекунд
+
+        if self.MAX_FPS > 0:
+            if self._delta_time:
+                if 1 / self._delta_time > self.MAX_FPS:
+                    pygame.time.wait(min(100, int(1000/((1 / self._delta_time) - self.MAX_FPS))))
 
     def additional_event_check(self, event):
         pass

@@ -2,12 +2,12 @@ import pygame
 
 from src.objects.textobject import TextObject
 from src.scenes.base_scene import Scene
-from src.utils.constants import FONT, Color
+from src.utils.constants import Color, Path
 
 
 class TransitionScene(Scene):
     def create_objects(self):
-        font_name = FONT
+        font_name = Path.FONT
         font_size = 50
         color = Color.WHITE
         aa = True
