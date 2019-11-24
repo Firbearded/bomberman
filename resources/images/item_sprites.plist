@@ -7,7 +7,7 @@
 		<key>count_up.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{2,2},{50,50}}</string>
+			<string>{{874,104},{50,50}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -17,10 +17,23 @@
 			<key>sourceSize</key>
 			<string>{50,50}</string>
 		</dict>
+		<key>door.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{874,2},{100,100}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{100,100}}</string>
+			<key>sourceSize</key>
+			<string>{100,100}</string>
+		</dict>
 		<key>life.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{54,2},{50,50}}</string>
+			<string>{{926,104},{50,50}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -33,7 +46,7 @@
 		<key>power_up.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{54,54},{50,50}}</string>
+			<string>{{926,156},{50,50}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -43,6 +56,19 @@
 			<key>sourceSize</key>
 			<string>{50,50}</string>
 		</dict>
+		<key>speed_up.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{2,2},{870,870}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{870,870}}</string>
+			<key>sourceSize</key>
+			<string>{870,870}</string>
+		</dict>
 	</dict>
 	<key>metadata</key>
 	<dict>
@@ -51,7 +77,7 @@
 		<key>realTextureFileName</key>
 		<string>input/item_sprites.png</string>
 		<key>size</key>
-		<string>{128,128}</string>
+		<string>{1024,1024}</string>
 		<key>textureFileName</key>
 		<string>input/item_sprites.png</string>
 	</dict>

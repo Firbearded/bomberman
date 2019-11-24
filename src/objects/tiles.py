@@ -4,7 +4,7 @@ CATEGORY = "tile_textures"
 class Tile:
     color = (0, 0, 0)
     image_name = None
-    breakable = False
+    soft = False
     walkable = False
 
 
@@ -25,12 +25,13 @@ class TileWall(Tile):
 class TileBreakableWall(Tile):
     color = (160, 160, 160)
     image_name = "break_wall"
-    breakable = True
+    soft = True
 
 
 class TileUnreachableEmpty(TileEmpty):
     walkable = False
 
-TILES = [
-    TileEmpty, TileWall, TileBreakableWall, TileUnreachableEmpty  # TileBomb, TilePoints, TileFirewave
-]
+
+TILES = (
+    TileEmpty, TileWall, TileBreakableWall, TileUnreachableEmpty
+)

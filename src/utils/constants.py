@@ -14,6 +14,8 @@ class Directory:
 FONT_OLD = join(Directory.FONT_DIR, "arcade-classic.ttf")
 FONT_NEW = join(Directory.FONT_DIR, "bm.ttf")
 
+FONT = FONT_OLD
+
 
 class Color:
     WHITE = 255, 255, 255

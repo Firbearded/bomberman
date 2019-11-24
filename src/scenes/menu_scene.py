@@ -5,7 +5,7 @@ from src.objects.menu.menu_items.menu_item_button import MenuItemButton
 from src.objects.menu.menu_items.menu_item_label import MenuItemLabel
 from src.objects.textobject import TextObject
 from src.scenes.base_scene import Scene
-from src.utils.constants import FONT_OLD, Color
+from src.utils.constants import Color, FONT
 from src.utils.vector import Point
 
 
@@ -16,7 +16,7 @@ class MenuScene(Scene):
     def create_objects(self):
         items = []
         font_size = 25
-        font_name = FONT_OLD
+        font_name = FONT
         color = Color.WHITE
         color2 = Color.RED
         aa = True
@@ -40,7 +40,7 @@ class MenuScene(Scene):
         self.objects.append(Menu(self.game, pos, items))
 
     def start(self):
-        self.game.set_scene(self.game.GAME_SCENE_INDEX)
+        self.game.set_scene(self.game.GAME_SCENE_INDEX, reset=True)
 
     def exit(self):
         sys.exit(0)

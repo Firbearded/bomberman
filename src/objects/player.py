@@ -50,24 +50,32 @@ class Player(Entity):
     COLOR = Color.BLUE
 
     SPEED_VALUE = 2
-    START_LIVES = 3
+    START_LIVES = 2
     BOMBS_POWER = 2
     MAX_BOMBS_NUMBER = 1
 
     def __init__(self, field_object, pos: Point = (0, 0), size: tuple = (1, 1)):
         super().__init__(field_object, pos, size)
 
-        self.speed_value = self.SPEED_VALUE
-        self.lives = self.START_LIVES
-        self.bombs_power = self.BOMBS_POWER
-        self.bombs_number, self.max_bombs_number = 0, self.MAX_BOMBS_NUMBER
+        self.field_object.players.append(self)
 
-        self.score = 0
-
-        self.direction = Vector(0, 1)
-        self.is_moving = False
+        self.reset(True)
 
         self.animation = self.create_animation()
+
+    def reset(self, full=False):
+        if full:
+            self.speed_value = self.SPEED_VALUE
+            self.lives = self.START_LIVES
+            self.bombs_power = self.BOMBS_POWER
+            self.max_bombs_number = self.MAX_BOMBS_NUMBER
+            self.score = 0
+        self.bombs_number = 0
+        self.direction = Vector(0, 1)
+        self.is_moving = False
+        self.speed_vector = Vector()
+        self.pos = Point(1, self.field_object.height - 2)
+        self.enable()
 
     def get_state(self):
         state = 'walking' if self.is_moving else 'standing'
@@ -124,6 +132,14 @@ class Player(Entity):
             if speed_vector[j] == 0:
                 vec_dir = sign(speed_vector[i])
                 d = ((-1, 0, 1), (vec_dir, vec_dir, vec_dir))
+                fw, fh = self.field_object.size
+
+                f = False  # TODO: костыли
+                for k in range(3):
+                    if not (0 <= tile_y + d[i][k] < fh and 0 <= tile_x + d[j][k] < fw):
+                        f = True
+                if f: continue
+
                 up, nx, dn = [not TILES[self.field_object.grid[tile_y + d[i][k]][tile_x + d[j][k]]].walkable for k in
                               range(3)]
                 if not nx:
@@ -182,6 +198,20 @@ class Player(Entity):
 
         self.pos = self.pos + normalized_speed_vector
 
+        # TODO: screen shift
+        # x, y = self.pos
+        # top_interval = 200
+        # left_interval = 50
+        # right_interval = 50
+        # x = max(-self.field_object.real_size[0] + right_interval + self.game_object.width / 2, min(left_interval, -self.x * self.field_object.tile_size[0] + self.game_object.width / 2))
+        # y = max(-top_interval, -self.y * self.field_object.tile_size[1])
+        #
+        # print(x, y)
+        # # x += self.game_object.width / 2
+        # y += self.game_object.height / 2
+        #
+        self.field_object.pos = Point( -self.x * self.field_object.tile_size[0] + self.game_object.width / 2, -self.y * self.field_object.tile_size[1] + self.game_object.height / 2)
+
         if self.animation:
             self.is_moving = bool(normalized_speed_vector)
             if self.is_moving:
@@ -194,12 +224,14 @@ class Player(Entity):
             for keys, i, m in self.KEYS_MOV:
                 if key in keys:
                     self.speed_vector[i] += m
+                    self.speed_vector[i] = sign(self.speed_vector[i])
                     break
         if event.type == pygame.KEYUP:
             key = event.key
             for keys, i, m in self.KEYS_MOV:
                 if key in keys:
                     self.speed_vector[i] += (-m)
+                    self.speed_vector[i] = sign(self.speed_vector[i])
                     break
         # TODO: Сделать нормальную установку бомбы игроком
         if event.type == pygame.KEYDOWN:
@@ -214,6 +246,12 @@ class Player(Entity):
         rect = (p.x, p.y - (self.image_size[1] - self.real_size[1])), self.image_size
         self.game_object.screen.blit(self.animation.current_image, rect)
 
-    def on_hurt(self, from_enemy):
-        self.lives = max(0, self.lives - 1)
-        print("GAME_OVER: lives left {}".format(self.lives))
+    def on_hurt(self, from_enemy):  # TODO: gameover
+        self.disable()
+        self.game_object.sounds['effect']['lose'].play()
+        print(self.lives)
+        if self.lives == 0:
+            self.field_object.game_over()
+        else:
+            self.lives -= 1
+            self.field_object.reset_stage(False)

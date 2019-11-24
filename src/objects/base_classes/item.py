@@ -1,5 +1,4 @@
 from src.objects.base_classes.entity import Entity
-from src.objects.field import Field
 from src.objects.player import Player
 from src.utils.constants import Color
 from src.utils.intersections import is_collide_rect
@@ -12,9 +11,12 @@ class Item(Entity):
 
     SOUND_PICK_UP = 'item'
 
+    SIZE = .5, .5
     COLOR = Color.YELLOW
 
-    def __init__(self, field_object: Field, pos: Point, size: tuple):
+    def __init__(self, field_object, pos: Point, size: tuple = None):
+        if size is None:
+            size = self.SIZE
         super().__init__(field_object, pos, size)
         self.animation = self.create_animation()
         self.centralize_pos()

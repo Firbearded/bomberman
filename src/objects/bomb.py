@@ -73,7 +73,7 @@ class Fire(Entity):
         return False
 
     def try_to_break(self, pos):
-        if TILES[self.field_object.grid[pos.y][pos.x]].breakable:
+        if TILES[self.field_object.grid[pos.y][pos.x]].soft:
             self.field_object.destroy_wall(pos.x, pos.y, self.delay)
 
     def next_fire(self):

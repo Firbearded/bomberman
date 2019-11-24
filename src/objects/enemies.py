@@ -14,3 +14,6 @@ class Onil(Enemy):
     SPEED_VALUE = 1
     SCORE = 200
     COLOR = (100, 100, 255)
+
+
+ENEMIES = (Ballom, Onil)

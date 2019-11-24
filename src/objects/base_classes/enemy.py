@@ -18,6 +18,7 @@ class Enemy(Entity):
 
     def __init__(self, field, pos: Point = (0, 0), size: tuple = (1, 1)):
         super().__init__(field, pos, size)
+        self.field_object.enemies_count += 1
 
         self.target = self.new_target()
         self.speed_vector = self.new_target_direction()
@@ -42,7 +43,7 @@ class Enemy(Entity):
                 possible_target.append(d)
 
         if not possible_target:
-            return self.target
+            return self.tile
 
         rand_i = randint(0, len(possible_target) - 1)  # Получение случайного направления из
         target = possible_target[rand_i]  # массива возможных направлений
@@ -75,4 +76,5 @@ class Enemy(Entity):
 
     def on_hurt(self, from_enemy):
         from_enemy.bomb_object.player_object.score += self.SCORE
+        self.field_object.enemies_count -= 1
         self.destroy()

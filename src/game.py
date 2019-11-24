@@ -8,6 +8,7 @@ from src.scenes.game_scene import GameScene
 from src.scenes.highscore_scene import HighscoreScene
 from src.scenes.loading_scene import LoadingScene
 from src.scenes.menu_scene import MenuScene
+from src.scenes.transition_scene import TransitionScene
 from src.utils.decorators import timetest
 from src.utils.loader import load_textures, load_sounds
 
@@ -17,6 +18,7 @@ class Game:
     GAME_SCENE_INDEX = 1
     GAMEOVER_SCENE_INDEX = 2
     HIGHSCORE_SCENE_INDEX = 3
+    TRANSITION_SCENE_INDEX = 4
 
     @timetest
     def __init__(self, window_size=(800, 600), title='Bomberman'):
@@ -52,7 +54,8 @@ class Game:
         self.sounds = load_sounds(self)
 
     def create_scenes(self):
-        self.scenes = [MenuScene(self), GameScene(self), GameoverScene(self), HighscoreScene(self)]
+        self.scenes = [MenuScene(self), GameScene(self), GameoverScene(self), HighscoreScene(self),
+                       TransitionScene(self)]
         self.current_scene = 0
 
     def resize_screen(self, size=None):
@@ -90,7 +93,12 @@ class Game:
 
         sys.exit(0)  # Выход из программы
 
-    def set_scene(self, index, delay=0, message=''):  # TODO: переход
-        print("New scene: from {} to {}".format(self.current_scene, index))
-        self.current_scene = int(index)
-        self.scenes[self.current_scene].on_switch()
+    def set_scene(self, index, delay=0, message='', *args, **kwargs):
+        print("New scene: from {} to {} (delay={}; message='{}'".format(self.current_scene, index, delay, message))
+        if delay > 0:
+            self.current_scene = int(self.TRANSITION_SCENE_INDEX)
+            self.scenes[self.current_scene].on_switch(*args, **kwargs)
+            self.scenes[self.current_scene].start(index, delay, message)
+        else:
+            self.current_scene = int(index)
+            self.scenes[self.current_scene].on_switch(*args, **kwargs)

@@ -1,29 +1,22 @@
-from src.objects.enemies import Onil, Ballom
 from src.objects.field import Field
-from src.objects.items import ItemPowerUp, ItemLifeUp
 from src.objects.player import Player
 from src.scenes.base_scene import Scene
 from src.utils.vector import Point
 
 
 class GameScene(Scene):
-    def on_switch(self):
-        self.game.resize_screen(Point(self.field_size) * Point(self.tile_size))
+    def on_switch(self, *args, **kwargs):
+        if 'reset' in kwargs:
+            if kwargs['reset']:
+                self.game.sounds['effect']['start'].play()
+                self.field.reset_stage()
+        # self.game.resize_screen(self.field.real_size)
 
     def create_objects(self):
         pos = Point(0, 0)
-        self.field_size = 21, 15
-        self.tile_size = 50, 50
+        tile_size = (40, 40)
+        self.field = Field(self.game, pos, tile_size)
+        self.objects.append(self.field)
 
-        f = Field(self.game, pos, self.field_size, self.tile_size)
-        self.objects.append(f)
+        p = Player(self.field, Point(1, self.field.height - 2))
 
-        p = Player(f, Point(1, 1))
-
-        Ballom(f, Point(5, 5))
-        Onil(f, Point(5, 5))
-
-        ItemPowerUp(f, Point(1, 3), (.5, .5))
-        ItemLifeUp(f, Point(3, 1), (.5, .5))
-
-        f.rand_fill(2, 30)
