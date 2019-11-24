@@ -29,7 +29,7 @@ class MenuScene(Scene):
         items.append(MenuItemLabel(self.game, to))
         items[-1].interval_after = 75
 
-        to = TextObject(self.game, 'Start new game', font_name, font_size, color=color, antialiasing=aa)
+        to = TextObject(self.game, 'New game', font_name, font_size, color=color, antialiasing=aa)
         items.append(MenuItemButton(self.game, to, wrapper, color2, self.start))
 
         to = TextObject(self.game, 'Continue', font_name, font_size, color=color, antialiasing=aa)

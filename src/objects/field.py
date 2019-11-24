@@ -332,15 +332,21 @@ class Field(DrawableObject):
         self.save_score()
 
     def save_stage(self):
-        with open(Path.STAGE_SAVE, 'w') as f:
-            print(self.current_stage, file=f)
-            print(self.players[0].score, file=f)
-            print(self.players[0].lives, file=f)
-            print(self.players[0].speed_value, file=f)
-            print(self.players[0].bombs_power, file=f)
-            print(self.players[0].max_bombs_number, file=f)
+        if not exists(Path.SAVE_DIR):
+            mkdir(Path.SAVE_DIR)
+        if exists(Path.STAGE_SAVE):
+            with open(Path.STAGE_SAVE, 'w') as f:
+                print(self.current_stage, file=f)
+                print(self.players[0].score, file=f)
+                print(self.players[0].lives, file=f)
+                print(self.players[0].speed_value, file=f)
+                print(self.players[0].bombs_power, file=f)
+                print(self.players[0].max_bombs_number, file=f)
 
     def save_score(self):
+        if not exists(Path.SAVE_DIR):
+            mkdir(Path.SAVE_DIR)
+
         highscores = []
         if exists(Path.HIGHSCORES_SAVE):
             with open(Path.HIGHSCORES_SAVE, 'r') as f:
@@ -359,6 +365,8 @@ class Field(DrawableObject):
             f.writelines(highscores)
 
     def load(self):
+        if not exists(Path.SAVE_DIR):
+            mkdir(Path.SAVE_DIR)
         if exists(Path.STAGE_SAVE):
             with open(Path.STAGE_SAVE, 'r') as f:
                 lines = f.readlines()

@@ -40,7 +40,7 @@ class HighscoreScene(Scene):
 
         to = TextObject(self.game, 'Back', font_name, font_size, color=color, antialiasing=aa)
         items.append(MenuItemButton(self.game, to, "<<{}<<", color2, self.back))
-        items[-1].interval_before = interval
+        items[-1].interval_before = interval / 2
 
         pos = Point(self.game.width / 2, interval)
         self.menu = Menu(self.game, pos, items, 10)
