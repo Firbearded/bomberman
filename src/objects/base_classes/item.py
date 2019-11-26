@@ -1,5 +1,4 @@
 from src.objects.base_classes.entity import Entity
-from src.objects.player import Player
 from src.utils.constants import Color
 from src.utils.intersections import is_collide_rect
 from src.utils.vector import Point
@@ -11,8 +10,9 @@ class Item(Entity):
 
     SOUND_PICK_UP = 'item'
 
-    SIZE = .5, .5
+    SIZE = .75, .75
     COLOR = Color.YELLOW
+    BREAKABLE = True
 
     def __init__(self, field_object, pos: Point, size: tuple = None):
         if size is None:
@@ -31,9 +31,9 @@ class Item(Entity):
         pass
 
     def additional_logic(self):
-        for e in self.field_object.entities:
-            if type(e) is Player:
-                if is_collide_rect(self.pos, self.size, e.pos, e.size):
-                    self.game_object.sounds['effect'][self.SOUND_PICK_UP].play()
-                    self.on_take(e)
-                    self.destroy()
+        from src.objects.player import Player
+        for e in self.field_object.get_entities(Player):
+            if is_collide_rect(self.pos, self.size, e.pos, e.size):
+                self.game_object.play('effect', self.SOUND_PICK_UP)
+                self.on_take(e)
+                self.destroy()

@@ -1,7 +1,4 @@
-def sign(x):
-    if x == 0:
-        return 0
-    return 1 if x > 0 else -1
+from src.utils.sign import sign
 
 
 class Vector:
@@ -9,6 +6,7 @@ class Vector:
     Класс двумерного вектора с координатами (x, y).
     Поддерживает некоторые базовые операции над векторами.
     """
+
     def __init__(self, *args):
         """
         В конструктор можно передавать:
@@ -26,7 +24,23 @@ class Vector:
             args = (0, 0)
         elif len(args) == 1:
             args = args[0]
-        self.x, self.y = args
+        self._x, self._y = args
+
+    @property
+    def x(self):
+        return self._x
+
+    @x.setter
+    def x(self, value):
+        self._x = float(value)
+
+    @property
+    def y(self):
+        return self._y
+
+    @y.setter
+    def y(self, value):
+        self._y = float(value)
 
     @property
     def get(self):
@@ -37,19 +51,31 @@ class Vector:
         return self.x, self.y
 
     @property
-    def length(self):
-        """
-        Длинна или модуль вектора.
-        """
-        return (self.x ** 2 + self.y ** 2) ** .5
-    
-    @property
     def copy(self):
         """
         Возвращает новый объект класса Vector с такими же координатами
         :rtype: Vector
         """
         return Vector(self.x, self.y)
+
+    @property
+    def length(self):
+        """
+        Длинна или модуль вектора.
+        """
+        return (self.x ** 2 + self.y ** 2) ** .5
+
+    @length.setter
+    def length(self, value):
+        ln = self.length
+        self._x /= ln
+        self._y /= ln
+        self._x *= float(value)
+        self._y *= float(value)
+
+    def changed_to(self, new_length):
+        v = self.copy
+        return (v / v.length) * new_length
 
     @property
     def normalized(self):
@@ -88,11 +114,11 @@ class Vector:
         Делает данный вектор единичным (не с длинной 1, а с координатами -1, 0 или 1)
         :rtype: Vector
         """
-        self.x = sign(self.x)
-        self.y = sign(self.y)
+        self._x = sign(self.x)
+        self._y = sign(self.y)
 
     def __str__(self):
-        return '{' + "{}; {}".format(*self.get) + '}'
+        return 'Vector{' + "{}; {}".format(*self.get) + '}'
 
     def __iter__(self):
         return self.get.__iter__()
@@ -156,5 +182,9 @@ class Vector:
         :rtype: bool
         """
         return tuple(self) == tuple(other)
+
+    def __round__(self):
+        return Vector(int(self.x), int(self.y))
+
 
 Point = Vector

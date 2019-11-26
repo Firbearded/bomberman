@@ -2,8 +2,8 @@ import threading
 
 import pygame
 
-from src.objects.progress_bar import ProgressBar
-from src.objects.textobject import TextObject
+from src.objects.supporting.progress_bar import ProgressBar
+from src.objects.supporting.textobject import TextObject
 from src.scenes.base_scene import Scene
 from src.utils.constants import Color, Path
 from src.utils.decorators import protect

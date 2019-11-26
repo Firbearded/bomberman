@@ -1,10 +1,10 @@
 import pygame
 
-from src.objects.base_classes.drawable_object import DrawableObject
+from src.objects.base_classes.base_objects.pygame_object import PygameObject
 from src.utils.vector import Point
 
 
-class Menu(DrawableObject):
+class Menu(PygameObject):
     KEYS = {
         'down':
             (pygame.K_DOWN, pygame.K_s),

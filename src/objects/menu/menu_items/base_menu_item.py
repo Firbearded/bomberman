@@ -1,7 +1,7 @@
-from src.objects.base_classes.drawable_object import DrawableObject
+from src.objects.base_classes.base_objects.pygame_object import PygameObject
 
 
-class MenuBaseItemUnselectable(DrawableObject):
+class MenuBaseItemUnselectable(PygameObject):
     def __init__(self, game_object):
         super().__init__(game_object)
         self._selectable = False

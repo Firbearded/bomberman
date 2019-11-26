@@ -3,8 +3,7 @@ import sys
 from src.objects.menu.menu import Menu
 from src.objects.menu.menu_items.menu_item_button import MenuItemButton
 from src.objects.menu.menu_items.menu_item_label import MenuItemLabel
-from src.objects.menu.menu_items.menu_item_switch import MenuItemSwitch
-from src.objects.textobject import TextObject
+from src.objects.supporting.textobject import TextObject
 from src.scenes.base_scene import Scene
 from src.utils.constants import Color, Path
 from src.utils.vector import Point
@@ -12,9 +11,9 @@ from src.utils.vector import Point
 
 class MenuScene(Scene):
     def on_switch(self, play_sound=True):
-        self.game.resize_screen()
+        # self.game.resize_screen()
         if play_sound:
-            self.game.sounds['effect']['menu'].play(loops=9999)
+            self.game.play('effect', 'menu', loops=9999)
 
     def create_objects(self):
         items = []
@@ -35,9 +34,6 @@ class MenuScene(Scene):
         to = TextObject(self.game, 'Continue', font_name, font_size, color=color, antialiasing=aa)
         items.append(MenuItemButton(self.game, to, wrapper, color2, self.continue_game))
 
-        to = TextObject(self.game, 'Minimalistic mode: off', font_name, font_size, color=color, antialiasing=aa)
-        items.append(MenuItemSwitch(self.game, to, wrapper, color2, self.game.toggle_minimalistic_mode, 'Minimalistic mode: on'))
-
         to = TextObject(self.game, 'Highscores', font_name, font_size, color=color, antialiasing=aa)
         items.append(MenuItemButton(self.game, to, wrapper, color2, self.highscores))
 
@@ -48,12 +44,12 @@ class MenuScene(Scene):
         self.objects.append(Menu(self.game, pos, items))
 
     def start(self):
-        self.game.set_scene(self.game.GAME_SCENE_INDEX, reset=True)
-        self.game.sounds['effect']['menu'].stop()
+        self.game.stop('effect', 'menu')
+        self.game.set_scene(self.game.GAME_SCENE_INDEX, new_game=True)
 
     def continue_game(self):
-        self.game.set_scene(self.game.GAME_SCENE_INDEX, reset=True, try_to_continue=True)
-        self.game.sounds['effect']['menu'].stop()
+        self.game.stop('effect', 'menu')
+        self.game.set_scene(self.game.GAME_SCENE_INDEX, new_game=False)
 
     def exit(self):
         sys.exit(0)

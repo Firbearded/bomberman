@@ -3,7 +3,7 @@ from os.path import exists
 from src.objects.menu.menu import Menu
 from src.objects.menu.menu_items.menu_item_button import MenuItemButton
 from src.objects.menu.menu_items.menu_item_label import MenuItemLabel
-from src.objects.textobject import TextObject
+from src.objects.supporting.textobject import TextObject
 from src.scenes.base_scene import Scene
 from src.utils.constants import Path, Color
 from src.utils.vector import Point

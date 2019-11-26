@@ -2,18 +2,12 @@ import pygame
 
 from src.objects.base_classes.entity import Entity
 from src.objects.bomb import Bomb
-from src.objects.tiles import TILES
-from src.utils.animation import SimpleAnimation
+from src.objects.supporting.animation import SimpleAnimation
 from src.utils.constants import Color
 from src.utils.decorators import protect
 from src.utils.intersections import collide_rect
+from src.utils.sign import sign
 from src.utils.vector import Vector, Point
-
-
-def sign(x):
-    if x == 0:
-        return 0
-    return 1 if x > 0 else -1
 
 
 class Player(Entity):
@@ -50,32 +44,35 @@ class Player(Entity):
     COLOR = Color.BLUE
 
     SPEED_VALUE = 2
-    START_LIVES = 2
+    LIVES = 2
     BOMBS_POWER = 2
-    MAX_BOMBS_NUMBER = 1
+    BOMBS_NUMBER = 1
+
+    MAX_SPEED_VALUE = 5
+    MAX_LIVES = 20
+    MAX_BOMBS_POWER = 10
+    MAX_BOMBS_NUMBER = 10
 
     def __init__(self, field_object, pos: Point = (0, 0), size: tuple = (1, 1)):
         super().__init__(field_object, pos, size)
 
-        self.field_object.players.append(self)
-
         self.reset(True)
-
         self.animation = self.create_animation()
 
     def reset(self, full=False):
         if full:
             self.speed_value = self.SPEED_VALUE
-            self.lives = self.START_LIVES
+            self.lives = self.LIVES
             self.bombs_power = self.BOMBS_POWER
-            self.max_bombs_number = self.MAX_BOMBS_NUMBER
+            self.bombs_number = self.BOMBS_NUMBER
             self.score = 0
-        self.bombs_number = 0
+        self.current_bombs_number = 0
         self.direction = Vector(0, 1)
         self.is_moving = False
         self.speed_vector = Vector()
         self.pos = Point(1, self.field_object.height - 2)
         self.enable()
+        self.show()
 
     def get_state(self):
         state = 'walking' if self.is_moving else 'standing'
@@ -140,7 +137,7 @@ class Player(Entity):
                         f = True
                 if f: continue
 
-                up, nx, dn = [not TILES[self.field_object.grid[tile_y + d[i][k]][tile_x + d[j][k]]].walkable for k in
+                up, nx, dn = [not self.field_object.tile_at(tile_x + d[j][k], tile_y + d[i][k]).walkable for k in
                               range(3)]
                 if not nx:
                     if (speed_vector[i] > 0 and (self.right, self.bottom)[i] == (tile_x + 1, tile_y + 1)[i]) or \
@@ -153,8 +150,7 @@ class Player(Entity):
                             is_corner_fixing = 1
                             speed_vector[i] = 0
                             speed_vector[j] = -1
-        speed_vector = speed_vector.normalized * self.speed_value * self.game_object.delta_time  # self.speed_vector - всего лишь вектор для
-        # направления, тут я делаю, чтобы длина самого вектора была равна self.speed_value
+        speed_vector = speed_vector.normalized * self.real_speed_value
         if is_corner_fixing:  # Если мы исправляем застревания на углах,
             for i in range(2):  # то проверяем, чтобы подойти ровно в клетку
                 if abs(self.pos[i] - round(self.pos[i])) < \
@@ -176,7 +172,7 @@ class Player(Entity):
                     # Проверка на то, подходит ли нам клетка для проверки
                     if dx == dy == 0: continue
                     if (dx, dy)[i] != sign(tmp_speed_vector[i]): continue
-                    if TILES[self.field_object.grid[tile_y + dy][tile_x + dx]].walkable: continue
+                    if self.field_object.tile_at(tile_x + dx, tile_y + dy).walkable: continue
                     fw, fh = self.field_object.size
                     if not (0 <= tile_y + dy < fh and 0 <= tile_x + dx < fw): continue
 
@@ -189,7 +185,7 @@ class Player(Entity):
         return speed_vector
 
     def additional_logic(self):
-        normalized_speed_vector, is_fixing = self.corner_fixing(Vector(*self.speed_vector))
+        normalized_speed_vector, is_fixing = self.corner_fixing(self.speed_vector.copy)
 
         if not is_fixing:
             normalized_speed_vector = self.wall_collisions(normalized_speed_vector)
@@ -211,7 +207,7 @@ class Player(Entity):
         # # x += self.game_object.width / 2
         # y += self.game_object.height / 2
         #
-        self.field_object.pos = Point( -self.x * self.field_object.tile_size[0] + self.game_object.width / 2, -self.y * self.field_object.tile_size[1] + self.game_object.height / 2)
+        self.field_object.pos = Point(-self.x * self.field_object.tile_size[0] + self.game_object.width / 2, -self.y * self.field_object.tile_size[1] + self.game_object.height / 2)
 
         if self.animation:
             self.is_moving = bool(normalized_speed_vector)
@@ -237,10 +233,10 @@ class Player(Entity):
         # TODO: Сделать нормальную установку бомбы игроком
         if event.type == pygame.KEYDOWN:
             if event.key in self.KEYS_BOMB:
-                if self.bombs_number < self.max_bombs_number:
-                    if self.field_object.empty_at(tuple(self.tile)):
-                        self.bombs_number += 1
-                        self.game_object.sounds['effect'][self.SOUND_BOMB].play()
+                if self.current_bombs_number < self.bombs_number:
+                    if self.field_object.can_place_bomb(self.tile):
+                        self.current_bombs_number += 1
+                        self.game_object.play('effect', self.SOUND_BOMB)
                         Bomb(self, self.tile, self.bombs_power)
 
     def process_draw_animation(self):
@@ -248,12 +244,12 @@ class Player(Entity):
         rect = (p.x, p.y - (self.image_size[1] - self.real_size[1])), self.image_size
         self.game_object.screen.blit(self.animation.current_image, rect)
 
-    def on_hurt(self, from_enemy):  # TODO: gameover
+    def hurt(self, from_enemy):  # TODO: gameover
         self.disable()
-        self.game_object.sounds['effect']['lose'].play()
-        print(self.lives)
+        self.game_object.play('effect', 'lose')
+
         if self.lives == 0:
             self.field_object.game_over()
         else:
             self.lives -= 1
-            self.field_object.reset_stage(False)
+            self.field_object.lose()
