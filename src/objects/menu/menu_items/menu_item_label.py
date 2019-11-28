@@ -1,7 +1,7 @@
-from src.objects.menu.menu_items.base_menu_item import MenuBaseItemUnselectable
+from src.objects.menu.menu_items.base_menu_item import MenuBaseItem
 
 
-class MenuItemLabel(MenuBaseItemUnselectable):
+class MenuItemLabel(MenuBaseItem):
     def __init__(self, game_object, text_object):
         super().__init__(game_object)
 

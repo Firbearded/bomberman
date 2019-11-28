@@ -1,11 +1,11 @@
 import pygame
 
-from src.objects.base_classes.drawable_object import DrawableObject
+from src.objects.base_classes.base_objects.pygame_object import PygameObject
 from src.utils.constants import Color
 from src.utils.vector import Point
 
 
-class TextObject(DrawableObject):
+class TextObject(PygameObject):
     """
     Класс для обработки и отрисовки текста
 

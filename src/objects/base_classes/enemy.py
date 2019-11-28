@@ -2,8 +2,8 @@ from random import randint
 
 from src.objects.base_classes.entity import Entity
 from src.objects.player import Player
-from src.objects.tiles import TILES
 from src.utils.constants import Color
+from src.utils.intersections import is_circles_intersect
 from src.utils.vector import Point
 
 
@@ -18,7 +18,6 @@ class Enemy(Entity):
 
     def __init__(self, field, pos: Point = (0, 0), size: tuple = (1, 1)):
         super().__init__(field, pos, size)
-        self.field_object.enemies_count += 1
 
         self.target = self.new_target()
         self.speed_vector = self.new_target_direction()
@@ -38,7 +37,7 @@ class Enemy(Entity):
 
         tile_x, tile_y = self.tile
         for x, y in zip(dx, dy):
-            if TILES[self.field_object.grid[y + tile_y][x + tile_x]].walkable:
+            if self.field_object.tile_at(x + tile_x, y + tile_y).walkable:
                 d = Point(x + tile_x, y + tile_y)
                 possible_target.append(d)
 
@@ -54,27 +53,31 @@ class Enemy(Entity):
             self.target = self.new_target()
             self.speed_vector = self.new_target_direction()
 
-        normalized_speed_vector = self.speed_vector.normalized * self.speed_value * self.game_object.delta_time
+        normalized_speed_vector = self.speed_vector.normalized * self.real_speed_value
         new_pos = self.pos + normalized_speed_vector
         new_target_direction = (self.target - new_pos).united
+
+        if self.target != self.tile and not self.field_object.tile_at(self.target).walkable:
+            self.speed_vector *= -1
+            self.target = self.tile
 
         if self.speed_vector == new_target_direction:
             self.pos = new_pos
         else:
             self.pos = self.target
-            if TILES[self.field_object.at(self.tile + self.speed_vector)].walkable:
+            if self.field_object.tile_at(self.tile + self.speed_vector).walkable:
                 self.target += self.speed_vector
             else:
                 self.target = self.new_target()
                 self.speed_vector = self.new_target_direction()
 
-        for e in self.field_object.entities:  # Проверка на коллизии и игроками
+        for e in self.field_object.get_entities(Player):  # Проверка на коллизии c игроками
             if e.is_enabled:
-                if type(e) is Player:
-                    if self.tile == e.tile:
-                        e.on_hurt(self)
+                r = (self.height + self.width) / 4 * self.COLLISION_MODIFIER
+                r2 = (e.height + e.width) / 4 * self.COLLISION_MODIFIER
+                if is_circles_intersect(self.pos, r, e.pos, r2):
+                    e.hurt(self)
 
-    def on_hurt(self, from_enemy):
-        from_enemy.bomb_object.player_object.score += self.SCORE
-        self.field_object.enemies_count -= 1
+    def hurt(self, from_):
+        from_.bomb_object.player_object.score += self.SCORE
         self.destroy()

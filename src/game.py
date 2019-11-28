@@ -1,13 +1,16 @@
 import sys
 from threading import Thread
+from time import time
 
 import pygame
 
+from src.scenes.captions_scene import CaptionsScene
 from src.scenes.game_over_scene import GameoverScene
 from src.scenes.game_scene import GameScene
 from src.scenes.highscore_scene import HighscoreScene
 from src.scenes.loading_scene import LoadingScene
 from src.scenes.menu_scene import MenuScene
+from src.scenes.settings_scene import SettingsScene
 from src.scenes.transition_scene import TransitionScene
 from src.utils.decorators import timetest
 from src.utils.loader import load_textures, load_sounds
@@ -19,11 +22,14 @@ class Game:
     GAMEOVER_SCENE_INDEX = 2
     HIGHSCORE_SCENE_INDEX = 3
     TRANSITION_SCENE_INDEX = 4
+    SETTINGS_SCENE_INDEX = 5
+    CAPTIONS_SCENE_INDEX = 6
 
     @timetest
     def __init__(self, window_size=(800, 600), title='Bomberman'):
         self.size = self.width, self.height = window_size
         self.title = title
+        self.volume = .05
 
         self.init()
 
@@ -40,9 +46,7 @@ class Game:
 
         self.create_scenes()
 
-        self.running = False
         self.delta_time = 0
-        self.minimalistic_mode = False
 
     def init(self):
         pygame.init()  # Инициализация библиотеки
@@ -57,7 +61,7 @@ class Game:
 
     def create_scenes(self):
         self.scenes = [MenuScene(self), GameScene(self), GameoverScene(self), HighscoreScene(self),
-                       TransitionScene(self)]
+                       TransitionScene(self), SettingsScene(self), CaptionsScene(self)]
         self.current_scene = 0
         self.scenes[self.current_scene].on_switch()
 
@@ -71,10 +75,10 @@ class Game:
 
     def main_loop(self):
         self.running = True
-        fps_start_time = pygame.time.get_ticks()
+        fps_start_time = time()
         fps = 0
         while self.running:  # Основной цикл работы программы
-            loop_start_time = pygame.time.get_ticks()
+            loop_start_time = time()
             
             eventlist = pygame.event.get()
             for event in eventlist:
@@ -85,13 +89,13 @@ class Game:
 
             self.scenes[self.current_scene].process_frame(eventlist)
 
-            end_time = pygame.time.get_ticks()
-            self.delta_time = (end_time - loop_start_time) / 1000
+            end_time = time()
+            self.delta_time = (end_time - loop_start_time)
 
             fps += 1
-            if end_time - fps_start_time >= 1000:
+            if end_time - fps_start_time >= 1:
                 self.display_fps(fps)
-                fps_start_time = end_time - (end_time - fps_start_time) % 1000
+                fps_start_time = end_time - (end_time - fps_start_time) % 1
                 fps = 0
 
         sys.exit(0)  # Выход из программы
@@ -106,11 +110,20 @@ class Game:
             self.current_scene = int(index)
             self.scenes[self.current_scene].on_switch(*args, **kwargs)
 
-    def toggle_minimalistic_mode(self):
-        if not self.minimalistic_mode:
-            self.minimalistic_mode = True
-            self._images = self.images  # TODO: for e in entities: e.reload_textures()
-            self.images = None
-        else:
-            self.minimalistic_mode = False
-            self.images = self._images
+    def play(self, category, name, **kwargs):
+        self.sounds[category][name].set_volume(self.volume)
+        self.sounds[category][name].play(**kwargs)
+
+    def stop(self, category, name):
+        self.sounds[category][name].stop()
+
+    def set_volume(self, p):
+        self.volume = p
+        for c in self.sounds:
+            for n in self.sounds[c]:
+                self.sounds[c][n].set_volume(self.volume)
+
+    def stop_all(self):
+        for c in self.sounds:
+            for n in self.sounds[c]:
+                self.sounds[c][n].stop()

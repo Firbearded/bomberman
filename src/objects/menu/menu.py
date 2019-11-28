@@ -1,10 +1,10 @@
 import pygame
 
-from src.objects.base_classes.drawable_object import DrawableObject
+from src.objects.base_classes.base_objects.pygame_object import PygameObject
 from src.utils.vector import Point
 
 
-class Menu(DrawableObject):
+class Menu(PygameObject):
     KEYS = {
         'down':
             (pygame.K_DOWN, pygame.K_s),
@@ -14,8 +14,6 @@ class Menu(DrawableObject):
             (pygame.K_LEFT, pygame.K_a),
         'right':
             (pygame.K_RIGHT, pygame.K_d),
-        'enter':
-            (pygame.K_SPACE, pygame.K_RETURN),
     }
     INTERVAL = 20
 
@@ -84,10 +82,11 @@ class Menu(DrawableObject):
             if event.key in self.KEYS['up']:
                 self.add_selected_index(-1)
 
-            if event.key in self.KEYS['enter']:
-                self.selected_item.press()
-                self.update_item_positions(self.interval)  # TODO
+        self.selected_item.process_event(event)
+
+        self.update_item_positions(self.interval)
 
     def process_draw(self):
+        self.update_item_positions(self.interval)
         for index in range(len(self.items)):
             self.items[index].process_draw(self._items_positions[index])

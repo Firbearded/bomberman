@@ -4,8 +4,9 @@ CATEGORY = "tile_textures"
 class Tile:
     color = (0, 0, 0)
     image_name = None
-    soft = False
-    walkable = False
+    soft = False  # Можно ли ломать
+    walkable = False  # Можно ходить (земля)
+    empty = False  # Пусто, но ходить нельзя (вода)
 
 
 # Tiles:
@@ -15,6 +16,7 @@ class TileEmpty(Tile):
     color = (220, 220, 220)
     image_name = "grass"
     walkable = True
+    empty = True
 
 
 class TileWall(Tile):

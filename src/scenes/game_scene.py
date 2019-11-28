@@ -1,8 +1,6 @@
-import pygame
-
-from src.objects.field import Field
+from src.objects.field.field_class import Field
 from src.objects.player import Player
-from src.objects.textobject import TextObject
+from src.objects.supporting.textobject import TextObject
 from src.scenes.base_scene import Scene
 from src.utils.constants import Color, Path
 from src.utils.vector import Point
@@ -11,20 +9,17 @@ from src.utils.vector import Point
 class GameScene(Scene):
     MAX_FPS = 0
 
-    def on_switch(self, reset=False, try_to_continue=False):
-        for i in self.objects:
-            from src.objects.base_classes.entity import Entity
-            if issubclass(type(i), Entity) or type(i) is Field:
-                i.reload_animations()
-        if reset:
-            self.game.sounds['effect']['start'].play()
-            self.field.reset_stage(load=try_to_continue)
-        # self.game.resize_screen(self.field.real_size)
+    def on_switch(self, new_game=False, restart=True):
+        if new_game:
+            self.game.play('effect', 'start')
+        self.field.start_game(new_game, restart)
 
     def create_objects(self):
-        pos = Point(0, 0)
         tile_size = (40, 40)
-        self.field = Field(self.game, pos, tile_size)
+
+        self.field = Field(self.game, tile_size)
+        Player(self.field, Point(1, 1))
+        self.field.flush_enitites()
         self.objects.append(self.field)
 
         font_size = 20
@@ -36,13 +31,11 @@ class GameScene(Scene):
         self.objects.append(self.score_object)
         self.objects.append(self.lives_object)
 
-        p = Player(self.field, Point(1, self.field.height - 2))
-
     def additional_logic(self):
         self.update_gui()
 
     def update_gui(self):
-        t = self.field.time - (pygame.time.get_ticks() - self.field.start_time) // 1000
+        t = int((self.field.timer._delay - self.field.timer.remaining) / 1000)
         if t < 0:
             t = 0
             self.timer_object.set_color(Color.RED)
@@ -51,7 +44,7 @@ class GameScene(Scene):
 
         min, sec = t // 60, t % 60
 
-        self.score_object.set_text("Score: {}".format(self.field.players[0].score))
+        self.score_object.set_text("Score: {}".format(self.field.main_player.score))
         pos = Point(0, 0)
         self.score_object.pos = pos
 
@@ -59,6 +52,6 @@ class GameScene(Scene):
         pos = Point((self.game.width - self.timer_object.size[0]) / 2, 0)
         self.timer_object.pos = pos
 
-        self.lives_object.set_text("Lives: {}".format(self.field.players[0].lives))
-        pos = Point((self.game.width - self.score_object.size[0], 0))
+        self.lives_object.set_text("Lives: {}".format(self.field.main_player.lives))
+        pos = Point((self.game.width - self.lives_object.size[0], 0))
         self.lives_object.pos = pos

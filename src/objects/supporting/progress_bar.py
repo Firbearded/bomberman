@@ -1,11 +1,11 @@
 import pygame
 
-from src.objects.base_classes.drawable_object import DrawableObject
+from src.objects.base_classes.base_objects.pygame_object import PygameObject
 from src.utils.constants import Color
 from src.utils.vector import Point
 
 
-class ProgressBar(DrawableObject):
+class ProgressBar(PygameObject):
     LINE_WIDTH = 1
     LINE_COLOR = Color.BLACK
 

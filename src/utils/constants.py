@@ -18,19 +18,58 @@ class Path:
 
     STAGE_SAVE = join(SAVE_DIR, 'stage.sav')
     HIGHSCORES_SAVE = join(SAVE_DIR, 'highscores.sav')
+    SETTINGS_SAVE = join(SAVE_DIR, 'settings.ini')
 
 
 class Color:
     WHITE = 255, 255, 255
-    LIGHT_GRAY = 200, 200, 200
+    LIGHT_GREY = 192, 192, 192
+    GREY = 128, 128, 128
+    DARK_GREY = 64, 64, 64
     BLACK = 0, 0, 0
 
+    MAROON = 128, 0, 0
     RED = 255, 0, 0
-    GREEN = 0, 255, 0
-    BLUE = 0, 0, 255
+    PINK = 250, 190, 190
 
-    CYAN = 0, 255, 255
-    MAGENTA = 255, 0, 255
-    YELLOW = 255, 255, 0
+    BROWN = 170, 110, 40
+    ORANGE = 245, 130, 48
+    APRICOT = 255, 215, 180
 
-    ORANGE = 255, 165, 0
+    OLIVE = 128, 128, 0
+    YELLOW = 255, 255, 25
+    BEIGE = 255, 250, 200
+
+    LIME = 210, 245, 60
+    GREEN = 60, 180, 75
+    MINT = 170, 255, 195
+
+    TEAL = 0, 128, 128
+    CYAN = 70, 240, 240
+
+    NAVY = 0, 0, 128
+    BLUE = 0, 130, 200
+
+    PURPLE = 145, 30, 180
+    LAVENDER = 230, 190, 255
+
+    MAGENTA = 240, 50, 230
+
+    @staticmethod
+    def random_color():
+        from random import choice
+        d = Color.__dict__
+        return d[choice([key for key in d.keys() if key[:1].isupper()])]
+
+    @staticmethod
+    def full_random_color():
+        from random import randint
+        return randint(0, 255), randint(0, 255), randint(0, 255)
+
+    @staticmethod
+    def byte_to_share(color):
+        """
+        128, 255, 255 -> 0.5, 1, 1
+        """
+        r, g, b = color
+        return r / 255, g / 255, b / 255
