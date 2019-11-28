@@ -21,20 +21,23 @@ class Item(Entity):
         self.centralize_pos()
 
     def centralize_pos(self):
+        """ Централизируем объект в клетке """
         cx, cy = self.tile
         cx += .5 - self.width / 2
         cy += .5 - self.width / 2
         self.pos = Point(cx, cy)
 
     def on_take(self, player_object):
+        """ Метод, вызываемый, когда игрок подбирает предмет (его можно переназначать)"""
         pass
 
     def hurt(self, from_e):
+        """ Смерть вещи """
         self.destroy()
 
     def additional_logic(self):
         from src.objects.player import Player
-        for e in self.field_object.get_entities(Player):
+        for e in self.field_object.get_entities(Player):             # Проверка на коллизии с игроком
             if is_collide_rect(self.pos, self.size, e.pos, e.size):
                 self.game_object.play('effect', self.SOUND_PICK_UP)
                 self.on_take(e)

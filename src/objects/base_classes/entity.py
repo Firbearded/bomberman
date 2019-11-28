@@ -19,12 +19,15 @@ class Entity(PygameObject, GeometricObject, EnableableObject, VisibleObject):
     `speed_value` — скорость (клеток в секунду)
     """
     SPEED_VALUE = 1  # клеток в секунду
-    COLLISION_MODIFIER = .5
-    COLOR = Color.BLACK
+    COLLISION_MODIFIER = .5  # процент от половины среднего арифметического размера —
+    # — расстояние, на котором фиксируется столкновение между мобами и игроками
+    COLOR = Color.BLACK   # Цвет объекта на запасную отрисовку (если проблемы с анимациями и спрайтами)
 
-    SPRITE_CATEGORY = None
-    SPRITE_NAMES = None
-    SPRITE_DELAY = None
+    SPRITE_CATEGORY = None  # Категория спрайтов
+    SPRITE_NAMES = None     # tuple из названий спрайтов
+    SPRITE_DELAY = None     # Задержка междку спрайтами
+    # (Эти три переменные для упрощённых анимаций, состоящих из одной группы спрайтов, переключаемых по циклу.
+    # Для более сложных анимаций надо писать самому)
 
     def __init__(self, field_object, pos: Point, size: tuple = (1, 1)):
         """
@@ -43,11 +46,11 @@ class Entity(PygameObject, GeometricObject, EnableableObject, VisibleObject):
         VisibleObject.__init__(self, True)
 
         self.field_object = field_object
-        field_object.add_entity(self)
+        field_object.add_entity(self)        # Сущность сама добавляется в поле
 
-        self.speed_vector = Vector()  # Просто напровление, куда мы двигаемся
-        self.speed_value = self.SPEED_VALUE
-        self.animation = None
+        self.speed_vector = Vector()         # Просто напровление, куда мы двигаемся
+        self.speed_value = self.SPEED_VALUE  # Значение скорости (клеток в секунду)
+        self.animation = None                # Объект класса анимаций
 
     @property
     def tile(self):
@@ -80,36 +83,57 @@ class Entity(PygameObject, GeometricObject, EnableableObject, VisibleObject):
 
     @property
     def real_speed_value(self):
+        """
+        Значение скорости, рассчитанное на данный момент
+        (чтобы скорость не зависела от количества кадров в секунду, использовать это значение для рассчётов)
+        :rtype: float
+        """
         return self.speed_value * self.game_object.delta_time
 
     def destroy(self):
+        """
+        Уничтожение объекта.
+        (деактивируем, делаем невидимым и удаляем из поля)
+        """
         self.disable()
         self.hide()
         self.field_object.delete_entity(self)
 
     # ======================== Эвенты ========================
     def process_event(self, event):
+        """ Если сущность активна, то проверяем события """
         if self.is_enabled:
             self.additional_event(event)
 
     def additional_event(self, event):
+        """ Сюда писать проверку на события """
         pass
 
     # ======================== Логика ========================
     def process_logic(self):
+        """
+        Обработка логики:
+        если есть анимации, то вызываем логику у анимации,
+        если сущность активка, то вызываем дополнительную логику
+        """
         if self.animation is not None:
             self.animation.process_logic()
         if self.is_enabled:
             self.additional_logic()
 
     def additional_logic(self):
-        """ В этом методе писать логику для сущности. """
+        """ В этом методе писать логику для сущности """
         speed_vector = Vector(self.speed_vector)
 
         self.pos += (speed_vector.normalized * self.real_speed_value)
 
     # ======================= Отрисовка ======================
     def process_draw(self):
+        """
+        Отрисовка:  если сущность видна, то рисуем.
+        Если есть анимации, то рисуем анимации,
+        иначе — дополнительный метод отрисовки.
+        """
         if self.is_visible:
             if self.animation is not None:
                 self.process_draw_animation()

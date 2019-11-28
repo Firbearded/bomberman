@@ -15,7 +15,7 @@ class Fire(Entity, TimerObject):
     Создается объектом бомбы.
     Висит на поле некоторое время, а потом исчезает.
     """
-    DELAY = 500
+    DELAY = 500  # Задержка перед исчезновением
     FIRE_CENTRAL = 0
     FIRE_MIDDLE = 1
     FIRE_END = 2
@@ -30,7 +30,7 @@ class Fire(Entity, TimerObject):
     )
     SPRITE_DELAY = 100
 
-    COLOR = ((150, 0, 0), (255, 0, 0), (255, 100, 0), (255, 255, 0))
+    COLOR = ((150, 0, 0), (255, 0, 0), (255, 100, 0), (255, 255, 0))  # Запасные цвета
 
     def __init__(self, bomb_object, pos: Point, power=0, delay=DELAY, fire_type=FIRE_CENTRAL, direction=Vector(0, 0),
                  start_time=None):
@@ -68,15 +68,16 @@ class Fire(Entity, TimerObject):
         self.animation = self.create_animation()
 
     def is_possible_to_spread(self, pos):
-        if self.field_object.tile_at(pos).empty:
-            return True
-        return False
+        """ Можем ли мы распространяться на позицию pos """
+        return self.field_object.tile_at(pos).empty
 
     def try_to_break(self, pos):
+        """ Пытаемся сломать стену на позиции pos """
         if self.field_object.tile_at(pos).soft:
             self.field_object.destroy_wall(pos, self.delay)
 
     def generate_next_fire(self):
+        """ Генерируем огонь """
         i = Vector(1, 0)
         j = Vector(0, 1)
         all_directions = (i, j, -i, -j)
@@ -130,6 +131,7 @@ class Fire(Entity, TimerObject):
 
     @protect
     def create_animation(self):
+        """ Создание анимаций """
         if not self.game_object.images: return
 
         sprites = [pygame.transform.scale(self.game_object.images[self.SPRITE_CATEGORY][i], self.real_size) for i in
@@ -183,13 +185,14 @@ class Bomb(Entity, TimerObject):
         self.power = power
         self.animation = self.create_animation()
         self.field_object.tile_set(self.pos, self.field_object.TILE_UNREACHABLE_EMPTY)
+        # ставим под себя невидимую стену
         self.start()
 
     def additional_logic(self):
         self.timer_logic()
 
     def on_timeout(self):
-        Fire(self, self.pos, self.power)
-        self.player_object.current_bombs_number -= 1
-        self.field_object.tile_set(self.pos, self.field_object.TILE_EMPTY)
-        self.destroy()
+        Fire(self, self.pos, self.power)  # Когда таймер заканчивается, то создаём огонь
+        self.player_object.current_bombs_number -= 1  # Уменьшаем число активных бомб у игрока
+        self.field_object.tile_set(self.pos, self.field_object.TILE_EMPTY)  # Ставим под себя пустую клетку
+        self.destroy()  # И уничтожаемся

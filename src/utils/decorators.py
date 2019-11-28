@@ -1,46 +1,61 @@
-import time
 from functools import wraps
+
+DEBUG_STRING_WRAPPER = "DEBUG: {}"
 
 
 def protect(func):
-    """
-    Декоратор, который защищает всё от неожиданного сваливания
-    """
+    """ Декоратор, который защищает всё от неожиданного сваливания """
+    import traceback
 
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            print("EXCEPTION {} IN {}".format(e, func.__name__))
+            print(DEBUG_STRING_WRAPPER.format('CRITICAL ERROR\n' + traceback.format_exc()))
 
     return wrapper
 
 
-def timetest(func):
-    """
-    Декоратор, который время замеряет
-    """
+def benchmark(func):
+    """ Декоратор, который время замеряет """
+    from time import time
 
     @wraps(func)
-    def timed(*args, **kwargs):
-        start_time = time.time()
-        result = func(*args, **kwargs)
-        end_time = time.time()
+    def wrapper(*args, **kwargs):
+        start_time = time()
+        res = func(*args, **kwargs)
+        delta_time = time() - start_time
+        print(
+            DEBUG_STRING_WRAPPER.format("function '{}' complete in {:.2f} ms".format(func.__name__, delta_time * 1000)))
+        return res
 
-        print("Name: {}\nArgs: {}\nKwargs: {}\nTime: {:.4f} s\n{}".format(
-            func.__name__, args, kwargs, end_time - start_time, "="*40))
-        return result
-
-    return timed
+    return wrapper
 
 
 def counter(func):
+    """ Декоратор, который считает вызовы конкретной функции """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         wrapper.count += 1
-        print("DEBUG", ("function '{0}' was called {1} time(s)".format(func.__name__, wrapper.count)))
+        print(DEBUG_STRING_WRAPPER.format("function '{0}' was called {1} time(s)".format(func.__name__, wrapper.count)))
         return func(*args, **kwargs)
 
     wrapper.count = 0
+    return wrapper
+
+
+def logging(func):
+    """ Декоратор, который логи делает """
+    n = 60
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        res = func(*args, **kwargs)
+        msg = "{}\nName: {}\nArgs: {}\nKwargs: {}\nResult: {}\n{}".format(
+            "=" * (n - len(DEBUG_STRING_WRAPPER) + 2), func.__name__, args, kwargs, res, "=" * n)
+        print(DEBUG_STRING_WRAPPER.format(msg))
+        return res
+
     return wrapper

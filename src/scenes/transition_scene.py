@@ -6,6 +6,7 @@ from src.utils.constants import Color, Path
 
 
 class TransitionScene(Scene):
+    """ Сцена перехода """
     def create_objects(self):
         font_name = Path.FONT
         font_size = 50

@@ -1,4 +1,5 @@
 class PygameObject(object):
+    """ Класс объекта игры с основными методами (события, логика, отрисовка) """
     def __init__(self, game_object):
         """
         :type game_object: Game

@@ -2,8 +2,19 @@ from src.objects.menu.menu_items.menu_item_button import MenuItemButton
 
 
 class MenuItemSwitch(MenuItemButton):
+    """ Пункт меню, который может переключаться (тоже самое, что кнопка, но ещё + одно состояние) """
     def __init__(self, game_object, text_object, selected_text_wrapper='{}', selected_color=None, func=None,
                  switched_text=""):
+        """
+        :param func: Функция, которая вызывается, когда переключают этот пункт меню
+        :param switched_text: Текст, когда пункт меню переключён
+        :type game_object: Game
+        :type text_object: TextObject
+        :type selected_text_wrapper: str
+        :type selected_color: tuple
+        :type func: function
+        :type switched_text: str
+        """
         super().__init__(game_object, text_object, selected_text_wrapper, selected_color, func)
 
         self.switched_text = switched_text
@@ -49,5 +60,5 @@ class MenuItemSwitch(MenuItemButton):
 
     def press(self):
         self.toggle()
-        if self.func:
-            self.func()
+        if self.on_press:
+            self.on_press()

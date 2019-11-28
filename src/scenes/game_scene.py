@@ -7,6 +7,7 @@ from src.utils.vector import Point
 
 
 class GameScene(Scene):
+    """ Игровая сцена """
     MAX_FPS = 0
 
     def on_switch(self, new_game=False, restart=True):

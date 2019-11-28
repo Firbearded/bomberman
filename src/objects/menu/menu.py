@@ -5,19 +5,27 @@ from src.utils.vector import Point
 
 
 class Menu(PygameObject):
+    """
+    Класс меню, в котором хранятся пункты меню.
+    Ещё тут обрабатываются отрисовка и изменение индекса выбранного пункта меню
+    KEYS — кнопки, по которым переключаем выбранный пункт меню
+    INTERVAL — стандартное расстояние между всеми объектами
+    """
     KEYS = {
         'down':
             (pygame.K_DOWN, pygame.K_s),
         'up':
             (pygame.K_UP, pygame.K_w),
-        'left':
-            (pygame.K_LEFT, pygame.K_a),
-        'right':
-            (pygame.K_RIGHT, pygame.K_d),
     }
     INTERVAL = 20
 
     def __init__(self, game_object, pos=(0, 0), items=None, interval=INTERVAL):
+        """
+        :type game_object: Game
+        :type pos: Point
+        :type items: list(MenuItems)
+        :type interval: int
+        """
         super().__init__(game_object)
 
         if items is None:
@@ -31,6 +39,7 @@ class Menu(PygameObject):
         self.update_item_positions(self.interval)
 
     def update_item_positions(self, interval=None):
+        """ Обновление позиций для пунктов текста """
         if interval is None:
             interval = self.interval
         self._items_positions = []
@@ -44,6 +53,7 @@ class Menu(PygameObject):
             self._items_positions.append(Point(x, y))
 
     def update_selectable_item_indexes(self):
+        """ Обновление индексов у пунктов меню, которые можно выбирать """
         self._selectable_item_indexes = []
 
         for index in range(len(self.items)):
@@ -56,19 +66,23 @@ class Menu(PygameObject):
 
     @property
     def selected_item(self):
+        """ Выбранные пункт меню """
         if self.has_selectable_items:
             return self.items[self._selectable_item_indexes[self.selected_index]]
         return None
 
     @property
     def has_selectable_items(self):
+        """ Есть ли пункты меню, которые можно выбрать """
         return self.selected_index is not None
 
     @property
     def selectable_count(self):
+        """ Количество пунктов меню, которые можно выбрать """
         return len(self._selectable_item_indexes)
 
     def add_selected_index(self, d):
+        """ + к selected_index """
         self.selected_item.unselect()
         self.selected_index = (self.selected_index + d) % self.selectable_count
         self.selected_item.select()

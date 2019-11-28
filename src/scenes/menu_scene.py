@@ -10,8 +10,8 @@ from src.utils.vector import Point
 
 
 class MenuScene(Scene):
+    """ Сцена меню """
     def on_switch(self, play_sound=True):
-        # self.game.resize_screen()
         if play_sound:
             self.game.stop_all()
             self.game.play('effect', 'menu', loops=9999)

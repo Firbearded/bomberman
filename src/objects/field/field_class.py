@@ -1,5 +1,4 @@
 import os
-import os.path
 import sys
 from random import randint, choice
 from time import strftime
@@ -21,27 +20,27 @@ class Field(PygameObject, GeometricObject):
     """
     В Field сосредоточена основная информация об игровых объектах.
     """
-    LINE_WIDTH = 0  # ширина линии при отрисовки
-    _PLAYER_BUFFER = 3
-    ENEMIES_ON_DOOR = 0, 5, 0
+    LINE_WIDTH = 0  # ширина линии при отрисовки (0 - нет линии)
+    _PLAYER_BUFFER = 3  # Ширина буфера для игрока (чтобы враги не появлялись рядом)
+    ENEMIES_ON_DOOR = 0, 5, 0  # Выпадаемые враги со двери
 
     TILE_TYPES = \
         TILE_EMPTY, TILE_WALL, TILE_SOFT_WALL, TILE_UNREACHABLE_EMPTY = \
         0, 1, 2, 3
 
-    _BACKGROUND_TILE_TYPE = TILE_EMPTY
+    _BACKGROUND_TILE_TYPE = TILE_EMPTY  # Клетка, которая на заднем фоне
     _BACKGROUND_TILE = TILES[_BACKGROUND_TILE_TYPE]
 
-    KEYS_EXIT = (pygame.K_ESCAPE,)
+    KEYS_EXIT = (pygame.K_ESCAPE,)  # Кнопки на выход из игры
 
-    STAGES = (
-        # Stage(name="Stage 1", enemies=(6, 0, 0)),
-        # Stage(name="Stage test 0", enemies=(1, 1, 1), upgrades_number=999),
-        # Stage(name="Stage HELL", enemies=(1, 0, 0), upgrades_number=999, time=10),
-        # Stage(field_size=(9, 17), name="Enemy collision test 0", enemies=(5, 0, 0), soft_wall_number=10),
+    STAGES = (  # Уровки игры (смотрите класс Stage)
+        Stage(name="Stage 1", enemies=(6, 0, 0)),
+        Stage(name="Stage test 0", enemies=(1, 1, 1), upgrades_number=999),
+        Stage(name="Stage HELL", enemies=(1, 0, 0), upgrades_number=999, time=10),
+        Stage(field_size=(9, 17), name="Enemy collision test 0", enemies=(5, 0, 0), soft_wall_number=10),
         Stage(field_size=(9, 7), name="Stage test 1", enemies=(0, 0, 0), soft_wall_number=1),
         Stage(field_size=(9, 7), name="Stage test 2", enemies=(1, 0, 0), soft_wall_number=3),
-        # Stage(field_size=(11, 11), name="Stage test 3", enemies=(2, 0, 0), soft_wall_number=4),
+        Stage(field_size=(11, 11), name="Stage test 3", enemies=(2, 0, 0), soft_wall_number=4),
     )
 
     GAMEOVER_MSG = "GAME OVER"
@@ -63,7 +62,7 @@ class Field(PygameObject, GeometricObject):
         self._grid = None  # Двумерный список — типы клеток
         self._field_size = (1, 1)  # Размеры поля
         self._entities = {}  # Список сущностей, принадлежащих этому полю
-        self._class_priority = (Player, Enemy, Fire, Bomb, Item,)
+        self._class_priority = (Player, Enemy, Fire, Bomb, Item,)  # Приоритет классов на отрисовку (по убыванию)
         self._enemies_on_door = Field.ENEMIES_ON_DOOR
 
         self._soft_number = None
@@ -72,8 +71,9 @@ class Field(PygameObject, GeometricObject):
         self._enemies = None
         self._extra_enemies = None
 
-        self._current_stage_index = 0
-        self._entities_queue = []
+        self._current_stage_index = 0  # Индекс уровня
+        self._entities_queue = []  # Очередь сущностей на добавление. Нельзя добавлять сущности в словарь во время
+        # использования этого же словаря
 
         self.timer = TimerObject(0)
         self.timer.on_timeout = self.on_timeout
@@ -98,10 +98,12 @@ class Field(PygameObject, GeometricObject):
 
     @property
     def real_size(self):
+        """ Реальный размер поля (в пикселях) """
         w, h = self.tile_size
         return self.width * w, self.height * h
 
     def add_entity(self, entity):
+        """ Добвить сущность в поле (на самом деле добавить в очередь) """
         cls = type(entity)
 
         for c in self._class_priority:
@@ -112,6 +114,7 @@ class Field(PygameObject, GeometricObject):
         self._entities_queue.append((cls, entity))
 
     def flush_enitites(self):
+        """ А тут добавить все сущности из очереди в поле """
         for cls, entity in self._entities_queue:
             if cls not in self._entities:
                 self._entities[cls] = []
@@ -122,22 +125,33 @@ class Field(PygameObject, GeometricObject):
         self._entities_queue.clear()
 
     def delete_entity(self, entity):
+        """ Удалить сущность из поля """
         for cls in self._entities:
             if entity in self._entities[cls]:
                 self._entities[cls].remove(entity)
                 return
 
     def get_entities(self, cls):
+        """ Получить сущности одного класса """
         if cls in self._entities:
             return self._entities[cls]
         return []
 
     @property
     def main_player(self):
+        """ Основной игрок (если будет мультиплеер, то там будет один основной, а остальные - дополнительные для
+        каждого клиента) """
         from src.objects.player import Player
         return self._entities[Player][0]
 
     def tile_at(self, *args):
+        """
+        Получить класс клетки в данной позиции (x, y)
+        Аргументы: или tile_at(x, y),
+                   или tile_at(Point(x, y)),
+                   или tile_at((x, y))...
+        :rtype: Tile
+        """
         x, y = 0, 0
         if len(args) == 1:
             x, y = args[0]
@@ -148,6 +162,12 @@ class Field(PygameObject, GeometricObject):
         return TILES[self._grid[y][x]]
 
     def tile_set(self, *args):
+        """
+        Установить другую клетку (v) на позицию (x, y).
+        Аргументы: или tile_set(x, y, v),
+                   или tile_set(Point(x, y), v),
+                   или tile_set((x, y), v)...
+        """
         x, y = 0, 0
         v = 0
         if len(args) == 2:
@@ -161,6 +181,7 @@ class Field(PygameObject, GeometricObject):
         self._grid[y][x] = v
 
     def can_place_bomb(self, pos):
+        """ Проверка на то, можно ли поставить бомбу в клетку на позиции pos """
         from src.objects.bomb import Bomb
 
         pos = tuple(pos)
@@ -172,10 +193,11 @@ class Field(PygameObject, GeometricObject):
         return True
 
     def destroy_wall(self, pos, delay):
-        """ Запускает анимацию уничтожения клетки (x, y) за delay миллисекунд. """
+        """ Запускает анимацию уничтожения клетки pos за delay миллисекунд. """
         BreakingWall(self, pos, delay)
 
     def try_drop_item(self, pos):
+        """ Дроп предмета на позиции pos (если рандом) """
         if self._soft_number == 1 and not self._has_door:
             self._has_door = True
             Door(self, pos)
@@ -190,6 +212,7 @@ class Field(PygameObject, GeometricObject):
                     choice(DROP)(self, pos)
 
     def load_images(self):
+        """ Загрузка и resize изображений клеток для дальнейшего использования """
         self.tile_images = {}
         if self.game_object.images:
             for key in self.game_object.images[CATEGORY]:
@@ -198,9 +221,13 @@ class Field(PygameObject, GeometricObject):
 
     @property
     def current_stage(self):
+        """
+        :rtype: Stage
+        """
         return self.STAGES[self._current_stage_index]
 
     def _get_empty_tiles(self):
+        """ Получить пустые клетки """
         empty_tiles = []
 
         for h in range(0, self.height):
@@ -211,6 +238,7 @@ class Field(PygameObject, GeometricObject):
         return empty_tiles
 
     def _get_player_buffer(self):
+        """ Получить клетки, которые входят в буффер игроков """
         from src.objects.player import Player
 
         buffer = []
@@ -224,6 +252,7 @@ class Field(PygameObject, GeometricObject):
         return buffer
 
     def _get_empty_tiles_without_buffer(self):
+        """ Пустые клетки без буффера игроков """
         empty_tiles = self._get_empty_tiles()
 
         for b in self._get_player_buffer():
@@ -233,6 +262,7 @@ class Field(PygameObject, GeometricObject):
         return empty_tiles
 
     def reset_stage(self):
+        """ Сброс уровня """
         stage = self.current_stage
         self._field_size = stage.field_size
         self._start_soft_number = stage.soft_wall_number
@@ -274,6 +304,7 @@ class Field(PygameObject, GeometricObject):
                 self._grid[i][j] = Field.TILE_WALL
 
     def generate_soft_walls(self):
+        """ Случайная генерация ломающихся стен """
         empty_tiles = self._get_empty_tiles_without_buffer()
 
         for _ in range(self._start_soft_number):
@@ -281,6 +312,7 @@ class Field(PygameObject, GeometricObject):
             self.tile_set(pos, Field.TILE_SOFT_WALL)
 
     def generate_enemies(self, enemies, pos=None):
+        """ Генерация мобов """
         if pos is None:
             empty_tiles = self._get_empty_tiles_without_buffer()
 
@@ -297,6 +329,7 @@ class Field(PygameObject, GeometricObject):
                     ENEMIES[e_type](self, pos)
 
     def start_game(self, new_game, restart=True):
+        """ Метод дял Начала игры """
         if not new_game:
             self.load(full=not restart)
         self.reset_stage()
@@ -308,6 +341,7 @@ class Field(PygameObject, GeometricObject):
         self.timer.start()
 
     def next_stage(self):
+        """ Переключение на следующий уровень """
         self._current_stage_index += 1
         if self._current_stage_index + 1 > len(Field.STAGES):
             self.game_over(win=True)
@@ -317,6 +351,7 @@ class Field(PygameObject, GeometricObject):
         self.game_object.set_scene(self.game_object.GAME_SCENE_INDEX, 3000, self.current_stage.name)
 
     def game_over(self, win=False):
+        """ Окончание игры (полный проигрыш или выигрыш) """
         self._current_stage_index = 0
         self.save_score()
         self.start_game(True, False)
@@ -327,9 +362,11 @@ class Field(PygameObject, GeometricObject):
         self.game_object.set_scene(self.game_object.MENU_SCENE_INDEX, 3000, (Field.GAMEOVER_MSG, Field.WIN_MSG)[win])
 
     def lose(self):
+        """ Проигрыш (не полный, жизни ещё есть) """
         self.game_object.set_scene(self.game_object.GAME_SCENE_INDEX, 3000, self.current_stage.name)
 
     def save_score(self):
+        """ Сохранить счёт """
         highscores = get_highscores()
         player = self.main_player
 
@@ -342,6 +379,7 @@ class Field(PygameObject, GeometricObject):
         save_highscores(highscores)
 
     def save_stage(self, on_exit=False):
+        """ Сохранить уровень """
         check_dir(Path.SAVE_DIR)
         if on_exit:
             self.load()
@@ -360,6 +398,7 @@ class Field(PygameObject, GeometricObject):
         sys.stdout = sys.__stdout__
 
     def load(self, full=False):
+        """ Загрузить уровень """
         check_dir(Path.SAVE_DIR)
         if os.path.exists(Path.STAGE_SAVE):
             with open(Path.STAGE_SAVE, 'r') as f:
@@ -368,7 +407,7 @@ class Field(PygameObject, GeometricObject):
                     player = self.main_player
                     lines = list(map(float, lines))
                     self._current_stage_index, player.score, lives, player.speed_value, \
-                        player.bombs_number, player.bombs_power = lines
+                    player.bombs_number, player.bombs_power = lines
                     self._current_stage_index = int(self._current_stage_index)
                     player.score = int(player.score)
                     if full:
@@ -377,11 +416,13 @@ class Field(PygameObject, GeometricObject):
                     player.bombs_power = int(player.bombs_power)
 
     def on_timeout(self):
+        """ Метод, когда время на таймере закончится """
         self.game_object.play('effect', self.SOUND_TIMEOUT)
         self.generate_enemies(self._extra_enemies)
 
     # ======================== Эвенты ========================
     def additional_event(self, event):
+        """ Проверка на выход из игры в меню """
         if event.type == pygame.KEYDOWN:
             if event.key in Field.KEYS_EXIT:
                 print("Exit from game to menu")
@@ -390,6 +431,7 @@ class Field(PygameObject, GeometricObject):
                 return
 
     def process_event(self, event):
+        """ Обработка событий """
         self.additional_event(event)
 
         for cls in self._entities:
@@ -398,6 +440,7 @@ class Field(PygameObject, GeometricObject):
 
     # ======================== Логика ========================
     def process_logic(self):
+        """ Логика таймера, обработка логики и добавление сущностей из очереди """
         self.timer.timer_logic()
         for cls in self._entities:
             for e in self._entities[cls]:
@@ -415,10 +458,11 @@ class Field(PygameObject, GeometricObject):
 
                 tile = self.tile_at(w, h)
                 if self.tile_images and tile.image_name and Field._BACKGROUND_TILE.image_name:
+                    # Если есть спрайты и названия спайтов у клеток, то рисуем текстуры
                     self.game_object.screen.blit(self.tile_images[Field._BACKGROUND_TILE.image_name], rect)
                     if tile is not Field._BACKGROUND_TILE:
                         self.game_object.screen.blit(self.tile_images[tile.image_name], rect)
-                else:
+                else:  # Иначе запасной план: рисуем квадраты
                     pygame.draw.rect(self.game_object.screen, tile.color, rect, 0)
 
                 if Field.LINE_WIDTH > 0:
@@ -438,11 +482,13 @@ class Field(PygameObject, GeometricObject):
 
 
 def check_dir(dir_path):
+    """ Проверка на то, существует ли папка. Если нет, то создаём"""
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
 
 
 def get_highscores():
+    """ Загрузка всех результатов """
     check_dir(Path.SAVE_DIR)
 
     highscores = []
@@ -457,6 +503,7 @@ def get_highscores():
 
 
 def save_highscores(highscores):
+    """ Сохранение результатов """
     check_dir(Path.SAVE_DIR)
 
     with open(Path.HIGHSCORES_SAVE, 'w') as f:

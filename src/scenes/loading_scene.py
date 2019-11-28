@@ -12,6 +12,7 @@ from src.utils.vector import Point
 
 
 class LoadingScene(Scene):
+    """ Сцена загрузки """
     BG_COLOR = Color.BLACK
     MAX_FPS = 0
 

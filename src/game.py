@@ -12,7 +12,7 @@ from src.scenes.loading_scene import LoadingScene
 from src.scenes.menu_scene import MenuScene
 from src.scenes.settings_scene import SettingsScene
 from src.scenes.transition_scene import TransitionScene
-from src.utils.decorators import timetest
+from src.utils.decorators import benchmark
 from src.utils.loader import load_textures, load_sounds
 
 
@@ -25,7 +25,7 @@ class Game:
     SETTINGS_SCENE_INDEX = 5
     CAPTIONS_SCENE_INDEX = 6
 
-    @timetest
+    @benchmark
     def __init__(self, window_size=(800, 600), title='Bomberman'):
         self.size = self.width, self.height = window_size
         self.title = title
@@ -49,33 +49,39 @@ class Game:
         self.delta_time = 0
 
     def init(self):
-        pygame.init()  # Инициализация библиотеки
+        """ Инициализация библиотек и окна """
+        pygame.init()
         pygame.font.init()
 
         self.resize_screen(self.size)
         pygame.display.set_caption(self.title)
 
     def load_resurces(self):
+        """ Загрузка ресурсов """
         self.images = load_textures(self)
         self.sounds = load_sounds(self)
 
     def create_scenes(self):
+        """ Создание сцен """
         self.scenes = [MenuScene(self), GameScene(self), GameoverScene(self), HighscoreScene(self),
                        TransitionScene(self), SettingsScene(self), CaptionsScene(self)]
         self.current_scene = 0
         self.scenes[self.current_scene].on_switch()
 
     def resize_screen(self, size=None):
+        """ Resize'им окно """
         if size is not None:
             self.size = self.width, self.height = tuple(size)
         self.screen = pygame.display.set_mode(self.size)  # Создание окна (установка размера)
 
     def display_fps(self, fps):
+        """ Показываем FPS в названии окна """
         pygame.display.set_caption("{} — {} FPS".format(self.title, fps))
 
     def main_loop(self):
+        """ Запуск основного цикла программы """
         self.running = True
-        fps_start_time = time()
+        fps_start_time = time()  # Для счёта FPS
         fps = 0
         while self.running:  # Основной цикл работы программы
             loop_start_time = time()
@@ -89,10 +95,10 @@ class Game:
 
             self.scenes[self.current_scene].process_frame(eventlist)
 
-            end_time = time()
+            end_time = time()  # Расчёт delta_time
             self.delta_time = (end_time - loop_start_time)
 
-            fps += 1
+            fps += 1  # Дляя счёта FPS
             if end_time - fps_start_time >= 1:
                 self.display_fps(fps)
                 fps_start_time = end_time - (end_time - fps_start_time) % 1
@@ -101,6 +107,13 @@ class Game:
         sys.exit(0)  # Выход из программы
 
     def set_scene(self, index, delay=0, message='', *args, **kwargs):
+        """
+        Переключение на другую сцену.
+        Если с задержкой, то через сцену перехода.
+        :type index: int
+        :type delay: int
+        :type message: str
+        """
         print("New scene: from {} to {} (delay={}; message='{}'".format(self.current_scene, index, delay, message))
         if delay > 0:
             self.current_scene = int(self.TRANSITION_SCENE_INDEX)
@@ -111,19 +124,23 @@ class Game:
             self.scenes[self.current_scene].on_switch(*args, **kwargs)
 
     def play(self, category, name, **kwargs):
+        """ Запуск звука """
         self.sounds[category][name].set_volume(self.volume)
         self.sounds[category][name].play(**kwargs)
 
     def stop(self, category, name):
+        """ Остановка звука """
         self.sounds[category][name].stop()
 
-    def set_volume(self, p):
+    def set_volume(self, p):  # TODO: optimize
+        """ Устанавлмваем всем звукам громкость """
         self.volume = p
         for c in self.sounds:
             for n in self.sounds[c]:
                 self.sounds[c][n].set_volume(self.volume)
 
     def stop_all(self):
+        """ Останавливаем все звуки """
         for c in self.sounds:
             for n in self.sounds[c]:
                 self.sounds[c][n].stop()

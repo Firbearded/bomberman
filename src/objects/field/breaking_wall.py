@@ -20,7 +20,7 @@ class BreakingWall(Entity, TimerObject):
 
         Entity.__init__(self, field_object, round(pos))
         TimerObject.__init__(self, delay)
-        self.field_object.tile_set(pos, Field.TILE_UNREACHABLE_EMPTY)
+        self.field_object.tile_set(pos, Field.TILE_UNREACHABLE_EMPTY)  # Ставим под себя невидимую стену
 
         self.animation = self.create_animation()
         self.start()
@@ -36,9 +36,10 @@ class BreakingWall(Entity, TimerObject):
 
     def on_timeout(self):
         from src.objects.field.field_class import Field
-        self.field_object.tile_set(self.pos, Field.TILE_EMPTY)
-        self.field_object.try_drop_item(self.pos)
-        self.field_object._soft_number -= 1
+
+        self.field_object.tile_set(self.pos, Field.TILE_EMPTY)  # Когда время выходит, то убираем невидимую клетку
+        self.field_object.try_drop_item(self.pos)               # Пытаемся дропнуть вещь
+        self.field_object._soft_number -= 1                     # Уменьшаем количество ломаемых стен
 
         self.destroy()
 

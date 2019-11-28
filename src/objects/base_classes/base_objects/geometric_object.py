@@ -2,7 +2,13 @@ from src.utils.vector import Point
 
 
 class GeometricObject(object):
+    """ Класс объекта с геометрическими свойстами (позиция, размер) """
+
     def __init__(self, pos: Point = Point(), size: tuple = (1, 1)):
+        """
+        :param pos: Позиция объекта (левый верхний угол)
+        :param size: Размер (ширина и высоты)
+        """
         self._pos = Point(pos)
         self._size = tuple(size)
 
@@ -49,6 +55,10 @@ class GeometricObject(object):
     @width.setter
     def width(self, value):
         self._size = float(value), self.height
+
+    @height.setter
+    def height(self, value):
+        self._size = self.width, float(value)
 
     @property
     def left(self):

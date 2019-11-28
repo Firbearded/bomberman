@@ -12,6 +12,7 @@ from src.utils.vector import Point
 
 
 class SettingsScene(Scene):
+    """ Сцена настроек """
     def create_objects(self):
         items = []
         font_size = 25
@@ -46,7 +47,6 @@ class SettingsScene(Scene):
         if os.path.exists(Path.SETTINGS_SAVE):
             config = ConfigParser()
             config.read(Path.SETTINGS_SAVE)
-            print(config.sections())
             if 'volume' in config['settings']:
                 self.volume.value = float(config['settings']['volume'])
                 self.volume.add(0)

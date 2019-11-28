@@ -61,7 +61,7 @@ class Player(Entity):
 
     def reset(self, full=False):
         if full:
-            self.speed_value = self.SPEED_VALUE
+            self.speed_value = self.SPEED_VALUE        # TODO: инкапсуляция
             self.lives = self.LIVES
             self.bombs_power = self.BOMBS_POWER
             self.bombs_number = self.BOMBS_NUMBER

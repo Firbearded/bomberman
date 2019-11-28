@@ -23,6 +23,7 @@ TOTAL_NUMBER = len(TEXTURE_FILENAMES) + sum([len(SOUND_FILENAMES[key]) for key i
 
 
 def load_textures(game_object, directory=TEXTURE_DIR, filenames=TEXTURE_FILENAMES):
+    """ Загрузка текстур """
     result = {}
     for filename in filenames:
         game_object.loading.set_stage("textures '{}'".format(filename))
@@ -66,7 +67,7 @@ def load_textures(game_object, directory=TEXTURE_DIR, filenames=TEXTURE_FILENAME
     return result
 
 
-def tree_to_dict(tree):
+def tree_to_dict(tree):  # Вспомогательные
     d = {}
     for index, item in enumerate(tree):
         if item.tag == 'key':
@@ -83,7 +84,7 @@ def tree_to_dict(tree):
     return d
 
 
-def frames_from_data(data_filename):
+def frames_from_data(data_filename):  # Вспомогательные
     root = ElementTree.fromstring(open(data_filename, 'r').read())
     plist_dict = tree_to_dict(root[0])
     to_list = lambda x: x.replace('{', '').replace('}', '').split(',')
@@ -132,6 +133,7 @@ def frames_from_data(data_filename):
 
 
 def load_sounds(game_object, ):
+    """ Загрузка звуков """
     result = {}
     ex = '.ogg'
 

@@ -2,6 +2,7 @@ from os.path import join
 
 
 class Path:
+    """ Класс с константами. Тут хранятся пути до папок и файлов """
     RESOURCES_DIR = join("resources")
 
     IMAGE_DIR = join(RESOURCES_DIR, "images")
@@ -22,6 +23,7 @@ class Path:
 
 
 class Color:
+    """ Класс с константами цветов """
     WHITE = 255, 255, 255
     LIGHT_GREY = 192, 192, 192
     GREY = 128, 128, 128
@@ -57,18 +59,21 @@ class Color:
 
     @staticmethod
     def random_color():
+        """ Получить случайный цвет из тех, что выше """
         from random import choice
         d = Color.__dict__
         return d[choice([key for key in d.keys() if key[:1].isupper()])]
 
     @staticmethod
     def full_random_color():
+        """ Получить вообще случайный цвет """
         from random import randint
         return randint(0, 255), randint(0, 255), randint(0, 255)
 
     @staticmethod
     def byte_to_share(color):
         """
+        Перевод восьмибитных цветов в доли.
         128, 255, 255 -> 0.5, 1, 1
         """
         r, g, b = color

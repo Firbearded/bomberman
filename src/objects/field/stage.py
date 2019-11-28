@@ -11,7 +11,7 @@ class Stage:
     SOFT_WALL_NUMBER = 60
     UPGRADES_NUMBER = 1
     TIME = 180
-    ON_TIMEOUT = (0, 0, 30)
+    ON_TIMEOUT = (0, 0, 30)  # -> после окончания времени появится 30 мобов третьего типа
 
     def __init__(self,
                  field_size=FIELD_SIZE,

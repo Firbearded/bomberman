@@ -10,6 +10,8 @@ from src.utils.vector import Point
 
 
 class HighscoreScene(Scene):
+    """ Сцена с лучшими результатами """
+
     MAX_HIGHSCORES = 10
     NONE_HIGHSCORE = "-none-"
 

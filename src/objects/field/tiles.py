@@ -2,11 +2,12 @@ CATEGORY = "tile_textures"
 
 
 class Tile:
-    color = (0, 0, 0)
-    image_name = None
+    color = (0, 0, 0)  # Запасной цвет
+    image_name = None  # Название спрайта клетки
     soft = False  # Можно ли ломать
     walkable = False  # Можно ходить (земля)
     empty = False  # Пусто, но ходить нельзя (вода)
+    # Огонь может распространяться по пустым (empty), но мобы могут ходить только где можно (walkable)
 
 
 # Tiles:

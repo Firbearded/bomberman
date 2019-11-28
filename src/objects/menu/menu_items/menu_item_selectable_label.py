@@ -3,7 +3,19 @@ from src.objects.menu.menu_items.menu_item_label import MenuItemLabel
 
 
 class MenuItemSelectableLabel(MenuItemLabel, MenuBaseSelectableItem):
+    """
+    Класс пункта меню, который может быть выбран и имеет текст.
+    При выборе этого пунта меню можно изменить цвет и обёртку текста.
+    """
     def __init__(self, game_object, text_object, selected_text_wrapper="{}", selected_color=None):
+        """
+        :param selected_text_wrapper: Обёртка для текста, когда пункт меню будет выбран
+        :param selected_color: Цвет пункта меню, когда он будет выбрать
+        :type game_object: Game
+        :type text_object: TextObject
+        :type selected_text_wrapper: str
+        :type selected_color: tuple
+        """
         MenuBaseSelectableItem.__init__(self, game_object)
         MenuItemLabel.__init__(self, game_object, text_object)
 
@@ -15,6 +27,7 @@ class MenuItemSelectableLabel(MenuItemLabel, MenuBaseSelectableItem):
 
     @property
     def current_text_object(self):
+        """ Получить текущий объект текста (зависит от выбранности) """
         if self._current_stage == self.is_selected:
             return self._current_text_object
 
@@ -23,6 +36,7 @@ class MenuItemSelectableLabel(MenuItemLabel, MenuBaseSelectableItem):
         return self._current_text_object
 
     def _force_update(self):
+        """ Обновить текущий объект текста """
         self._current_stage = self.is_selected
         self._current_text_object = self.text_object.copy
 
