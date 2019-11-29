@@ -261,7 +261,7 @@ class Field(PygameObject, GeometricObject):
 
         return empty_tiles
 
-    def reset_stage(self):
+    def reset_stage(self, full=False):
         """ Сброс уровня """
         stage = self.current_stage
         self._field_size = stage.field_size
@@ -281,7 +281,7 @@ class Field(PygameObject, GeometricObject):
                 self._entities[cls] = []
             else:
                 for e in self._entities[cls]:
-                    e.reset(full=False)
+                    e.reset(full=full)
 
     def grid_init(self):
         """ Заполнение неразрущаемыми стенами границы и остальное через одну клетку """
@@ -332,7 +332,7 @@ class Field(PygameObject, GeometricObject):
         """ Метод дял Начала игры """
         if not new_game:
             self.load(full=not restart)
-        self.reset_stage()
+        self.reset_stage(full=new_game)
         self.grid_init()
         self.generate_soft_walls()
         self.generate_enemies(self._enemies)
