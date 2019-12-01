@@ -20,8 +20,8 @@ class Player(Entity):
         },
         'walking': {
             'up': ('bb_walking1_up', 'bb_walking2_up',),
-            'down': ('bb_walking1_down', 'bb_walking2',),
-            'horizontal': ('bb_walking1_horizontal', 'bb_walking2_horizontal',),
+            'down': ('bb_walking1_down', 'bb_walking2_down',),
+            'horizontal': ('bb_h1', 'bb_h2', 'bb_h3', 'bb_h4', 'bb_h5', 'bb_h6', 'bb_h7', ),
         }
     }
 
@@ -88,7 +88,7 @@ class Player(Entity):
         if not self.game_object.images: return
 
         animation_dict = {}
-        animation_delay = 150
+        animation_delay = 100
 
         had_image_size = False
         for state in self.SPRITE_NAMES:
@@ -101,7 +101,7 @@ class Player(Entity):
 
                     if not had_image_size:
                         w, h = sprite.get_rect().size
-                        k = w / self.real_size[0]
+                        k = w / (self.real_size[0] * 1.4)
                         new_size = (int(w // k), int(h // k))
                         self.image_size = new_size
                         had_image_size = True

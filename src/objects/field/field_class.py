@@ -36,7 +36,7 @@ class Field(PygameObject, GeometricObject):
     KEYS_EXIT = (pygame.K_ESCAPE,)  # Кнопки на выход из игры
 
     STAGES = (  # Уровки игры (смотрите класс Stage)
-        # Stage(name="Stage 1", enemies=(6, 0, 0)),
+        Stage(name="Stage 1", enemies=(6, 0, 0)),
         Stage(name="Stage test 0", enemies=(1, 1, 1), upgrades_number=999),
         Stage(name="Stage HELL", enemies=(1, 0, 0), upgrades_number=999, time=10),
         Stage(field_size=(9, 17), name="Enemy collision test 0", enemies=(5, 0, 0), soft_wall_number=10),
@@ -341,6 +341,8 @@ class Field(PygameObject, GeometricObject):
         self.generate_enemies(self._enemies)
         if new_game:
             self.save_stage()
+            self.game_object.set_scene(self.game_object.GAME_SCENE_INDEX, 3000, self.current_stage.name)
+            return
         self.timer.start()
 
     def next_stage(self):

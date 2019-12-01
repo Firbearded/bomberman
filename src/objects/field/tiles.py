@@ -27,7 +27,7 @@ class TileWall(Tile):
 
 class TileBreakableWall(Tile):
     color = (160, 160, 160)
-    image_name = "break_wall"
+    image_name = "c_wall"
     soft = True
 
 

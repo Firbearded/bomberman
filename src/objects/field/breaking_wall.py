@@ -12,7 +12,7 @@ class BreakingWall(Entity, TimerObject):
     Нужна для анимации разрушения.
     """
     SPRITE_CATEGORY = CATEGORY
-    SPRITE_NAMES = ('break_wall', 'break_wall1', 'break_wall2', 'break_wall3')
+    SPRITE_NAMES = ('c_wall', 'c_wall1', 'c_wall2', 'c_wall3', 'c_wall4', 'c_wall5')
     COLOR = TILES[2].color
 
     def __init__(self, field_object, pos: Point, delay):
