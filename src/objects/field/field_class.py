@@ -460,7 +460,20 @@ class Field(PygameObject, GeometricObject):
         """ Отрисовка самого поля, т.е. его клеток. """
         for h in range(self.height):
             for w in range(self.width):
-                tile_real_pos = [self.pos[k] + (w, h)[k] * self.tile_size[k] for k in range(2)]
+
+                new_pos = Point()
+
+                for i in range(2):
+                    new_pos[i] = (-self.main_player.center[i] * self.tile_size[i] + self.game_object.size[i] / 2)
+                    if self.size[i] * self.tile_size[i] < self.game_object.size[i]:
+                        new_pos[i] = (self.game_object.size[i] - self.size[i] * self.tile_size[i]) / 2
+                    else:
+                        new_pos[i] = min(new_pos[i], 0)
+                        new_pos[i] = max(new_pos[i], self.game_object.size[i] - self.size[i] * self.tile_size[i])
+
+                self.pos = new_pos
+                tile_real_pos = (self.pos[0] + w * self.tile_size[0], self.pos[1] + h * self.tile_size[1])
+
                 rect = tile_real_pos, self.tile_size
 
                 if not is_collide_rect(Point(0, 0), self.game_object.size, Point(tile_real_pos), self.tile_size):

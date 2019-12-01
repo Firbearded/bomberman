@@ -68,6 +68,7 @@ class Entity(PygameObject, GeometricObject, EnableableObject, VisibleObject):
         Реальные координаты сущности на экране (в пикселях)
         :rtype: tuple
         """
+
         x = self.field_object.pos[0] + self.x * self.field_object.tile_size[0]
         y = self.field_object.pos[1] + self.y * self.field_object.tile_size[1]
         return x, y
