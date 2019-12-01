@@ -1,11 +1,6 @@
-from random import randint
-
 from src.objects.base_classes.enemy import Enemy
 from src.objects.field.tiles import TileWall, TileUnreachableEmpty
-from src.objects.player import Player
 from src.utils.constants import Color
-from src.utils.intersections import is_circles_intersect
-from src.utils.vector import Point
 
 """
 class Ballom (Enemy):
@@ -89,7 +84,7 @@ class Pass (Enemy):
     SCORE = 4000
 
 
-class Coin (Doria):
+class Pontan (Doria):
     """
     Как Doria, но быстрый
     """
@@ -100,4 +95,4 @@ class Coin (Doria):
     SPRITE_DELAY = 100
 
 
-ENEMIES = (Ballom, Onil, Coin)
+ENEMIES = (Ballom, Onil, Pontan)
