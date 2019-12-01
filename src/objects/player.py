@@ -196,20 +196,6 @@ class Player(Entity):
 
         self.pos = self.pos + normalized_speed_vector
 
-        # TODO: screen shift
-        # x, y = self.pos
-        # top_interval = 200
-        # left_interval = 50
-        # right_interval = 50
-        # x = max(-self.field_object.real_size[0] + right_interval + self.game_object.width / 2, min(left_interval, -self.x * self.field_object.tile_size[0] + self.game_object.width / 2))
-        # y = max(-top_interval, -self.y * self.field_object.tile_size[1])
-        #
-        # print(x, y)
-        # # x += self.game_object.width / 2
-        # y += self.game_object.height / 2
-        #
-        # self.field_object.pos = Point(-self.x * self.field_object.tile_size[0] + self.game_object.width / 2, -self.y * self.field_object.tile_size[1] + self.game_object.height / 2)
-
         if self.animation:
             self.is_moving = bool(normalized_speed_vector)
             if self.is_moving:
