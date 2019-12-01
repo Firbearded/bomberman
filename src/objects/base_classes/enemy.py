@@ -91,17 +91,19 @@ class Enemy(Entity):
     def additional_logic(self):
         self.check_environment()
 
+        self.check_moving()
+
+        self.check_collisions()
+
+    def check_moving(self):
         normalized_speed_vector = self.speed_vector.normalized * self.real_speed_value
         new_pos = self.pos + normalized_speed_vector  # Следующая позиция (которая будет в следующий тик)
         new_target_direction = (self.target - new_pos).united  # Направление к цели от следующей позиции
-
         if self.speed_vector == new_target_direction:
             self.pos = new_pos  # Если новый вектор направления и старый совпрадают, то ничего
         else:  # Если же новый вектор направления не равен со старым, то значит, что мы в следующий
             self.pos = self.target  # тик перейдём клетку-цель, поэтому
             self.on_new_tile()
-
-        self.check_collisions()
 
     def check_collisions(self):
         """ Проверка на коллизии """
@@ -116,78 +118,3 @@ class Enemy(Entity):
         """ Метод смерти моба """
         from_.bomb_object.player_object.score += self.SCORE  # Добавляем счёт тому, чья бомба взорвала этого моба
         self.destroy()
-
-# chance_of_turning = 0  # Шанс поворота в процентах, растет на 20 процентов на каждом перекрёстке, вплоть до 50 процентов,
-#
-#     def can_walk_at(self, pos):
-#         return self.field_object.tile_at(pos) != TileWall and self.field_object.tile_at(pos) != TileUnreachableEmpty
-#         # return self.field_object.tile_at(pos).walkable
-#
-#     def check_environment(self):
-#         if self.target == self.pos or not self.speed_vector:  # Если мы стоим на месте,
-#             self.target = self.new_target()  # то пытаемся выбрать новое направление
-#             self.speed_vector = self.new_target_direction()
-#             return
-#
-#         if self.target != self.tile and not self.can_walk_at(self.target):
-#             self.speed_vector *= -1  # Проверка на коллизии. Если мы вдруг идём прямо в клетку, по которой нельзя
-#             self.target = self.tile  # ходить, то разворачиваемся.
-#             return
-#
-#     def on_new_tile(self):
-#         if self.tile.x % 2 != 0 and self.tile.y % 2 != 0:  # Проверка на изменение цели, происходит только на "перекрёстках"
-#             self.chance_of_turning += 20
-#             if self.chance_of_turning > 60:
-#                 self.chance_of_turning = 50
-#             if randint(1, 100) <= self.chance_of_turning:
-#                 self.target = self.new_target()
-#                 self.chance_of_turning = 0
-#
-#         elif self.can_walk_at(self.tile + self.speed_vector):
-#             self.target += self.speed_vector  # Если можно идти в следующую клетку, то идём дальше
-#         else:
-#             self.target = self.new_target()  # иначе ищем новую цель
-#
-#         self.speed_vector = self.new_target_direction()
-#
-#         # Проверка на то, хотим ли мы изменить нашу цель
-#
-#     def new_target(self):
-#         """ Выбор мобом следующей цели """
-#         dx = -1, 0, 1, 0
-#         dy = 0, -1, 0, 1
-#
-#         possible_target = []
-#
-#         tile_x, tile_y = self.tile
-#         for x, y in zip(dx, dy):
-#             if self.can_walk_at(Point(x + tile_x, y + tile_y)):
-#                 d = Point(x + tile_x, y + tile_y)
-#                 possible_target.append(d)
-#
-#         if not possible_target:
-#             return self.tile
-#
-#         rand_i = randint(0, len(possible_target) - 1)  # Получение случайного направления из
-#         target = possible_target[rand_i]  # массива возможных направлений
-#         return target
-#
-#     def additional_logic(self):
-#         self.check_environment()
-#
-#         normalized_speed_vector = self.speed_vector.normalized * self.real_speed_value
-#         new_pos = self.pos + normalized_speed_vector  # Следующая позиция (которая будет в следующий тик)
-#         new_target_direction = (self.target - new_pos).united  # Направление к цели от следующей позиции
-#
-#         if self.speed_vector == new_target_direction:
-#             self.pos = new_pos  # Если новый вектор направления и старый совпрадают, то ничего
-#         else:  # Если же новый вектор направления не равен со старым, то значит, что мы в следующий
-#             self.pos = self.target  # тик перейдём клетку-цель, поэтому
-#             self.on_new_tile()
-#
-#         for e in self.field_object.get_entities(Player):  # Проверка на коллизии c игроками
-#             if e.is_enabled:
-#                 r = (self.height + self.width) / 4 * self.COLLISION_MODIFIER
-#                 r2 = (e.height + e.width) / 4 * self.COLLISION_MODIFIER
-#                 if is_circles_intersect(self.pos, r, e.pos, r2):
-#                     e.hurt(self)
