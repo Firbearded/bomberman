@@ -453,7 +453,23 @@ class Field(PygameObject, GeometricObject):
         """ Отрисовка самого поля, т.е. его клеток. """
         for h in range(self.height):
             for w in range(self.width):
-                tile_real_pos = [self.pos[k] + (w, h)[k] * self.tile_size[k] for k in range(2)]
+                grid_start_pos = self.pos
+
+                if self.width * self.tile_size[0] < self.game_object.width:
+                    grid_start_pos[0] = (self.game_object.width - self.width * self.tile_size[0]) / 2
+                else:
+                    grid_start_pos[0] = min(grid_start_pos[0], 0)
+                    grid_start_pos[0] = max(grid_start_pos[0], self.game_object.width - self.width * self.tile_size[0])
+
+                if self.height * self.tile_size[1] < self.game_object.height:
+                    grid_start_pos[1] = (self.game_object.height - self.height * self.tile_size[1]) / 2
+                else:
+                    grid_start_pos[1] = min(grid_start_pos[1], 0)
+                    grid_start_pos[1] = max(grid_start_pos[1],
+                                            self.game_object.height - self.height * self.tile_size[1])
+
+                tile_real_pos = [grid_start_pos[0] + w * self.tile_size[0], grid_start_pos[1] + h * self.tile_size[1]]
+
                 rect = tile_real_pos, self.tile_size
 
                 tile = self.tile_at(w, h)
