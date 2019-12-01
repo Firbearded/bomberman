@@ -10,8 +10,8 @@ class Stage:
     ENEMIES = tuple([0 for i in range(len(ENEMY_LIST))])
     SOFT_WALL_NUMBER = 60
     UPGRADES_NUMBER = 1
-    TIME = 180
-    ON_TIMEOUT = (0, 0, 30)  # -> после окончания времени появится 30 мобов третьего типа
+    TIME = 200
+    ON_TIMEOUT = (0, 0, 0, 0, 0, 0, 0, 10)  # -> после окончания времени появится карательный отряд
 
     def __init__(self,
                  field_size=FIELD_SIZE,
@@ -34,6 +34,8 @@ class Stage:
         self.name = name
         self.soft_wall_number = soft_wall_number
         self.enemies = tuple(enemies)  # смотреть -> src.objects.enemies.ENEMIES
+        if len(self.enemies) < len(ENEMY_LIST):
+            self.enemies = self.enemies + tuple([0 for i in range(len(ENEMY_LIST) - len(self.enemies))])
         self.upgrades_number = upgrades_number
         self.time = time
         self.enemies_on_timeout = tuple(on_timeout)
