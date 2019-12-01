@@ -2,7 +2,7 @@ from src.objects.field.field_class import Field
 from src.objects.player import Player
 from src.objects.supporting.textobject import TextObject
 from src.scenes.base_scene import Scene
-from src.utils.constants import Color, Path
+from src.utils.constants import Color, Path, Sounds
 from src.utils.vector import Point
 
 
@@ -12,7 +12,7 @@ class GameScene(Scene):
 
     def on_switch(self, new_game=False, restart=True):
         if new_game:
-            self.game.play('effect', 'start')
+            self.game.mixer.channels[self.game.mixer.MUSIC_CHANNEL].add_sound_to_queue(Sounds.Music.round_start.value)
         self.field.start_game(new_game, restart)
 
     def create_objects(self):

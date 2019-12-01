@@ -5,7 +5,7 @@ from src.objects.menu.menu_items.menu_item_button import MenuItemButton
 from src.objects.menu.menu_items.menu_item_label import MenuItemLabel
 from src.objects.supporting.textobject import TextObject
 from src.scenes.base_scene import Scene
-from src.utils.constants import Color, Path
+from src.utils.constants import Color, Path, Sounds
 from src.utils.vector import Point
 
 
@@ -13,8 +13,8 @@ class MenuScene(Scene):
     """ Сцена меню """
     def on_switch(self, play_sound=True):
         if play_sound:
-            self.game.stop_all()
-            self.game.play('effect', 'menu', loops=9999)
+            self.game.mixer.channels[self.game.mixer.EFFECTS_CHANNEL].stop()
+            self.game.mixer.channels[self.game.mixer.MUSIC_CHANNEL].add_sound_to_queue(Sounds.Music.menu.value, -1)
 
     def create_objects(self):
         items = []
@@ -54,11 +54,11 @@ class MenuScene(Scene):
         self.objects.append(Menu(self.game, pos, items))
 
     def start(self):
-        self.game.stop('effect', 'menu')
+        self.game.mixer.channels[self.game.mixer.MUSIC_CHANNEL].stop()
         self.game.set_scene(self.game.GAME_SCENE_INDEX, new_game=True, restart=False)
 
     def continue_game(self):
-        self.game.stop('effect', 'menu')
+        self.game.mixer.channels[self.game.mixer.MUSIC_CHANNEL].stop()
         self.game.set_scene(self.game.GAME_SCENE_INDEX, new_game=False, restart=False)
 
     def exit(self):

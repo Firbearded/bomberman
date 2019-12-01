@@ -67,6 +67,7 @@ class Enemy(Entity):
         if self.target != self.tile and not self.field_object.tile_at(self.target).walkable:
             self.speed_vector *= -1   # Проверка на коллизии. Если мы вдруг идём прямо в клетку, по которой нельзя
             self.target = self.tile   # ходить, то разворачиваемся.
+            return
 
         if self.speed_vector == new_target_direction:
             self.pos = new_pos   # Если новый вектор направления и старый совпрадают, то ничего

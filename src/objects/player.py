@@ -3,7 +3,7 @@ import pygame
 from src.objects.base_classes.entity import Entity
 from src.objects.bomb import Bomb
 from src.objects.supporting.animation import SimpleAnimation
-from src.utils.constants import Color
+from src.utils.constants import Color, Sounds
 from src.utils.decorators import protect
 from src.utils.intersections import collide_rect
 from src.utils.sign import sign
@@ -25,7 +25,7 @@ class Player(Entity):
         }
     }
 
-    SOUND_BOMB = 'setbomb'
+    SOUND_BOMB = Sounds.Effects.bomb_place.value
 
     TEMP_DIR = {(1, 0): 'right',
                 (0, 1): 'down',
@@ -237,7 +237,7 @@ class Player(Entity):
                 if self.current_bombs_number < self.bombs_number:
                     if self.field_object.can_place_bomb(self.tile):
                         self.current_bombs_number += 1
-                        self.game_object.play('effect', self.SOUND_BOMB)
+                        self.game_object.mixer.channels['effects'].sound_play(self.SOUND_BOMB)
                         Bomb(self, self.tile, self.bombs_power)
 
     def process_draw_animation(self):
@@ -247,7 +247,6 @@ class Player(Entity):
 
     def hurt(self, from_enemy):
         self.disable()
-        self.game_object.play('effect', 'lose')
 
         if self.lives == 0:
             self.field_object.game_over()

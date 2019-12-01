@@ -7,6 +7,7 @@ from src.objects.base_classes.base_objects.visible_object import VisibleObject
 from src.objects.supporting.animation import SimpleAnimation
 from src.utils.constants import Color
 from src.utils.decorators import protect
+from src.utils.intersections import is_collide_rect
 from src.utils.vector import Vector, Point
 
 
@@ -134,6 +135,8 @@ class Entity(PygameObject, GeometricObject, EnableableObject, VisibleObject):
         Если есть анимации, то рисуем анимации,
         иначе — дополнительный метод отрисовки.
         """
+        if not is_collide_rect(Point(0, 0), self.game_object.size, Point(self.real_pos), self.real_size):
+            return
         if self.is_visible:
             if self.animation is not None:
                 self.process_draw_animation()

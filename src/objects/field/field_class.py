@@ -13,7 +13,9 @@ from src.objects.field.breaking_wall import BreakingWall
 from src.objects.field.stage import Stage
 from src.objects.field.tiles import TILES, CATEGORY
 from src.objects.items import Door, DROP
-from src.utils.constants import Path
+from src.utils.constants import Path, Sounds
+from src.utils.intersections import is_collide_rect
+from src.utils.vector import Point
 
 
 class Field(PygameObject, GeometricObject):
@@ -34,7 +36,7 @@ class Field(PygameObject, GeometricObject):
     KEYS_EXIT = (pygame.K_ESCAPE,)  # Кнопки на выход из игры
 
     STAGES = (  # Уровки игры (смотрите класс Stage)
-        Stage(name="Stage 1", enemies=(6, 0, 0)),
+        # Stage(name="Stage 1", enemies=(6, 0, 0)),
         Stage(name="Stage test 0", enemies=(1, 1, 1), upgrades_number=999),
         Stage(name="Stage HELL", enemies=(1, 0, 0), upgrades_number=999, time=10),
         Stage(field_size=(9, 17), name="Enemy collision test 0", enemies=(5, 0, 0), soft_wall_number=10),
@@ -45,8 +47,9 @@ class Field(PygameObject, GeometricObject):
 
     GAMEOVER_MSG = "GAME OVER"
     WIN_MSG = "WIN"
-    SOUND_GAMEWIN = "gamewin"
-    SOUND_TIMEOUT = 'timeout'
+    SOUND_GAMEWIN = Sounds.Music.game_win.value
+    SOUND_TIMEOUT = Sounds.Effects.timeout.value
+    SOUND_LOSE = Sounds.Music.round_lose.value
 
     def __init__(self, game_object, tile_size: tuple):
         PygameObject.__init__(self, game_object)
@@ -357,13 +360,15 @@ class Field(PygameObject, GeometricObject):
         self.start_game(True, False)
 
         if win:
-            self.game_object.stop_all()
-            self.game_object.play('effect', self.SOUND_GAMEWIN)
+            self.game_object.mixer.channels['music'].stop()
+            self.game_object.mixer.channels['music'].add_sound_to_queue(self.SOUND_GAMEWIN)
         self.game_object.set_scene(self.game_object.MENU_SCENE_INDEX, 3000, (Field.GAMEOVER_MSG, Field.WIN_MSG)[win])
 
     def lose(self):
         """ Проигрыш (не полный, жизни ещё есть) """
+        self.game_object.mixer.channels['music'].stop()
         self.game_object.set_scene(self.game_object.GAME_SCENE_INDEX, 3000, self.current_stage.name)
+        self.game_object.mixer.channels['music'].add_sound_to_queue(self.SOUND_LOSE)
 
     def save_score(self):
         """ Сохранить счёт """
@@ -417,7 +422,7 @@ class Field(PygameObject, GeometricObject):
 
     def on_timeout(self):
         """ Метод, когда время на таймере закончится """
-        self.game_object.play('effect', self.SOUND_TIMEOUT)
+        self.game_object.mixer.channels['effects'].sound_play(self.SOUND_TIMEOUT)
         self.generate_enemies(self._extra_enemies)
 
     # ======================== Эвенты ========================
@@ -455,6 +460,9 @@ class Field(PygameObject, GeometricObject):
             for w in range(self.width):
                 tile_real_pos = [self.pos[k] + (w, h)[k] * self.tile_size[k] for k in range(2)]
                 rect = tile_real_pos, self.tile_size
+
+                if not is_collide_rect(Point(0, 0), self.game_object.size, Point(tile_real_pos), self.tile_size):
+                    continue
 
                 tile = self.tile_at(w, h)
                 if self.tile_images and tile.image_name and Field._BACKGROUND_TILE.image_name:
