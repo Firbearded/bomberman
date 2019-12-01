@@ -208,7 +208,7 @@ class Player(Entity):
         # # x += self.game_object.width / 2
         # y += self.game_object.height / 2
         #
-        self.field_object.pos = Point(-self.x * self.field_object.tile_size[0] + self.game_object.width / 2, -self.y * self.field_object.tile_size[1] + self.game_object.height / 2)
+        # self.field_object.pos = Point(-self.x * self.field_object.tile_size[0] + self.game_object.width / 2, -self.y * self.field_object.tile_size[1] + self.game_object.height / 2)
 
         if self.animation:
             self.is_moving = bool(normalized_speed_vector)

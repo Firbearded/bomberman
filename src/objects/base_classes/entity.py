@@ -68,29 +68,8 @@ class Entity(PygameObject, GeometricObject, EnableableObject, VisibleObject):
         :rtype: tuple
         """
 
-        grid_start_pos = self.field_object.pos
-
-        if self.game_object.current_scene == 1:
-            if self.field_object.width * self.field_object.tile_size[0] < self.game_object.width:
-                grid_start_pos[0] = (self.game_object.width - self.field_object.width * self.field_object.tile_size[
-                    0]) / 2
-            else:
-                grid_start_pos[0] = min(grid_start_pos[0], 0)
-                grid_start_pos[0] = max(grid_start_pos[0],
-                                        self.game_object.width - self.field_object.width * self.field_object.tile_size[
-                                            0])
-
-            if self.field_object.height * self.field_object.tile_size[1] < self.game_object.height:
-                grid_start_pos[1] = (self.game_object.height - self.field_object.height * self.field_object.tile_size[
-                    1]) / 2
-            else:
-                grid_start_pos[1] = min(grid_start_pos[1], 0)
-                grid_start_pos[1] = max(grid_start_pos[1],
-                                        self.game_object.height - self.field_object.height *
-                                        self.field_object.tile_size[1])
-
-        x = grid_start_pos[0] + self.x * self.field_object.tile_size[0]
-        y = grid_start_pos[1] + self.y * self.field_object.tile_size[1]
+        x = self.field_object.pos[0] + self.x * self.field_object.tile_size[0]
+        y = self.field_object.pos[1] + self.y * self.field_object.tile_size[1]
         return x, y
 
     @property

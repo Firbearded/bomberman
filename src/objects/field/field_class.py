@@ -14,6 +14,7 @@ from src.objects.field.stage import Stage
 from src.objects.field.tiles import TILES, CATEGORY
 from src.objects.items import Door, DROP
 from src.utils.constants import Path
+from src.utils.vector import Point
 
 
 class Field(PygameObject, GeometricObject):
@@ -453,22 +454,19 @@ class Field(PygameObject, GeometricObject):
         """ Отрисовка самого поля, т.е. его клеток. """
         for h in range(self.height):
             for w in range(self.width):
-                grid_start_pos = self.pos
 
-                if self.width * self.tile_size[0] < self.game_object.width:
-                    grid_start_pos[0] = (self.game_object.width - self.width * self.tile_size[0]) / 2
-                else:
-                    grid_start_pos[0] = min(grid_start_pos[0], 0)
-                    grid_start_pos[0] = max(grid_start_pos[0], self.game_object.width - self.width * self.tile_size[0])
+                new_pos = Point()
 
-                if self.height * self.tile_size[1] < self.game_object.height:
-                    grid_start_pos[1] = (self.game_object.height - self.height * self.tile_size[1]) / 2
-                else:
-                    grid_start_pos[1] = min(grid_start_pos[1], 0)
-                    grid_start_pos[1] = max(grid_start_pos[1],
-                                            self.game_object.height - self.height * self.tile_size[1])
+                for i in range(2):
+                    new_pos[i] = (-self.main_player.center[i] * self.tile_size[i] + self.game_object.size[i] / 2)
+                    if self.size[i] * self.tile_size[i] < self.game_object.size[i]:
+                        new_pos[i] = (self.game_object.size[i] - self.size[i] * self.tile_size[i]) / 2
+                    else:
+                        new_pos[i] = min(new_pos[i], 0)
+                        new_pos[i] = max(new_pos[i], self.game_object.size[i] - self.size[i] * self.tile_size[i])
 
-                tile_real_pos = [grid_start_pos[0] + w * self.tile_size[0], grid_start_pos[1] + h * self.tile_size[1]]
+                self.pos = new_pos
+                tile_real_pos = (self.pos[0] + w * self.tile_size[0], self.pos[1] + h * self.tile_size[1])
 
                 rect = tile_real_pos, self.tile_size
 
