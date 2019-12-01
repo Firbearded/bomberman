@@ -60,25 +60,8 @@ class Ovape (Enemy):
     """
     chance_of_turning = 0 #Шанс поворота в процентах, растет на 20 процентов на каждом перекрёстке, вплоть до 50 процентов,
 
-    def new_target(self):
-        """ Выбор мобом следующей цели """
-        dx = -1, 0, 1, 0
-        dy = 0, -1, 0, 1
-
-        possible_target = []
-
-        tile_x, tile_y = self.tile
-        for x, y in zip(dx, dy):
-            if self.field_object.tile_at(x + tile_x, y + tile_y) != TileWall and self.field_object.tile_at(x + tile_x, y + tile_y) != TileUnreachableEmpty:
-                d = Point(x + tile_x, y + tile_y)
-                possible_target.append(d)
-
-        if not possible_target:
-            return self.tile
-
-        rand_i = randint(0, len(possible_target) - 1)  # Получение случайного направления из
-        target = possible_target[rand_i]  # массива возможных направлений
-        return target
+    def can_walk_at(self, pos):
+        return self.field_object.tile_at(pos) != TileWall and self.field_object.tile_at(pos) != TileUnreachableEmpty
 
     def additional_logic(self):
         if self.target == self.pos or not self.speed_vector:  # Если мы стоим на месте,
@@ -89,7 +72,7 @@ class Ovape (Enemy):
         new_pos = self.pos + normalized_speed_vector             # Следующая позиция (которая будет в следующий тик)
         new_target_direction = (self.target - new_pos).united    # Направление к цели от следующей позиции
 
-        if self.target != self.tile and (self.field_object.tile_at(self.target) == TileWall or self.field_object.tile_at(self.target) == TileUnreachableEmpty):
+        if self.target != self.tile and not self.can_walk_at(self.target):
             self.speed_vector *= -1   # Проверка на коллизии. Если мы вдруг идём прямо в клетку, по которой нельзя
             self.target = self.tile   # ходить, то разворачиваемся.
 
