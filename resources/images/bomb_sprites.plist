@@ -49,11 +49,11 @@
 		<key>format</key>
 		<integer>2</integer>
 		<key>realTextureFileName</key>
-		<string>test_image0.png</string>
+		<string>input/bomb_sprites.png</string>
 		<key>size</key>
 		<string>{512,512}</string>
 		<key>textureFileName</key>
-		<string>test_image0.png</string>
+		<string>input/bomb_sprites.png</string>
 	</dict>
 </dict>
 </plist>

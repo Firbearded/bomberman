@@ -1,4 +1,77 @@
+from enum import Enum
 from os.path import join
+
+
+class TextureCategories(Enum):
+    tiles = 'tile_textures'
+    bomberman = "bomberman_sprites"
+    fire = "fire_sprites"
+    bomb = "bomb_sprites"
+    item = "item_sprites"
+    enemy = "enemy_sprites"
+
+
+class TexturesTiles(Enum):
+    empty = 'grass'
+    wall = 'wall'
+    soft_wall = 'break_wall'
+
+    class soft_wall_anim(Enum):
+        anim1 = 'break_wall'
+        anim2 = 'break_wall1'
+        anim3 = 'break_wall2'
+        anim4 = 'break_wall3'
+
+
+class TexturesBobmerman(Enum):
+    pass  # TODO
+
+
+class TexturesFire(Enum):
+    pass
+
+
+class TexturesBomb(Enum):
+    pass
+
+
+class TexturesItem(Enum):
+    pass
+
+
+class TexturesEnemy(Enum):
+    pass
+
+
+SpritesName = {
+    TextureCategories.tiles: TexturesTiles,
+    TextureCategories.bomberman: TexturesBobmerman,
+    TextureCategories.fire: TexturesFire,
+    TextureCategories.bomb: TexturesBomb,
+    TextureCategories.item: TexturesItem,
+    TextureCategories.enemy: TexturesEnemy,
+}
+
+
+class Sounds:
+    class Background(Enum):
+        background1 = 'bg1'
+        background2 = 'bg2'
+        background3 = 'bg3'
+        background4 = 'bg4'
+
+    class Effects(Enum):
+        explosion = 'explosion'
+        item_pick_up = 'item_pick_up'
+        bomb_place = 'bomb_place'
+        timeout = 'timeout'
+
+    class Music(Enum):
+        menu = 'menu'
+        round_start = 'start'
+        round_win = 'win'
+        round_lose = 'lose'
+        game_win = 'gamewin'
 
 
 class Path:
@@ -7,8 +80,22 @@ class Path:
 
     IMAGE_DIR = join(RESOURCES_DIR, "images")
     TEXTURES_DIR = IMAGE_DIR
+    TEXTURES_EXTENSION_PIC = '.png'
+    TEXTURES_EXTENSION_LIST = '.plist'
+
+    TEXTURES = TextureCategories
 
     SOUNDS_DIR = join(RESOURCES_DIR, "sounds")
+    SOUNDS_MUSIC_DIR = join(SOUNDS_DIR, "music")
+    SOUNDS_EFFECTS_DIR = join(SOUNDS_DIR, "effects")
+    SOUNDS_BACKGROUND_DIR = join(SOUNDS_MUSIC_DIR, "background")
+    SOUNDS_EXTENSION = '.ogg'
+
+    SOUNDS = {
+        SOUNDS_BACKGROUND_DIR: Sounds.Background,
+        SOUNDS_EFFECTS_DIR: Sounds.Effects,
+        SOUNDS_MUSIC_DIR: Sounds.Music,
+    }
 
     FONT_DIR = join(RESOURCES_DIR, "fonts")
     FONT_OLD = join(FONT_DIR, "arcade-classic.ttf")

@@ -1,7 +1,11 @@
 from src.objects.base_classes.enemy import Enemy
 from src.objects.base_classes.item import Item
 from src.objects.player import Player
+from src.utils.constants import Sounds
 
+
+# TODO:  + детонатор + Bomb-Walk + Wall-Walker + Mystery + Flame-Proof +
+# TODO: инкапсуляция игрока
 
 class BombNumberUp(Item):
     SPRITE_NAMES = ("count_up",)
@@ -33,11 +37,11 @@ class LifeUp(Item):
 
 class Door(Item):
     SPRITE_NAMES = ("door",)
-    SOUND_WIN = 'win'
+    SOUND_WIN = Sounds.Music.round_win.value
     SIZE = 1, 1
 
     def on_take(self, player_object):
-        self.game_object.play('effect', self.SOUND_WIN)
+        self.game_object.mixer['effects'].sound_play(self.SOUND_WIN)
         # TODO : задержка
         self.field_object.next_stage()
 

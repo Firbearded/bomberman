@@ -6,30 +6,31 @@ from PIL import Image
 
 from src.utils.constants import Path
 
-TEXTURE_FILENAMES = "tile_textures", "bomberman_sprites", "fire_sprites", \
-                    "bomb_sprites", "item_sprites", "enemy_sprites"
+TEXTURE_FILENAMES = Path.TEXTURES
 TEXTURE_DIR = Path.TEXTURES_DIR
 
-SOUND_FILENAMES = {
-    "background":
-        ('bg1', 'bg2', 'bg3', 'bg4'),
-    "effect":
-        ('explosion', 'lose', 'menu', 'setbomb', 'start', 'item', 'win', 'gamewin', 'timeout'),
-}
 SOUND_DIR = Path.SOUNDS_DIR
+SOUND_FILENAMES = Path.SOUNDS
 
-
-TOTAL_NUMBER = len(TEXTURE_FILENAMES) + sum([len(SOUND_FILENAMES[key]) for key in SOUND_FILENAMES])
+textures_len = 0
+for k in TEXTURE_FILENAMES:
+    textures_len += 1
+sound_len = 0
+for k in SOUND_FILENAMES.values():
+    for j in k:
+        sound_len += 1
+TOTAL_NUMBER = textures_len + sound_len
 
 
 def load_textures(game_object, directory=TEXTURE_DIR, filenames=TEXTURE_FILENAMES):
     """ Загрузка текстур """
     result = {}
     for filename in filenames:
+        filename = filename.value
         game_object.loading.set_stage("textures '{}'".format(filename))
 
-        data_filename = join(directory, filename + '.plist')
-        png_filename = join(directory, filename + '.png')
+        data_filename = join(directory, filename + Path.TEXTURES_EXTENSION_LIST)
+        png_filename = join(directory, filename + Path.TEXTURES_EXTENSION_PIC)
 
         flag = False
         for f in (data_filename, png_filename):
@@ -135,20 +136,19 @@ def frames_from_data(data_filename):  # Вспомогательные
 def load_sounds(game_object, ):
     """ Загрузка звуков """
     result = {}
-    ex = '.ogg'
+    ex = Path.SOUNDS_EXTENSION
 
     for dir2 in SOUND_FILENAMES:
-        sounds = {}
         for filename in SOUND_FILENAMES[dir2]:
+            filename = filename.value
             game_object.loading.set_stage("sounds '{}'".format(filename))
 
-            path = join(SOUND_DIR, dir2, filename + ex)
+            path = join(dir2, filename + ex)
 
             sound = pygame.mixer.Sound(path)
-            sounds[splitext(filename)[0]] = sound
+            # sounds[splitext(filename)[0]] = sound
+            result[splitext(filename)[0]] = sound
             print("SOUND LOADING: from '{}' loaded '{}'".format(path, sound))
             game_object.loading.next()
-
-        result[dir2] = sounds
 
     return result

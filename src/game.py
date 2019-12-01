@@ -4,6 +4,7 @@ from time import time
 
 import pygame
 
+from src.objects.supporting.sound_mixer import SoundMixer
 from src.scenes.captions_scene import CaptionsScene
 from src.scenes.game_over_scene import GameoverScene
 from src.scenes.game_scene import GameScene
@@ -29,7 +30,8 @@ class Game:
     def __init__(self, window_size=(800, 600), title='Bomberman'):
         self.size = self.width, self.height = window_size
         self.title = title
-        self.volume = .05
+
+        self.mixer = SoundMixer()
 
         self.init()
 
@@ -37,7 +39,7 @@ class Game:
         loading_thread = Thread(target=self.loading.main_loop)
         loading_thread.start()
 
-        self.load_resurces()
+        self.load_resources()
 
         self.loading.running = False
         if self.loading.lock.acquire():
@@ -56,10 +58,10 @@ class Game:
         self.resize_screen(self.size)
         pygame.display.set_caption(self.title)
 
-    def load_resurces(self):
+    def load_resources(self):
         """ Загрузка ресурсов """
         self.images = load_textures(self)
-        self.sounds = load_sounds(self)
+        self.mixer.init(load_sounds(self))
 
     def create_scenes(self):
         """ Создание сцен """
@@ -94,6 +96,7 @@ class Game:
                 break
 
             self.scenes[self.current_scene].process_frame(eventlist)
+            self.mixer.process_logic()
 
             end_time = time()  # Расчёт delta_time
             self.delta_time = (end_time - loop_start_time)
@@ -122,25 +125,3 @@ class Game:
         else:
             self.current_scene = int(index)
             self.scenes[self.current_scene].on_switch(*args, **kwargs)
-
-    def play(self, category, name, **kwargs):
-        """ Запуск звука """
-        self.sounds[category][name].set_volume(self.volume)
-        self.sounds[category][name].play(**kwargs)
-
-    def stop(self, category, name):
-        """ Остановка звука """
-        self.sounds[category][name].stop()
-
-    def set_volume(self, p):  # TODO: optimize
-        """ Устанавлмваем всем звукам громкость """
-        self.volume = p
-        for c in self.sounds:
-            for n in self.sounds[c]:
-                self.sounds[c][n].set_volume(self.volume)
-
-    def stop_all(self):
-        """ Останавливаем все звуки """
-        for c in self.sounds:
-            for n in self.sounds[c]:
-                self.sounds[c][n].stop()

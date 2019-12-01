@@ -4,7 +4,7 @@
 <dict>
 	<key>frames</key>
 	<dict>
-		<key>break_wall.png</key>
+		<key>c_wall.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{2,2},{200,200}}</string>
@@ -17,7 +17,7 @@
 			<key>sourceSize</key>
 			<string>{200,200}</string>
 		</dict>
-		<key>break_wall1.png</key>
+		<key>c_wall1.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{204,2},{200,200}}</string>
@@ -30,10 +30,10 @@
 			<key>sourceSize</key>
 			<string>{200,200}</string>
 		</dict>
-		<key>break_wall2.png</key>
+		<key>c_wall2.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{204,204},{200,200}}</string>
+			<string>{{406,2},{200,200}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -43,10 +43,36 @@
 			<key>sourceSize</key>
 			<string>{200,200}</string>
 		</dict>
-		<key>break_wall3.png</key>
+		<key>c_wall3.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{2,204},{200,200}}</string>
+			<string>{{608,2},{200,200}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{200,200}}</string>
+			<key>sourceSize</key>
+			<string>{200,200}</string>
+		</dict>
+		<key>c_wall4.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{810,2},{200,200}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{200,200}}</string>
+			<key>sourceSize</key>
+			<string>{200,200}</string>
+		</dict>
+		<key>c_wall5.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{810,204},{200,200}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -72,7 +98,7 @@
 		<key>wall.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{2,608},{200,200}}</string>
+			<string>{{2,204},{200,200}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -88,11 +114,11 @@
 		<key>format</key>
 		<integer>2</integer>
 		<key>realTextureFileName</key>
-		<string>test_image0.png</string>
+		<string>input/tile_textures.png</string>
 		<key>size</key>
 		<string>{1024,1024}</string>
 		<key>textureFileName</key>
-		<string>test_image0.png</string>
+		<string>input/tile_textures.png</string>
 	</dict>
 </dict>
 </plist>

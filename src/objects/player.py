@@ -3,7 +3,7 @@ import pygame
 from src.objects.base_classes.entity import Entity
 from src.objects.bomb import Bomb
 from src.objects.supporting.animation import SimpleAnimation
-from src.utils.constants import Color
+from src.utils.constants import Color, Sounds
 from src.utils.decorators import protect
 from src.utils.intersections import collide_rect
 from src.utils.sign import sign
@@ -20,12 +20,12 @@ class Player(Entity):
         },
         'walking': {
             'up': ('bb_walking1_up', 'bb_walking2_up',),
-            'down': ('bb_walking1_down', 'bb_walking2',),
-            'horizontal': ('bb_walking1_horizontal', 'bb_walking2_horizontal',),
+            'down': ('bb_walking1_down', 'bb_walking2_down',),
+            'horizontal': ('bb_h1', 'bb_h2', 'bb_h3', 'bb_h4', 'bb_h5', 'bb_h6', 'bb_h7', ),
         }
     }
 
-    SOUND_BOMB = 'setbomb'
+    SOUND_BOMB = Sounds.Effects.bomb_place.value
 
     TEMP_DIR = {(1, 0): 'right',
                 (0, 1): 'down',
@@ -88,7 +88,7 @@ class Player(Entity):
         if not self.game_object.images: return
 
         animation_dict = {}
-        animation_delay = 150
+        animation_delay = 100
 
         had_image_size = False
         for state in self.SPRITE_NAMES:
@@ -101,7 +101,7 @@ class Player(Entity):
 
                     if not had_image_size:
                         w, h = sprite.get_rect().size
-                        k = w / self.real_size[0]
+                        k = w / (self.real_size[0] * 1.4)
                         new_size = (int(w // k), int(h // k))
                         self.image_size = new_size
                         had_image_size = True
@@ -196,20 +196,6 @@ class Player(Entity):
 
         self.pos = self.pos + normalized_speed_vector
 
-        # TODO: screen shift
-        # x, y = self.pos
-        # top_interval = 200
-        # left_interval = 50
-        # right_interval = 50
-        # x = max(-self.field_object.real_size[0] + right_interval + self.game_object.width / 2, min(left_interval, -self.x * self.field_object.tile_size[0] + self.game_object.width / 2))
-        # y = max(-top_interval, -self.y * self.field_object.tile_size[1])
-        #
-        # print(x, y)
-        # # x += self.game_object.width / 2
-        # y += self.game_object.height / 2
-        #
-        self.field_object.pos = Point(-self.x * self.field_object.tile_size[0] + self.game_object.width / 2, -self.y * self.field_object.tile_size[1] + self.game_object.height / 2)
-
         if self.animation:
             self.is_moving = bool(normalized_speed_vector)
             if self.is_moving:
@@ -237,7 +223,7 @@ class Player(Entity):
                 if self.current_bombs_number < self.bombs_number:
                     if self.field_object.can_place_bomb(self.tile):
                         self.current_bombs_number += 1
-                        self.game_object.play('effect', self.SOUND_BOMB)
+                        self.game_object.mixer.channels['effects'].sound_play(self.SOUND_BOMB)
                         Bomb(self, self.tile, self.bombs_power)
 
     def process_draw_animation(self):
@@ -247,7 +233,6 @@ class Player(Entity):
 
     def hurt(self, from_enemy):
         self.disable()
-        self.game_object.play('effect', 'lose')
 
         if self.lives == 0:
             self.field_object.game_over()
