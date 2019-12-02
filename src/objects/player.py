@@ -66,10 +66,10 @@ class Player(Entity):
             self.bombs_power = self.BOMBS_POWER
             self.bombs_number = self.BOMBS_NUMBER
             self.score = 0
+            self.speed_vector = Vector()
         self.current_bombs_number = 0
         self.direction = Vector(0, 1)
         self.is_moving = False
-        self.speed_vector = Vector()
         self.pos = Point(1, self.field_object.height - 2)
         self.enable()
         self.show()
@@ -203,6 +203,7 @@ class Player(Entity):
             self.animation.set_state(self.get_state())
 
     def process_event(self, event):
+
         if event.type == pygame.KEYDOWN:
             key = event.key
             for keys, i, m in self.KEYS_MOV:
@@ -217,6 +218,11 @@ class Player(Entity):
                     self.speed_vector[i] += (-m)
                     self.speed_vector[i] = sign(self.speed_vector[i])
                     break
+
+        if event.type == pygame.KEYDOWN:
+            print("KEYDOWN", event.key, self.speed_vector)
+        if event.type == pygame.KEYUP:
+            print("KEYUP", event.key, self.speed_vector)
 
         if event.type == pygame.KEYDOWN:
             if event.key in self.KEYS_BOMB:
