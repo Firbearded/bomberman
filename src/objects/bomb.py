@@ -149,16 +149,12 @@ class Fire(Entity, TimerObject):
     def process_draw_reserve(self):
         pygame.draw.rect(self.game_object.screen, self.COLOR[self._fire_type], (self.real_pos, self.real_size), 0)
 
-
-class Bomb(Entity, TimerObject):
+class BombWithoutTimer(Entity):
+    """"
+    Бомба без таймера (если у игрока есть детонатор).
+    Работает так же, как обычная бомба, но взрывается по
+    нажатию клавиши игроком
     """
-    Класс Bomb - собственно бомба в игре bomberman.
-    Должна создаваться объектом игрока.
-    Висит на поле некоторое время, а потом взрывается, распространяя огонь.
-    """
-    DELAY = 2000
-    POWER = 2
-
     SPRITE_CATEGORY = "bomb_sprites"
     SPRITE_NAMES = ('bomb', 'bomb1', 'bomb2')
     SPRITE_DELAY = 100
@@ -167,7 +163,35 @@ class Bomb(Entity, TimerObject):
 
     COLOR = Color.GREEN
 
-    def __init__(self, player_object, pos: Point, power=POWER, delay=DELAY):
+    POWER = 2
+
+    def __init__(self, player_object, pos: Point, power):
+        Entity.__init__(self, player_object.field_object, round(pos))
+        #TimerObject.__init__(self, delay)
+
+        self.player_object = player_object
+        self.power = power
+        self.animation = self.create_animation()
+        self.field_object.tile_set(self.pos, self.field_object.TILE_UNREACHABLE_EMPTY)
+        # ставим под себя невидимую стену
+        #self.start()
+
+    def blow_up(self):
+        Fire(self, round(self.pos), self.power)  # Когда таймер заканчивается, то создаём огонь
+        self.player_object.current_bombs_number -= 1  # Уменьшаем число активных бомб у игрока
+        self.field_object.tile_set(round(self.pos), self.field_object.TILE_EMPTY)  # Ставим под себя пустую клетку
+        self.destroy()
+
+
+class Bomb(BombWithoutTimer, TimerObject):
+    """
+    Класс Bomb - собственно бомба в игре bomberman.
+    Должна создаваться объектом игрока.
+    Висит на поле некоторое время, а потом взрывается, распространяя огонь.
+    """
+    DELAY = 2000
+
+    def __init__(self, player_object, pos: Point, power=BombWithoutTimer.POWER, delay=DELAY):
         """
         :param player_object: ссылка на объект игрока, установившего бомбу
         :param pos: позиция бомбы на игровом поле
@@ -178,21 +202,12 @@ class Bomb(Entity, TimerObject):
         :type power: int
         :type delay: int
         """
-        Entity.__init__(self, player_object.field_object, round(pos))
+        BombWithoutTimer.__init__(self, player_object, pos, power)
         TimerObject.__init__(self, delay)
-
-        self.player_object = player_object
-        self.power = power
-        self.animation = self.create_animation()
-        self.field_object.tile_set(self.pos, self.field_object.TILE_UNREACHABLE_EMPTY)
-        # ставим под себя невидимую стену
         self.start()
 
     def additional_logic(self):
         self.timer_logic()
 
     def on_timeout(self):
-        Fire(self, self.pos, self.power)  # Когда таймер заканчивается, то создаём огонь
-        self.player_object.current_bombs_number -= 1  # Уменьшаем число активных бомб у игрока
-        self.field_object.tile_set(self.pos, self.field_object.TILE_EMPTY)  # Ставим под себя пустую клетку
-        self.destroy()  # И уничтожаемся
+        self.blow_up()

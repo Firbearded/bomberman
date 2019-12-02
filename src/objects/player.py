@@ -1,7 +1,7 @@
 import pygame
 
 from src.objects.base_classes.entity import Entity
-from src.objects.bomb import Bomb
+from src.objects.bomb import BombWithoutTimer, Bomb
 from src.objects.supporting.animation import SimpleAnimation
 from src.utils.constants import Color
 from src.utils.decorators import protect
@@ -40,6 +40,7 @@ class Player(Entity):
                 ((pygame.K_DOWN, pygame.K_s,), 1, 1),
                 )
     KEYS_BOMB = (pygame.K_SPACE, )
+    KEYS_DETONATE_BOMB = (pygame.K_b, )
 
     COLOR = Color.BLUE
 
@@ -66,6 +67,9 @@ class Player(Entity):
             self.bombs_power = self.BOMBS_POWER
             self.bombs_number = self.BOMBS_NUMBER
             self.score = 0
+            self.has_detonator = False
+
+        self.bombs_with_detonator = []
         self.current_bombs_number = 0
         self.direction = Vector(0, 1)
         self.is_moving = False
@@ -238,7 +242,17 @@ class Player(Entity):
                     if self.field_object.can_place_bomb(self.tile):
                         self.current_bombs_number += 1
                         self.game_object.play('effect', self.SOUND_BOMB)
-                        Bomb(self, self.tile, self.bombs_power)
+                        if self.has_detonator:
+                            self.bombs_with_detonator.append(BombWithoutTimer(self, self.tile, self.bombs_power))
+                        else:
+                            Bomb(self, self.tile, self.bombs_power)
+
+        if event.type == pygame.KEYDOWN:
+            if event.key in self.KEYS_DETONATE_BOMB:
+                if self.has_detonator and \
+                    len(self.bombs_with_detonator) != 0:
+                    deleting_bomb = self.bombs_with_detonator.pop(0)
+                    deleting_bomb.blow_up()
 
     def process_draw_animation(self):
         p = Point(self.real_pos)
