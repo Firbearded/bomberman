@@ -68,6 +68,12 @@ class Player(Entity):
             self.bombs_number = self.BOMBS_NUMBER
             self.score = 0
             self.has_detonator = False
+            '''
+            Если у игрока есть детонатор, он может взорвать
+            первую в списке бомбу (self.bombs_with_detonator), если
+            та была поставлена после получения бонуса (иначе её не будет
+            в этом списке). Такие бомбы могут стоять бесконечно долго.
+            '''
 
         self.bombs_with_detonator = []
         self.current_bombs_number = 0
