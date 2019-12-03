@@ -52,7 +52,7 @@ class Ovape(Enemy):
     COLOR = Color.LIGHT_GREY
 
     def can_walk_at(self, pos):
-        return self.field_object.tile_at(pos).wallpass
+        return self.field_object.tile_at(pos).get_wallpass
 
 
 class Doria(Minvo, Ovape):
