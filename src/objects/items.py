@@ -11,28 +11,28 @@ class BombNumberUp(Item):
     SPRITE_NAMES = ("count_up",)
 
     def on_take(self, player_object):
-        player_object.bombs_number += 1
+        player_object.bomb_up()
 
 
 class SpeedUp(Item):
     SPRITE_NAMES = ("speed_up",)
 
     def on_take(self, player_object):
-        player_object.speed_value += .2
+        player_object.speed_up()
 
 
 class PowerUp(Item):
     SPRITE_NAMES = ("power_up",)
 
     def on_take(self, player_object):
-        player_object.bombs_power += 1
+        player_object.power_up()
 
 
 class LifeUp(Item):
     SPRITE_NAMES = ("life",)
 
     def on_take(self, player_object):
-        player_object.lives += 1
+        player_object.life_up()
 
 
 class Door(Item):

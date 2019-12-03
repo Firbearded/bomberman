@@ -19,7 +19,7 @@ class GameScene(Scene):
         tile_size = (40, 40)
 
         self.field = Field(self.game, tile_size)
-        Player(self.field, Point(1, 1))
+        Player(self.field)
         self.field.flush_enitites()
         self.objects.append(self.field)
 
@@ -53,6 +53,6 @@ class GameScene(Scene):
         pos = Point((self.game.width - self.timer_object.size[0]) / 2, 0)
         self.timer_object.pos = pos
 
-        self.lives_object.set_text("Lives: {}".format(self.field.main_player.lives))
+        self.lives_object.set_text("Lives: {}".format(self.field.main_player.current_lives))
         pos = Point((self.game.width - self.lives_object.size[0], 0))
         self.lives_object.pos = pos

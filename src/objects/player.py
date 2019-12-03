@@ -21,7 +21,7 @@ class Player(Entity):
         'walking': {
             'up': ('bb_walking1_up', 'bb_walking2_up',),
             'down': ('bb_walking1_down', 'bb_walking2_down',),
-            'horizontal': ('bb_h1', 'bb_h2', 'bb_h3', 'bb_h4', 'bb_h5', 'bb_h6', 'bb_h7', ),
+            'horizontal': ('bb_h1', 'bb_h2', 'bb_h3', 'bb_h4', 'bb_h5', 'bb_h6', 'bb_h7',),
         }
     }
 
@@ -39,11 +39,12 @@ class Player(Entity):
                 ((pygame.K_UP, pygame.K_w,), 1, -1),
                 ((pygame.K_DOWN, pygame.K_s,), 1, 1),
                 )
-    KEYS_BOMB = (pygame.K_SPACE, )
+    KEYS_BOMB = (pygame.K_SPACE,)
 
     COLOR = Color.BLUE
 
     SPEED_VALUE = 2
+    SPEED_DELTA = 0.2
     LIVES = 2
     BOMBS_POWER = 2
     BOMBS_NUMBER = 1
@@ -53,31 +54,36 @@ class Player(Entity):
     MAX_BOMBS_POWER = 10
     MAX_BOMBS_NUMBER = 10
 
-    def __init__(self, field_object, pos: Point = (0, 0), size: tuple = (1, 1)):
-        super().__init__(field_object, pos, size)
+    def __init__(self, field_object):
+        super().__init__(field_object, Point(0, 0), (1, 1))
 
-        self.reset(True)
+        self.reset(full=True)
         self.animation = self.create_animation()
 
     def reset(self, full=False):
         if full:
-            self.speed_value = self.SPEED_VALUE        # TODO: инкапсуляция
-            self.lives = self.LIVES
-            self.bombs_power = self.BOMBS_POWER
-            self.bombs_number = self.BOMBS_NUMBER
-            self.score = 0
             self.speed_vector = Vector()
-        self.current_bombs_number = 0
-        self.direction = Vector(0, 1)
-        self.is_moving = False
+            self.speed_value = self.SPEED_VALUE
+            self._score = 0
+            self._current_lives = self.LIVES
+            self._bombs_power = self.BOMBS_POWER
+            self._bombs_number = self.BOMBS_NUMBER
+            self._has_detonator = False
         self.pos = Point(1, self.field_object.height - 2)
+        self._direction = Vector(0, 1)
+        self._is_moving = False
+
+        self._active_bombs_number = 0
+        self._has_wallpass = False
+        self._has_flamepass = False
+        self._has_mystery = False
         self.enable()
         self.show()
-        print(self.speed_vector, self.direction)
 
+    # ================= Для анимаций ==================
     def get_state(self):
-        state = 'walking' if self.is_moving else 'standing'
-        d = list(self.direction)
+        state = 'walking' if self._is_moving else 'standing'
+        d = list(self._direction)
         if 0 not in d:
             d[1] = 0
         direction = self.TEMP_DIR[tuple(d)]
@@ -122,7 +128,14 @@ class Player(Entity):
 
         return SimpleAnimation(animation_dict, self.get_state())
 
+    def process_draw_animation(self):
+        p = Point(self.real_pos)
+        rect = (p.x, p.y - (self.image_size[1] - self.real_size[1])), self.image_size
+        self.game_object.screen.blit(self.animation.current_image, rect)
+
+    # ============== Движеник и коллизии ==============
     def corner_fixing(self, speed_vector):
+        """ Метод, где мы обрабатываем столкновения в углы и обход их """
         tile_x, tile_y = self.tile
         is_corner_fixing = 0  # Исправление застревания на углах
         for i in range(2):
@@ -160,6 +173,7 @@ class Player(Entity):
         return speed_vector, is_corner_fixing
 
     def wall_collisions(self, speed_vector):
+        """ Метод на обработку коллизий со стенами """
         tile_x, tile_y = self.tile
         for i in range(2):  # страшный код на проверку и исправления коллизий
             if speed_vector[i] == 0:
@@ -186,6 +200,7 @@ class Player(Entity):
         return speed_vector
 
     def additional_logic(self):
+        """ Движение, вызов обработки столкновений и изменение состояния анимации """
         normalized_speed_vector, is_fixing = self.corner_fixing(self.speed_vector.copy)
 
         if not is_fixing:
@@ -197,13 +212,13 @@ class Player(Entity):
         self.pos = self.pos + normalized_speed_vector
 
         if self.animation:
-            self.is_moving = bool(normalized_speed_vector)
-            if self.is_moving:
-                self.direction = normalized_speed_vector.united
+            self._is_moving = bool(normalized_speed_vector)
+            if self._is_moving:
+                self._direction = normalized_speed_vector.united
             self.animation.set_state(self.get_state())
 
+    # =============== Обработка нажатий ================
     def process_event(self, event):
-
         if event.type == pygame.KEYDOWN:
             key = event.key
             for keys, i, m in self.KEYS_MOV:
@@ -211,6 +226,12 @@ class Player(Entity):
                     self.speed_vector[i] += m
                     self.speed_vector[i] = sign(self.speed_vector[i])
                     break
+            if event.key in self.KEYS_BOMB:
+                if self._active_bombs_number < self._bombs_number:
+                    if self.field_object.can_place_bomb(self.tile):
+                        self.game_object.mixer.channels['effects'].sound_play(self.SOUND_BOMB)
+                        Bomb(self, self.tile, self._bombs_power)
+
         if event.type == pygame.KEYUP:
             key = event.key
             for keys, i, m in self.KEYS_MOV:
@@ -219,29 +240,76 @@ class Player(Entity):
                     self.speed_vector[i] = sign(self.speed_vector[i])
                     break
 
-        if event.type == pygame.KEYDOWN:
-            print("KEYDOWN", event.key, self.speed_vector)
-        if event.type == pygame.KEYUP:
-            print("KEYUP", event.key, self.speed_vector)
+    # =============== Улучшения ================
+    def bomb_up(self):
+        self._bombs_number = min(self._bombs_number + 1, self.MAX_BOMBS_NUMBER)
 
-        if event.type == pygame.KEYDOWN:
-            if event.key in self.KEYS_BOMB:
-                if self.current_bombs_number < self.bombs_number:
-                    if self.field_object.can_place_bomb(self.tile):
-                        self.current_bombs_number += 1
-                        self.game_object.mixer.channels['effects'].sound_play(self.SOUND_BOMB)
-                        Bomb(self, self.tile, self.bombs_power)
+    def power_up(self):
+        self._bombs_power = min(self._bombs_power + 1, self.MAX_BOMBS_POWER)
 
-    def process_draw_animation(self):
-        p = Point(self.real_pos)
-        rect = (p.x, p.y - (self.image_size[1] - self.real_size[1])), self.image_size
-        self.game_object.screen.blit(self.animation.current_image, rect)
+    def speed_up(self):
+        self.speed_value = min(self.speed_value + self.SPEED_DELTA, self.MAX_SPEED_VALUE)
 
+    def life_up(self):
+        self._current_lives = min(self._current_lives + 1, self.MAX_LIVES)
+
+    def get_detonator(self):
+        self._has_detonator = True
+
+    def get_wallpass(self):
+        self._has_wallpass = True
+
+    def get_flamepass(self):
+        self._has_flamepass = True
+
+    def get_mystery(self):
+        self._has_mystery = True
+
+    # =============== Остальное ================
     def hurt(self, from_enemy):
+        """ Когда больно """
         self.disable()
 
-        if self.lives == 0:
+        if self._current_lives == 0:
             self.field_object.game_over()
         else:
-            self.lives -= 1
-            self.field_object.lose()
+            self._current_lives -= 1
+            self.field_object.round_lose()
+
+    @property
+    def score(self):
+        return self._score
+
+    def add_score(self, score):
+        self._score += int(score)
+
+    @property
+    def current_lives(self):
+        return self._current_lives
+
+    @property
+    def bombs_number(self):
+        return self._bombs_number
+
+    @property
+    def bombs_power(self):
+        return self._bombs_power
+
+    def inc_active_bombs_number(self):
+        self._active_bombs_number += 1
+
+    def dec_active_bombs_number(self):
+        self._active_bombs_number -= 1
+
+    def _to_save(self):
+        return "_score", "_current_lives", "_bombs_power", "_bombs_number", "_has_detonator"
+
+    def to_str(self):
+        s = " ".join(map(str, [vars(self)[v] for v in self._to_save()]))
+        return s
+
+    def from_str(self, string):
+        string = string.strip()
+        vdict = vars(self)
+        for var, s in zip(self._to_save(), string.split()):
+            vdict[var] = type(vdict[var])(s)

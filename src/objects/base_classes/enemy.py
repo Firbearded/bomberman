@@ -37,18 +37,6 @@ class Enemy(Entity):
         return self.field_object.tile_at(pos).walkable
 
     # ======= Цель (куда мы движемся) и направление, чтобы попасть в эту цель =======
-    def _get_direction(self, pos):
-        """
-        Расчёт направления для моба.
-
-        Должен возвращать единичный вектор направления —
-         в какую сторону мы сейчас хотим двигаться,
-         чтобы от pos прийти в Enemy.target
-        """
-        target_direction = self.target - pos
-
-        return target_direction.united
-
     def _get_new_target(self):
         """ Выбор мобом следующей цели (При стандартном поведение моба) """
         dx = -1, 0, 1, 0
@@ -66,6 +54,19 @@ class Enemy(Entity):
 
         target = choice(possible_targets)  # Получение случайного направления из массива возможных направлений
         return target
+
+    def _get_new_subtarget(self):
+        """
+        Расчёт сдедующей клетки для моба, чтобы попасть в target.
+
+        Должен возвращать одну из четырёх клеткок, которые вокруг моба —
+         в какую сторону мы сейчас хотим двигаться,
+         чтобы от pos прийти в Enemy.target
+        """
+        return self.target
+
+    def _get_direction(self, pos):
+        return (self._get_new_subtarget() - pos).united
 
     def update_direction(self):
         self.speed_vector = self._get_direction(self.pos)
@@ -132,5 +133,5 @@ class Enemy(Entity):
 
     def hurt(self, from_):
         """ Метод смерти моба """
-        from_.bomb_object.player_object.score += self.SCORE  # Добавляем счёт тому, чья бомба взорвала этого моба
+        from_.bomb_object.player_object.add_score(self.SCORE)  # Добавляем счёт тому, чья бомба взорвала этого моба
         self.destroy()

@@ -36,11 +36,11 @@ class Field(PygameObject, GeometricObject):
     KEYS_EXIT = (pygame.K_ESCAPE,)  # Кнопки на выход из игры
 
     STAGES = (  # Уровки игры (смотрите класс Stage)
-        Stage(name="Stage 1", enemies=(6,)),  # TODO: не рандомные улучшения + детонатор
-        Stage(name="Stage 2", enemies=(3, 3)),
-        Stage(name="Stage 3", enemies=(2, 2, 2)),
-        Stage(name="Stage 4", enemies=(1, 1, 2, 2)),
-        Stage(name="Stage 5", enemies=(0, 4, 3)),
+        # Stage(name="Stage 1", enemies=(6,)),  # TODO: не рандомные улучшения + детонатор
+        # Stage(name="Stage 2", enemies=(3, 3)),
+        # Stage(name="Stage 3", enemies=(2, 2, 2)),
+        # Stage(name="Stage 4", enemies=(1, 1, 2, 2)),
+        # Stage(name="Stage 5", enemies=(0, 4, 3)),
         Stage(name="Stage test 0", enemies=(1, 1, 1), upgrades_number=999),
         Stage(name="Stage HELL", enemies=(1, 0, 0), upgrades_number=999, time=10),
         Stage(field_size=(9, 17), name="Enemy collision test 0", enemies=(5, 0, 0), soft_wall_number=10),
@@ -368,7 +368,7 @@ class Field(PygameObject, GeometricObject):
             self.game_object.mixer.channels['music'].add_sound_to_queue(self.SOUND_GAMEWIN)
         self.game_object.set_scene(self.game_object.MENU_SCENE_INDEX, 3000, (Field.GAMEOVER_MSG, Field.WIN_MSG)[win])
 
-    def lose(self):
+    def round_lose(self):
         """ Проигрыш (не полный, жизни ещё есть) """
         self.game_object.mixer.channels['music'].stop()
         self.game_object.set_scene(self.game_object.GAME_SCENE_INDEX, 3000, self.current_stage.name)
@@ -396,13 +396,7 @@ class Field(PygameObject, GeometricObject):
         with open(Path.STAGE_SAVE, 'w') as f:
             sys.stdout = f
             print(self._current_stage_index)
-
-            player = self.main_player
-            print(player.score)
-            print(player.lives)
-            print(player.speed_value)
-            print(player.bombs_number)
-            print(player.bombs_power)
+            print(self.main_player.to_str())
 
         sys.stdout = sys.__stdout__
 
@@ -414,15 +408,14 @@ class Field(PygameObject, GeometricObject):
                 lines = f.readlines()
                 if len(lines) > 1:
                     player = self.main_player
-                    lines = list(map(float, lines))
-                    self._current_stage_index, player.score, lives, player.speed_value, \
-                    player.bombs_number, player.bombs_power = lines
+
+                    self._current_stage_index, player_vars = lines
                     self._current_stage_index = int(self._current_stage_index)
-                    player.score = int(player.score)
-                    if full:
-                        player.lives = int(lives)
-                    player.bombs_number = int(player.bombs_number)
-                    player.bombs_power = int(player.bombs_power)
+
+                    _lives = player._current_lives
+                    player.from_str(player_vars)
+                    if not full:
+                        player._current_lives = _lives
 
     def on_timeout(self):
         """ Метод, когда время на таймере закончится """

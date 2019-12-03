@@ -182,6 +182,7 @@ class Bomb(Entity, TimerObject):
         TimerObject.__init__(self, delay)
 
         self.player_object = player_object
+        self.player_object.inc_active_bombs_number()
         self.power = power
         self.animation = self.create_animation()
         self.field_object.tile_set(self.pos, self.field_object.TILE_UNREACHABLE_EMPTY)
@@ -193,6 +194,6 @@ class Bomb(Entity, TimerObject):
 
     def on_timeout(self):
         Fire(self, self.pos, self.power)  # Когда таймер заканчивается, то создаём огонь
-        self.player_object.current_bombs_number -= 1  # Уменьшаем число активных бомб у игрока
+        self.player_object.dec_active_bombs_number()  # Уменьшаем число активных бомб у игрока
         self.field_object.tile_set(self.pos, self.field_object.TILE_EMPTY)  # Ставим под себя пустую клетку
         self.destroy()  # И уничтожаемся
