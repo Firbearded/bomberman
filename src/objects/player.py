@@ -63,7 +63,6 @@ class Player(Entity):
 
     def reset(self, full=False):
         if full:
-            self.speed_vector = Vector()
             self.speed_value = self.SPEED_VALUE
             self._score = 0
             self._current_lives = self.LIVES
@@ -71,6 +70,7 @@ class Player(Entity):
             self._bombs_number = self.BOMBS_NUMBER
             self._has_detonator = False
 
+        self.speed_vector = Vector()  # TODO: fix bug on start
         self.pos = Point(1, self.field_object.height - 2)
         self._direction = Vector(0, 1)
         self._is_moving = False
@@ -319,11 +319,11 @@ class Player(Entity):
         return "_score", "_current_lives", "_bombs_power", "_bombs_number", "_has_detonator"
 
     def to_str(self):
-        s = " ".join(map(str, [vars(self)[v] for v in self._to_save()]))
+        s = " ".join(map(lambda x: str(int(x)), [vars(self)[v] for v in self._to_save()]))
         return s
 
     def from_str(self, string):
         string = string.strip()
         vdict = vars(self)
         for var, s in zip(self._to_save(), string.split()):
-            vdict[var] = type(vdict[var])(s)
+            vdict[var] = int(s)

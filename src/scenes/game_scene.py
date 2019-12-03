@@ -20,7 +20,7 @@ class GameScene(Scene):
 
         self.field = Field(self.game, tile_size)
         Player(self.field)
-        self.field.flush_enitites()
+        self.field._flush_enitites()
         self.objects.append(self.field)
 
         font_size = 20

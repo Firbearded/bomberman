@@ -58,4 +58,4 @@ class Door(Item):
                         self.destroy()
 
 
-DROP = (BombNumberUp, PowerUp, Detonator, SpeedUp, LifeUp, )
+DROP_LIST = (BombNumberUp, PowerUp, Detonator, SpeedUp, LifeUp,)

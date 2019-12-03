@@ -12,7 +12,7 @@ from src.objects.enemies import ENEMIES
 from src.objects.field.breaking_wall import BreakingWall
 from src.objects.field.stage import Stage
 from src.objects.field.tiles import TILES, CATEGORY
-from src.objects.items import Door, DROP
+from src.objects.items import Door, DROP_LIST
 from src.utils.constants import Path, Sounds
 from src.utils.intersections import is_collide_rect
 from src.utils.vector import Point
@@ -36,17 +36,12 @@ class Field(PygameObject, GeometricObject):
     KEYS_EXIT = (pygame.K_ESCAPE,)  # Кнопки на выход из игры
 
     STAGES = (  # Уровки игры (смотрите класс Stage)
-        # Stage(name="Stage 1", enemies=(6,)),  # TODO: не рандомные улучшения + детонатор
-        # Stage(name="Stage 2", enemies=(3, 3)),
-        # Stage(name="Stage 3", enemies=(2, 2, 2)),
-        # Stage(name="Stage 4", enemies=(1, 1, 2, 2)),
-        # Stage(name="Stage 5", enemies=(0, 4, 3)),
-        Stage(name="Stage test 0", enemies=(1, 1, 1), upgrades_number=999),
-        Stage(name="Stage HELL", enemies=(1, 0, 0), upgrades_number=999, time=10),
-        Stage(field_size=(9, 17), name="Enemy collision test 0", enemies=(5, 0, 0), soft_wall_number=10),
-        Stage(field_size=(9, 7), name="Stage test 1", enemies=(0, 0, 0), soft_wall_number=1),
-        Stage(field_size=(9, 7), name="Stage test 2", enemies=(1, 0, 0), soft_wall_number=3),
-        Stage(field_size=(11, 11), name="Stage test 3", enemies=(2, 0, 0), soft_wall_number=4),
+        Stage(name="Stage 1", enemies=(6,), upgrades=(0, 1)),
+        Stage(name="Stage 2", enemies=(3, 3), upgrades=(1, )),
+        Stage(name="Stage 3", enemies=(2, 2, 2), upgrades=(0, 0, 1)),
+        Stage(name="Stage 4", enemies=(1, 1, 2, 2), upgrades=(0, 0, 0, 1)),
+        Stage(name="Stage 5", enemies=(0, 4, 3), upgrades=(1, )),
+        Stage(name="Stage HELL", enemies=(1, 0, 0), upgrades=(100, 100, 5, 100, 100), time=10, on_timeout=(5, 5, 10, 15, 15, 20, 25, 30)),
     )
 
     GAMEOVER_MSG = "GAME OVER"
@@ -74,7 +69,7 @@ class Field(PygameObject, GeometricObject):
         self._enemies_on_door = Field.ENEMIES_ON_DOOR
 
         self._soft_number = None
-        self._upgrade_numbers = None
+        self._upgrades = None
         self._has_door = None
         self._enemies = None
         self._extra_enemies = None
@@ -88,6 +83,7 @@ class Field(PygameObject, GeometricObject):
 
         self.load_images()
 
+    # ======================== Свойства ========================
     @property
     def size(self):
         return self._field_size
@@ -110,6 +106,7 @@ class Field(PygameObject, GeometricObject):
         w, h = self.tile_size
         return self.width * w, self.height * h
 
+    # ================ Основные внешние методы ===============
     def add_entity(self, entity):
         """ Добвить сущность в поле (на самом деле добавить в очередь) """
         cls = type(entity)
@@ -121,7 +118,7 @@ class Field(PygameObject, GeometricObject):
 
         self._entities_queue.append((cls, entity))
 
-    def flush_enitites(self):
+    def _flush_enitites(self):
         """ А тут добавить все сущности из очереди в поле """
         for cls, entity in self._entities_queue:
             if cls not in self._entities:
@@ -211,14 +208,22 @@ class Field(PygameObject, GeometricObject):
             Door(self, pos)
         else:
             r = randint(1, self._soft_number)
-            if r <= self._upgrade_numbers + (not self._has_door):
+            if r <= sum(self._upgrades) + (not self._has_door):
                 if not self._has_door and r == 1:
                     self._has_door = True
                     Door(self, pos)
                 else:
-                    self._upgrade_numbers -= 1
-                    choice(DROP)(self, pos)
+                    not_empty_i = []
+                    for i in range(len(self._upgrades)):
+                        if self._upgrades[i]:
+                            not_empty_i.append(i)
 
+                    i = choice(not_empty_i)
+
+                    self._upgrades[i] -= 1
+                    DROP_LIST[i](self, pos)
+
+    # ================ Методы для самого поля ================
     def load_images(self):
         """ Загрузка и resize изображений клеток для дальнейшего использования """
         self.tile_images = {}
@@ -273,9 +278,8 @@ class Field(PygameObject, GeometricObject):
         """ Сброс уровня """
         stage = self.current_stage
         self._field_size = stage.field_size
-        self._start_soft_number = stage.soft_wall_number
-        self._soft_number = self._start_soft_number
-        self._upgrade_numbers = stage.upgrades_number
+        self._soft_number = stage.soft_wall_number
+        self._upgrades = list(stage.upgrades)
         self._enemies = stage.enemies
         self.timer.delay = stage.time * 1000
         self._extra_enemies = stage.enemies_on_timeout
@@ -315,7 +319,7 @@ class Field(PygameObject, GeometricObject):
         """ Случайная генерация ломающихся стен """
         empty_tiles = self._get_empty_tiles_without_buffer()
 
-        for _ in range(self._start_soft_number):
+        for _ in range(self._soft_number):
             pos = empty_tiles.pop(randint(0, len(empty_tiles) - 1))
             self.tile_set(pos, Field.TILE_SOFT_WALL)
 
@@ -449,7 +453,7 @@ class Field(PygameObject, GeometricObject):
             for e in self._entities[cls]:
                 e.process_logic()
 
-        self.flush_enitites()
+        self._flush_enitites()
 
     # ======================= Отрисовка ======================
     def process_draw_tiles(self):
