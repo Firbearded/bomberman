@@ -1,7 +1,7 @@
 import pygame
 
 from src.objects.base_classes.entity import Entity
-from src.objects.bomb import Bomb
+from src.objects.bomb import BombWithoutTimer, Bomb
 from src.objects.supporting.animation import SimpleAnimation
 from src.utils.constants import Color, Sounds
 from src.utils.decorators import protect
@@ -39,7 +39,8 @@ class Player(Entity):
                 ((pygame.K_UP, pygame.K_w,), 1, -1),
                 ((pygame.K_DOWN, pygame.K_s,), 1, 1),
                 )
-    KEYS_BOMB = (pygame.K_SPACE,)
+    KEYS_BOMB = (pygame.K_SPACE, )
+    KEYS_DETONATE_BOMB = (pygame.K_b, )
 
     COLOR = Color.BLUE
 
@@ -69,11 +70,18 @@ class Player(Entity):
             self._bombs_power = self.BOMBS_POWER
             self._bombs_number = self.BOMBS_NUMBER
             self._has_detonator = False
+            '''
+            Если у игрока есть детонатор, он может взорвать
+            первую в списке бомбу (self.bombs_with_detonator), если
+            та была поставлена после получения бонуса (иначе её не будет
+            в этом списке). Такие бомбы могут стоять бесконечно долго.
+            '''
         self.pos = Point(1, self.field_object.height - 2)
         self._direction = Vector(0, 1)
         self._is_moving = False
 
         self._active_bombs_number = 0
+        self._bombs_with_detonator = []
         self._has_wallpass = False
         self._has_flamepass = False
         self._has_mystery = False
@@ -230,7 +238,12 @@ class Player(Entity):
                 if self._active_bombs_number < self._bombs_number:
                     if self.field_object.can_place_bomb(self.tile):
                         self.game_object.mixer.channels['effects'].sound_play(self.SOUND_BOMB)
-                        Bomb(self, self.tile, self._bombs_power)
+                        # Bomb(self, self.tile, self._bombs_power)
+                        if self._has_detonator:
+                            self._bombs_with_detonator.append(BombWithoutTimer(self, self.tile, self.bombs_power))
+                        else:
+                            Bomb(self, self.tile, self._bombs_power)
+
 
         if event.type == pygame.KEYUP:
             key = event.key

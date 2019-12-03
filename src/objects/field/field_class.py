@@ -61,7 +61,7 @@ class Field(PygameObject, GeometricObject):
 
         self._tile_size = tuple(tile_size)
         from src.objects.bomb import Fire
-        from src.objects.bomb import Bomb
+        from src.objects.bomb import BombWithoutTimer, Bomb
         from src.objects.base_classes.item import Item
         from src.objects.base_classes.enemy import Enemy
         from src.objects.player import Player
@@ -69,7 +69,8 @@ class Field(PygameObject, GeometricObject):
         self._grid = None  # Двумерный список — типы клеток
         self._field_size = (1, 1)  # Размеры поля
         self._entities = {}  # Список сущностей, принадлежащих этому полю
-        self._class_priority = (Player, Enemy, Fire, Bomb, Item,)  # Приоритет классов на отрисовку (по убыванию)
+        self._class_priority = (Player, Enemy, Fire, BombWithoutTimer, Bomb, Item,)
+        # Приоритет классов на отрисовку (по убыванию)
         self._enemies_on_door = Field.ENEMIES_ON_DOOR
 
         self._soft_number = None

@@ -197,3 +197,17 @@ class Bomb(Entity, TimerObject):
         self.player_object.dec_active_bombs_number()  # Уменьшаем число активных бомб у игрока
         self.field_object.tile_set(self.pos, self.field_object.TILE_EMPTY)  # Ставим под себя пустую клетку
         self.destroy()  # И уничтожаемся
+
+
+class BombWithDetonator(Bomb):
+    def __init__(self, player_object, pos: Point, power=Bomb.POWER):
+        Entity.__init__(self, player_object.field_object, round(pos))
+        self.player_object = player_object
+        self.player_object.inc_active_bombs_number()
+        self.power = power
+        self.animation = self.create_animation()
+        self.field_object.tile_set(self.pos, self.field_object.TILE_UNREACHABLE_EMPTY)
+
+    def on_timeout(self):
+        self.player_object.delete_active_bomb(self)
+        Bomb.on_timeout(self)

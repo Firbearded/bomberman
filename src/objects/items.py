@@ -34,6 +34,11 @@ class LifeUp(Item):
     def on_take(self, player_object):
         player_object.life_up()
 
+class Detonator(Item):
+    SPRITE_NAMES = ("life",) # нужен спрайт для детонатора
+
+    def on_take(self, player_object):
+        player_object.has_detonator = True
 
 class Door(Item):
     SPRITE_NAMES = ("door",)
@@ -57,4 +62,4 @@ class Door(Item):
                         self.destroy()
 
 
-DROP = (SpeedUp, LifeUp, BombNumberUp, PowerUp)
+DROP = (SpeedUp, LifeUp, BombNumberUp, PowerUp, Detonator)
