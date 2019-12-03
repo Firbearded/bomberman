@@ -55,7 +55,7 @@ class Enemy(Entity):
         target = choice(possible_targets)  # Получение случайного направления из массива возможных направлений
         return target
 
-    def _get_next_subtarget(self):
+    def _get_new_subtarget(self):
         """
         Расчёт сдедующей клетки для моба, чтобы попасть в target.
 
@@ -66,7 +66,8 @@ class Enemy(Entity):
         return self.target
 
     def _get_direction(self, pos):
-        return (self._get_next_subtarget() - pos).united
+        self.subtarget = self._get_new_subtarget()
+        return (self.subtarget - pos).united
 
     def update_direction(self):
         self.speed_vector = self._get_direction(self.pos)
@@ -82,10 +83,10 @@ class Enemy(Entity):
     # =========== Методы на проверку ===========
     def check_environment(self):
         """ Проверка окружения (застряли, увидели игрока и тд), то есть проверка, которая всегда происходит """
-        if self.target == self.pos or not self.speed_vector:
+        if self.subtarget == self.pos or not self.speed_vector:
             self.update_target()  # Если мы стоим на месте, # то пытаемся выбрать новое направление
 
-        if self.target != self.tile and not self.can_walk_at(self.target):
+        if self.subtarget != self.tile and not self.can_walk_at(self.subtarget):
             # Если мы вдруг идём прямо в клетку, по которой нельзяходить, то возвращаемся.
             self.set_target(self.tile)
 
@@ -96,7 +97,7 @@ class Enemy(Entity):
         if self.speed_vector == new_target_direction:
             self.pos = new_pos  # Если новый вектор направления и старый совпрадают, то ничего
         else:  # Если же новый вектор направления не равен со старым, то значит, что мы в следующий
-            self.pos = self.target  # тик перейдём клетку-цель, поэтому немного сами сдвигаемся
+            self.pos = self.subtarget  # тик перейдём клетку-цель, поэтому немного сами сдвигаемся
             self.on_new_tile()      # вызываем новую проверку
 
     def check_collisions(self):
@@ -111,8 +112,8 @@ class Enemy(Entity):
     def on_new_tile(self):
         """ Проверка, когда мы пришли в новую клетку """
 
-        if self.can_walk_at(self.target + self.speed_vector):  # Если можно идти в следующую клетку, то идём дальше
-            self.set_target(self.target + self.speed_vector)
+        if self.can_walk_at(self.subtarget + self.speed_vector):  # Если можно идти в следующую клетку, то идём дальше
+            self.set_target(self.subtarget + self.speed_vector)
         else:
             self.update_target()  # иначе ищем новую цель
 
