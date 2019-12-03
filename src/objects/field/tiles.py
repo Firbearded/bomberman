@@ -7,6 +7,7 @@ class Tile:
     soft = False  # Можно ли ломать
     walkable = False  # Можно ходить (земля)
     empty = False  # Пусто, но ходить нельзя (вода)
+    wallpass = False  # Можно ли ходить тем, кто может через стены проходить (призраци)
     # Огонь может распространяться по пустым (empty), но мобы могут ходить только где можно (walkable)
 
 
@@ -18,6 +19,7 @@ class TileEmpty(Tile):
     image_name = "grass"
     walkable = True
     empty = True
+    wallpass = True
 
 
 class TileWall(Tile):
@@ -29,6 +31,7 @@ class TileBreakableWall(Tile):
     color = (160, 160, 160)
     image_name = "c_wall"
     soft = True
+    wallpass = True
 
 
 class TileUnreachableEmpty(TileEmpty):

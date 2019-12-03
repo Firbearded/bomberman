@@ -13,7 +13,7 @@ class Ballom (Enemy):
 class Onil(Enemy):
     SPEED_VALUE = 1.5
     SCORE = 200
-    COLOR = (100, 100, 255)
+    COLOR = Color.BLUE
     SPRITE_NAMES = "onil1", "onil2", "onil3"
     SPRITE_DELAY = 350
 
@@ -22,9 +22,10 @@ class Dahl(Enemy):
     """
     Чаще всего бегает слева направо, иногда меняя направление на сверху вниз
     """
-    CHANCE_MODIFIER = 1 - .0005
     SPEED_VALUE = 1.75
     SCORE = 400
+    TURN_CHANCE_MODIFIER = 1 - .0005
+    COLOR = Color.BROWN
 
 
 class Minvo(Enemy):
@@ -38,6 +39,7 @@ class Minvo(Enemy):
     """
     SPEED_VALUE = 2.75
     SCORE = 800
+    COLOR = Color.ORANGE
 
 
 class Ovape(Enemy):
@@ -46,9 +48,11 @@ class Ovape(Enemy):
     """
     SPEED_VALUE = 1.5
     SCORE = 2000
+    TURN_CHANCE_MODIFIER = 1 - .1
+    COLOR = Color.LIGHT_GREY
 
     def can_walk_at(self, pos):
-        return self.field_object.tile_at(pos).empty or self.field_object.tile_at(pos).soft
+        return self.field_object.tile_at(pos).wallpass
 
 
 class Doria(Minvo, Ovape):
@@ -58,6 +62,7 @@ class Doria(Minvo, Ovape):
     """
     SPEED_VALUE = 0.75
     SCORE = 1000
+    COLOR = Color.NAVY
 
 
 class Pass(Minvo):
@@ -76,6 +81,7 @@ class Pass(Minvo):
     """
     SPEED_VALUE = 2.75
     SCORE = 4000
+    COLOR = Color.APRICOT
 
 
 class Pontan(Doria):
@@ -84,9 +90,9 @@ class Pontan(Doria):
     """
     SPEED_VALUE = 2.25
     SCORE = 8000
-    COLOR = Color.RED
     SPRITE_NAMES = "coin1", "coin2", "coin3", "coin4"
     SPRITE_DELAY = 100
+    COLOR = Color.RED
 
 
 ENEMIES = (Ballom, Onil, Dahl, Minvo, Ovape, Doria, Pass, Pontan)
