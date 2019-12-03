@@ -4,7 +4,7 @@ from src.objects.player import Player
 from src.utils.constants import Sounds
 
 
-# TODO:  + детонатор + Bomb-Walk + Wall-Walker + Mystery + Flame-Proof +
+# TODO:  + Bomb-Walk + Wall-Walker + Mystery + Flame-Proof +
 
 class BombNumberUp(Item):
     SPRITE_NAMES = ("count_up",)

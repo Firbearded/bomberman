@@ -77,6 +77,7 @@ class Player(Entity):
 
         self._active_bombs_number = 0
         self._bombs_remote = []
+        self._has_bombpass = False
         self._has_wallpass = False
         self._has_flamepass = False
         self._has_mystery = False
@@ -265,6 +266,9 @@ class Player(Entity):
 
     def get_detonator(self):
         self._has_detonator = True
+
+    def get_bombpass(self):
+        self._has_bombpass = True
 
     def get_wallpass(self):
         self._has_wallpass = True
