@@ -5,8 +5,8 @@ from src.objects.bomb import Bomb, BombRemote
 from src.objects.supporting.animation import SimpleAnimation
 from src.utils.constants import Color, Sounds
 from src.utils.decorators import protect
+from src.utils.functions import sign
 from src.utils.intersections import collide_rect
-from src.utils.sign import sign
 from src.utils.vector import Vector, Point
 
 

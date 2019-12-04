@@ -1,4 +1,4 @@
-from src.utils.sign import sign
+from src.utils.functions import sign
 
 
 class Vector:
