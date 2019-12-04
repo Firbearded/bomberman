@@ -7,11 +7,15 @@ from queue import Queue
 
 """
     Внимание! При создании логики в мобах переопределять следующие методы:
-1)_get_new_target(self) возвращает клетку цели, которую преследует моб (это игрок, или
-  конечная точка некоторой траектории, или просто соседняя клетка, если моб не слишком умный);
-2)_get_new_subtarget(self) возвращает следующую клетку на пути моба к цели;
-3)_can_walk_at(self, pos) возвращает, может ли моб ходить по клетке, заданной позицией (по
-  умолчанию метод не разрешает ходить по стенам).
+1)can_walk_at(self, pos) возвращает, может ли моб ходить по клетке, заданной позицией (по
+  умолчанию метод не разрешает ходить по стенам);
+2)get_new_target(self) возвращает цель моба - соседнюю мобом клетку, в которую он должен
+  перейти.
+  
+  Внимание! При создании логики в мобах использовать значения из следующих полей класса:
+1)self.target - текущая цель моба (None, если моб стоит на месте);
+2)self.direction - направление движения моба (единичный вектор; None, если моб стоит на месте).
+Информация в этих полях всегда корректна при вызове can_walk_at и get_new_target.
 """
 
 class Ballom (Enemy):
@@ -91,45 +95,33 @@ class Pass(Minvo):
     Если путь не единственный, то Pass старается обойти бомбу, а убегать в обратную сторону начинает
     лишь если бомбу заспавнили в 4 или меньше блоках от него на его пути к персонажу
     """
-    SPEED_VALUE = 0.5 # 2.75
+    SPEED_VALUE = 2.75
     SCORE = 4000
     COLOR = Color.APRICOT
-    delta = [Vector(1, 0), Vector(0, 1), Vector(-1, 0), Vector(0, -1)]
 
-    def _get_next_tile(self):
+    def get_new_target(self):
+        player_pos = self.field_object.get_entities(Player)[0].tile
         queue = Queue()
         parent = []
         for i in range(self.field_object.width):
             parent.append(list())
             for j in range(self.field_object.height):
-                parent[i].append(Point(-1, -1))
+                parent[i].append(None)
         parent[self.tile.x][self.tile.y] = self.tile
         queue.put(self.tile)
         while not queue.empty():
             current_pos = queue.get()
             for v in self.delta:
                 new_pos = current_pos + v
-                if self.can_walk_at(current_pos + v) and parent[new_pos.x][new_pos.y] == Point(-1, -1):
+                if self.can_walk_at(current_pos + v) and not parent[new_pos.x][new_pos.y]:
                     parent[new_pos.x][new_pos.y] = current_pos
                     queue.put(new_pos)
-        if parent[self.target.x][self.target.y] == Point(-1, -1):
-            return Point(-1, -1)
-        current_pos = self.target
+        if not parent[player_pos.x][player_pos.y]:
+            return None
+        current_pos = player_pos
         while parent[current_pos.x][current_pos.y] != self.tile:
             current_pos = parent[current_pos.x][current_pos.y]
         return current_pos
-
-    def _get_new_target(self):
-        player_object = self.field_object.get_entities(Player)[0]
-        return player_object.tile
-
-    def _get_new_subtarget(self):
-        next_pos = self._get_next_tile()
-        # print(self.target, next_pos)
-        if next_pos == Point(-1, -1):
-            return self.tile
-        else:
-            return next_pos
 
 
 class Pontan(Doria):
