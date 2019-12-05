@@ -27,22 +27,34 @@ class SettingsScene(Scene):
         items.append(MenuItemLabel(self.game, to))
         items[-1].interval_after = interval
 
+        rl = 24
+        mx = 24
+        default = 10
+
+        sliders = []
+        to = TextObject(self.game, '-General--', font_name, font_size - 5, color=color, antialiasing=aa)
+        _volume = MenuItemSlider(self.game, to, "-{}-", color2, real_length=rl, on_change=self.update_general_volume,
+                                 max_value=mx, value=default)
+        items.append(_volume)
+        sliders.append(_volume)
+        _volume.interval_after = 15
+
         sliders = []
         to = TextObject(self.game, 'Background', font_name, font_size - 5, color=color, antialiasing=aa)
-        bb_volume = MenuItemSlider(self.game, to, "-{}-", color2, real_length=25, on_change=self.update_bb_volume,
-                                   max_value=25, value=5)
+        bb_volume = MenuItemSlider(self.game, to, "-{}-", color2, real_length=rl, on_change=self.update_bb_volume,
+                                   max_value=mx, value=default)
         items.append(bb_volume)
         sliders.append(bb_volume)
 
-        to = TextObject(self.game, 'Effects   ', font_name, font_size - 5, color=color, antialiasing=aa)
-        effects_volume = MenuItemSlider(self.game, to, "-{}-", color2, real_length=25,
-                                        on_change=self.update_effects_volume, max_value=25, value=5)
+        to = TextObject(self.game, '-Effects--', font_name, font_size - 5, color=color, antialiasing=aa)
+        effects_volume = MenuItemSlider(self.game, to, "-{}-", color2, real_length=rl,
+                                        on_change=self.update_effects_volume, max_value=mx, value=default)
         items.append(effects_volume)
         sliders.append(effects_volume)
 
-        to = TextObject(self.game, 'Other     ', font_name, font_size - 5, color=color, antialiasing=aa)
-        music_volume = MenuItemSlider(self.game, to, "-{}-", color2, real_length=25,
-                                      on_change=self.update_music_volume, max_value=25, value=5)
+        to = TextObject(self.game, '--Other---', font_name, font_size - 5, color=color, antialiasing=aa)
+        music_volume = MenuItemSlider(self.game, to, "-{}-", color2, real_length=rl,
+                                      on_change=self.update_music_volume, max_value=mx, value=default)
         items.append(music_volume)
         sliders.append(music_volume)
         self.items = sliders
@@ -94,5 +106,10 @@ class SettingsScene(Scene):
 
     def update_bb_volume(self, value, p):
         self.game.mixer.channels['background'].set_volume(p)
+        if hasattr(self, 'items'):
+            self.save()
+
+    def update_general_volume(self, value, p):
+        self.game.mixer.set_volume(p)
         if hasattr(self, 'items'):
             self.save()

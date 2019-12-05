@@ -89,6 +89,7 @@ class SoundMixer:
 
     def __init__(self, ):
         pygame.mixer.pre_init(self.FREQUENCY, self.SIZE, self.CHANNELS, self.BUFFER)
+        self._volume = 1.
 
     def init(self, sound_dict, channel_names=CHANNEL_NAMES):
         self._sound_dict = sound_dict
@@ -109,7 +110,8 @@ class SoundMixer:
 
     def set_volume(self, volume):
         for channel in self.channels.values():
-            channel.set_volume(volume)
+            channel._main_volume = volume
+            channel.set_volume()
 
 
 class Channel:
@@ -123,6 +125,9 @@ class Channel:
             self._queue.put((sound_name, loop))
 
         self._volume = 1
+        self._main_volume = 1
+        self._last_sound = None
+
         self._looped = looped
         self._muted = False
         self._paused = False
@@ -140,6 +145,8 @@ class Channel:
             value = self._volume
         self._volume = float(value)
         self._channel.set_volume(self._volume * (not self.is_muted()))
+        if self._last_sound:
+            self._last_sound.set_volume(self._main_volume)
 
     def is_looped(self):
         return self._looped
@@ -191,13 +198,14 @@ class Channel:
 
     def play(self, sound_name, loops=0):
         sound = self._sound_dict[sound_name]
-        sound.set_volume(1)
+        sound.set_volume(self._main_volume)
         self.set_volume()
+        self._last_sound = sound
         self._channel.play(sound, loops=loops)
 
     def sound_play(self, sound_name, loops=0):
         sound = self._sound_dict[sound_name]
-        sound.set_volume(self._volume)
+        sound.set_volume(self._volume * self._main_volume)
         sound.play(loops=loops)
 
     def sound_stop(self, sound_name):
