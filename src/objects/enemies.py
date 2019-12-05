@@ -117,7 +117,7 @@ class Pass(Minvo):
                     parent[new_pos.x][new_pos.y] = current_pos
                     queue.put(new_pos)
         if not parent[player_pos.x][player_pos.y]:
-            return None
+            return super().get_new_target()
         current_pos = player_pos
         while parent[current_pos.x][current_pos.y] != self.tile:
             current_pos = parent[current_pos.x][current_pos.y]
