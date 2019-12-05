@@ -48,6 +48,7 @@ class Game:
 
         self.create_scenes()
 
+        self._timers = []
         self.delta_time = 0
 
     def init(self):
@@ -87,7 +88,7 @@ class Game:
         fps = 0
         while self.running:  # Основной цикл работы программы
             loop_start_time = time()
-            
+
             eventlist = pygame.event.get()
             for event in eventlist:
                 if event.type == pygame.QUIT:
@@ -97,6 +98,10 @@ class Game:
 
             self.scenes[self.current_scene].process_frame(eventlist)
             self.mixer.process_logic()
+            for t in self._timers:
+                t.timer_logic()
+                if t.is_timeout:
+                    self._timers.remove(t)
 
             end_time = time()  # Расчёт delta_time
             self.delta_time = (end_time - loop_start_time)
@@ -125,3 +130,10 @@ class Game:
         else:
             self.current_scene = int(index)
             self.scenes[self.current_scene].on_switch(*args, **kwargs)
+
+    def add_timer(self, timer):
+        """
+        :type timer: TimerObject
+        """
+        timer.start()
+        self._timers.append(timer)

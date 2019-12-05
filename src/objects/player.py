@@ -1,5 +1,6 @@
 import pygame
 
+from src.objects.base_classes.base_objects.timer_object import TimerObject
 from src.objects.base_classes.entity import Entity
 from src.objects.bomb import Bomb, BombRemote
 from src.objects.supporting.animation import SimpleAnimation
@@ -14,14 +15,17 @@ class Player(Entity):
     SPRITE_CATEGORY = "bomberman_sprites"
     SPRITE_NAMES = {
         'standing': {
-            'up': ('bb_standing_up',),
-            'down': ('bb_standing_down',),
-            'horizontal': ('bb_standing_horizontal',),
+            'up': (200, ('bb_standing_up',)),
+            'down': (200, ('bb_standing_down',)),
+            'horizontal': (200, ('bb_standing_horizontal',)),
         },
         'walking': {
-            'up': ('bb_walking1_up', 'bb_walking2_up',),
-            'down': ('bb_walking1_down', 'bb_walking2_down',),
-            'horizontal': ('bb_h1', 'bb_h2', 'bb_h3', 'bb_h4', 'bb_h5', 'bb_h6', 'bb_h7',),
+            'up': (200, ('bb_walking1_up', 'bb_walking2_up',)),
+            'down': (200, ('bb_walking1_down', 'bb_walking2_down',)),
+            'horizontal': (100, ('bb_h1', 'bb_h2', 'bb_h3', 'bb_h4', 'bb_h5', 'bb_h6', 'bb_h7',)),
+        },
+        'other': {
+            'death': (500, ('bb_dead1', 'bb_dead2', 'bb_dead3', )),
         }
     }
 
@@ -98,15 +102,15 @@ class Player(Entity):
         if not self.game_object.images: return
 
         animation_dict = {}
-        animation_delay = 100
 
         had_image_size = False
         for state in self.SPRITE_NAMES:
             for dir in self.SPRITE_NAMES[state]:
                 print('PLAYER: GENERATING ANIMS: STATE = {}; DIR = {}'.format(state, dir))
+                animation_delay, sprite_names = self.SPRITE_NAMES[state][dir]
                 sprites = []
                 sprites2 = []
-                for sprite_name in self.SPRITE_NAMES[state][dir]:
+                for sprite_name in sprite_names:
                     sprite = self.game_object.images[self.SPRITE_CATEGORY][sprite_name]
 
                     if not had_image_size:
@@ -283,7 +287,17 @@ class Player(Entity):
     def hurt(self, from_enemy):
         """ Когда больно """
         self.disable()
+        self.game_object.mixer.channels['music'].stop()
+        self.game_object.mixer.channels['background'].stop()
+        self.game_object.mixer.channels['music'].add_sound_to_queue('lose')
+        self.animation.set_state('other_death')
 
+        timer = TimerObject(self.animation.current_length * self.animation.current_delay)
+        timer.on_timeout = self.death
+
+        self.game_object.add_timer(timer)
+
+    def death(self):
         if self._current_lives == 0:
             self.field_object.game_over()
         else:

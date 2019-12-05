@@ -84,7 +84,7 @@ class SoundMixer:
     CHANNELS = 2
     BUFFER = 2048
 
-    CHANNEL_NAMES = MUSIC_CHANNEL, EFFECTS_CHANNEL = "music", "effects"
+    CHANNEL_NAMES = MUSIC_CHANNEL, EFFECTS_CHANNEL, BACKGROUND_CHANNEL = "music", "effects", "background"
     _DELAY = 10
 
     def __init__(self, ):
@@ -129,7 +129,7 @@ class Channel:
 
         self.volume = property(self.get_volume, self.set_volume)
         self.looped = property(self.is_looped, self.set_looped)
-        self.mute = property(self.is_muted, self.set_mute)
+        self.muted = property(self.is_muted, self.set_mute)
         self.paused = property(self.is_paused, self.set_pause)
 
     def get_volume(self):
@@ -218,6 +218,5 @@ class Channel:
             q = self._queue.get()
             self.play(*q)
             if self.is_looped():
-                print("FLAG"*10)
                 self._queue.put(q)
 

@@ -12,7 +12,7 @@ class GameScene(Scene):
 
     def on_switch(self, new_game=False, restart=True):
         if new_game:
-            self.game.mixer.channels[self.game.mixer.MUSIC_CHANNEL].add_sound_to_queue(Sounds.Music.round_start.value)
+            self.game.mixer.channels[self.game.mixer.BACKGROUND_CHANNEL].add_sound_to_queue(Sounds.Music.round_start.value)
         self.field.start_game(new_game, restart)
 
     def create_objects(self):

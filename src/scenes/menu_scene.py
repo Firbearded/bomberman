@@ -14,6 +14,7 @@ class MenuScene(Scene):
     def on_switch(self, play_sound=True):
         if play_sound:
             self.game.mixer.channels[self.game.mixer.EFFECTS_CHANNEL].stop()
+            self.game.mixer.channels[self.game.mixer.BACKGROUND_CHANNEL].stop()
             self.game.mixer.channels[self.game.mixer.MUSIC_CHANNEL].add_sound_to_queue(Sounds.Music.menu.value, -1)
 
     def create_objects(self):

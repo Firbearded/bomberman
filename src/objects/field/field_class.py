@@ -1,6 +1,6 @@
 import os
 import sys
-from random import randint, choice
+from random import randint, choice, shuffle
 from time import strftime
 
 import pygame
@@ -354,6 +354,11 @@ class Field(PygameObject, GeometricObject):
         self.timer.start()
         self.surface = pygame.Surface(self.real_size)
         self.draw_all_tiles()
+        bbs = [i.value for i in Sounds.Background]
+        shuffle(bbs)
+        for bb in bbs * 10:
+            self.game_object.mixer.channels['background'].add_sound_to_queue(bb)
+        self.game_object.mixer.channels['background'].unmute()
 
     def next_stage(self):
         """ Переключение на следующий уровень """
@@ -370,6 +375,7 @@ class Field(PygameObject, GeometricObject):
         self._current_stage_index = 0
         self.save_score()
         self.start_game(True, False)
+        self.game_object.mixer.channels['background'].mute()
 
         if win:
             self.game_object.mixer.channels['music'].stop()
@@ -378,9 +384,9 @@ class Field(PygameObject, GeometricObject):
 
     def round_lose(self):
         """ Проигрыш (не полный, жизни ещё есть) """
-        self.game_object.mixer.channels['music'].stop()
-        self.game_object.set_scene(self.game_object.GAME_SCENE_INDEX, 3000, self.current_stage.name)
-        self.game_object.mixer.channels['music'].add_sound_to_queue(self.SOUND_LOSE)
+        # self.game_object.mixer.channels['music'].stop()
+        self.game_object.set_scene(self.game_object.GAME_SCENE_INDEX, 1500, self.current_stage.name)
+        # self.game_object.mixer.channels['music'].add_sound_to_queue(self.SOUND_LOSE)
 
     def save_score(self):
         """ Сохранить счёт """
