@@ -11,8 +11,8 @@ class Enemy(Entity):
     """ Класс мобов """
     SPEED_VALUE = .5  # Скорость моба
     SCORE = 100  # Очки, выпадаемые с моба
-    CHANCE_TURN_ASIDE = 0  # Вероятность поворота в сторону
-    CHANCE_TURN_BACK = 0  # Вероятность разворота
+    CHANCE_TURN_ASIDE = 0.2  # Вероятность поворота в сторону
+    CHANCE_TURN_BACK = 0.03  # Вероятность разворота
 
     delta = [Vector(1, 0), Vector(0, 1), Vector(-1, 0), Vector(0, -1)]
     SPRITE_CATEGORY = "enemy_sprites"

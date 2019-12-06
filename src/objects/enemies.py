@@ -42,7 +42,10 @@ class Dahl(Enemy):
     """
     SPEED_VALUE = 1.75
     SCORE = 400
-    TURN_CHANCE_MODIFIER = 1 - .0005
+
+    CHANCE_TURN_ASIDE = 0.02
+    CHANCE_TURN_BACK = 0.05
+
     COLOR = Color.BROWN
 
 
@@ -55,6 +58,26 @@ class Minvo(Enemy):
     В случае нахождения игрока, бежит в его сторону по прямой, не сворачивая,
     если персонаж отгородился или свернул, Minvo перестаёт преследование
     """
+    def __init__(self, field, pos: Point = (0, 0), size: tuple = (1, 1)):
+        super().__init__(field, pos, size)
+        self.chasing = False
+
+    continue_chasing = False
+
+    def get_new_target(self):
+        if self.field_object.tracker.get_straight_vision(self.tile) or self.chasing:
+            # Если уже преследуем или видим игрока по прямой
+            next_tile = self.field_object.tracker.get_next_tile(self.tile)
+            if not next_tile:
+                self.chasing = self.continue_chasing
+                return super().get_new_target()
+            else:
+                self.chasing = True
+                return next_tile
+        else:
+            # Если не преследуем и игрок не виден
+            return super().get_new_target()
+
     SPEED_VALUE = 2.75
     SCORE = 800
     COLOR = Color.ORANGE
@@ -66,11 +89,10 @@ class Ovape(Enemy):
     """
     SPEED_VALUE = 1.5
     SCORE = 2000
-    TURN_CHANCE_MODIFIER = 1 - .1
     COLOR = Color.LIGHT_GREY
 
     def can_walk_at(self, pos):
-        return self.field_object.tile_at(pos).get_wallpass
+        return self.field_object.tile_at(pos).wallpass
 
 
 class Doria(Minvo, Ovape):
@@ -97,30 +119,11 @@ class Pass(Minvo):
     Если путь не единственный, то Pass старается обойти бомбу, а убегать в обратную сторону начинает
     лишь если бомбу заспавнили в 4 или меньше блоках от него на его пути к персонажу
     """
+    continue_chasing = True
+
     SPEED_VALUE = 2.75
     SCORE = 4000
     COLOR = Color.APRICOT
-
-    CHANCE_TURN_ASIDE = 0.2
-    CHANCE_TURN_BACK = 0.03
-
-    def __init__(self, field, pos: Point = (0, 0), size: tuple = (1, 1)):
-        super().__init__(field, pos, size)
-        self.chasing = False
-
-    def get_new_target(self):
-        if self.field_object.tracker.get_straight_vision(self.tile) or self.chasing:
-            # Если уже преследуем или видим игрока по прямой
-            next_tile = self.field_object.tracker.get_next_tile(self.tile)
-            if not next_tile:
-                self.chasing = False
-                return super().get_new_target()
-            else:
-                self.chasing = True
-                return next_tile
-        else:
-            # Если не преследуем и игрок не виден
-            return super().get_new_target()
 
 
 class Pontan(Doria):
