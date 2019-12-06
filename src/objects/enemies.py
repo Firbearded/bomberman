@@ -1,9 +1,6 @@
 from src.objects.base_classes.enemy import Enemy
 from src.utils.constants import Color
-from src.objects.player import Player
 from src.utils.vector import Vector, Point
-
-from queue import Queue
 
 """
     Внимание! При создании логики в мобах переопределять следующие методы:
@@ -99,29 +96,15 @@ class Pass(Minvo):
     SCORE = 4000
     COLOR = Color.APRICOT
 
+    CHANCE_TURN_ASIDE = 0.2
+    CHANCE_TURN_BACK = 0.03
+
     def get_new_target(self):
-        player_pos = self.field_object.get_entities(Player)[0].tile
-        queue = Queue()
-        parent = []
-        for i in range(self.field_object.width):
-            parent.append(list())
-            for j in range(self.field_object.height):
-                parent[i].append(None)
-        parent[self.tile.x][self.tile.y] = self.tile
-        queue.put(self.tile)
-        while not queue.empty():
-            current_pos = queue.get()
-            for v in self.delta:
-                new_pos = current_pos + v
-                if self.can_walk_at(current_pos + v) and not parent[new_pos.x][new_pos.y]:
-                    parent[new_pos.x][new_pos.y] = current_pos
-                    queue.put(new_pos)
-        if not parent[player_pos.x][player_pos.y]:
+        next_tile = self.field_object.tracker.get_next_tile(self.tile)
+        if not next_tile:
             return super().get_new_target()
-        current_pos = player_pos
-        while parent[current_pos.x][current_pos.y] != self.tile:
-            current_pos = parent[current_pos.x][current_pos.y]
-        return current_pos
+        else:
+            return next_tile
 
 
 class Pontan(Doria):
