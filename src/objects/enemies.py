@@ -99,12 +99,23 @@ class Pass(Minvo):
     CHANCE_TURN_ASIDE = 0.2
     CHANCE_TURN_BACK = 0.03
 
+    def __init__(self, field, pos: Point = (0, 0), size: tuple = (1, 1)):
+        super().__init__(field, pos, size)
+        self.chasing = False
+
     def get_new_target(self):
-        next_tile = self.field_object.tracker.get_next_tile(self.tile)
-        if not next_tile:
-            return super().get_new_target()
+        if self.field_object.tracker.get_straight_vision(self.tile) or self.chasing:
+            # Если уже преследуем или видим игрока по прямой
+            next_tile = self.field_object.tracker.get_next_tile(self.tile)
+            if not next_tile:
+                self.chasing = False
+                return super().get_new_target()
+            else:
+                self.chasing = True
+                return next_tile
         else:
-            return next_tile
+            # Если не преследуем и игрок не виден
+            return super().get_new_target()
 
 
 class Pontan(Doria):
