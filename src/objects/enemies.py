@@ -13,6 +13,11 @@ from src.utils.vector import Vector, Point
 1)self.target - текущая цель моба (None, если моб стоит на месте);
 2)self.direction - направление движения моба (единичный вектор; None, если моб стоит на месте).
 Информация в этих полях всегда корректна при вызове can_walk_at и get_new_target.
+
+  Внимание! При создании логики в мобах могут понадобиться следующие инструменты:
+1)self.field_object.tracker - класс, следящий за игроком (см. src.objects.field.tracker.py);
+2)super.get_next_target() - метод, возвращающий следующую цель при встроенном глупом поведении
+  моба.
 """
 
 class Ballom (Enemy):
