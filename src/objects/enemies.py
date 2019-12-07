@@ -1,4 +1,5 @@
 from src.objects.base_classes.enemy import Enemy
+from src.objects.player import Player
 from src.utils.constants import Color
 from src.utils.vector import Vector, Point
 
@@ -39,7 +40,35 @@ class Onil(Enemy):
 class Dahl(Enemy):
     """
     Чаще всего бегает слева направо, иногда меняя направление на сверху вниз
+    Оказывается, ещё и бегает за игроком, как Minvo, пожтому теперь всё наследуется из него
     """
+    VISION_DIST = 6
+
+    def get_next_tile(self): #Находит, с какой стороны игрок, и возвращает тайл по направлению в его сторону
+        target = self.field_object.get_entities (Player)[0].tile
+        next_tile = self.tile
+        if self.tile.x - target.x > 0 and self.tile.x - target.x <= self.VISION_DIST and self.tile.y == target.y:
+            next_tile += Vector (-1, 0)
+        elif self.tile.x - target.x < 0 and self.tile.x - target.x >= -self.VISION_DIST and self.tile.y == target.y:
+            next_tile += Vector (1, 0)
+        elif self.tile.y - target.y > 0 and self.tile.y - target.y <= self.VISION_DIST and self.tile.x == target.x:
+            next_tile += Vector (0, -1)
+        elif self.tile.y - target.y < 0 and self.tile.y - target.y >= -self.VISION_DIST and self.tile.x == target.x:
+            next_tile += Vector (0, 1)
+        else:
+            next_tile = None
+        return next_tile
+
+    def get_new_target(self): #Как у Пасса, но подстроенный под других мобов
+        if self.field_object.tracker.get_straight_vision(self.tile):
+            next_tile = self.get_next_tile()
+            if not next_tile:
+                return super().get_new_target()
+            else:
+                return next_tile
+        else:
+            return super().get_new_target()
+
     SPEED_VALUE = 1.75
     SCORE = 400
 
@@ -49,7 +78,7 @@ class Dahl(Enemy):
     COLOR = Color.BROWN
 
 
-class Minvo(Enemy):
+class Minvo(Dahl):
     """
     Преследует персонажа, если тот находится на
     прямой по направлению вектора движения до первой преграды (блока или бомбы)
@@ -58,25 +87,7 @@ class Minvo(Enemy):
     В случае нахождения игрока, бежит в его сторону по прямой, не сворачивая,
     если персонаж отгородился или свернул, Minvo перестаёт преследование
     """
-    def __init__(self, field, pos: Point = (0, 0), size: tuple = (1, 1)):
-        super().__init__(field, pos, size)
-        self.chasing = False
-
-    continue_chasing = False
-
-    def get_new_target(self):
-        if self.field_object.tracker.get_straight_vision(self.tile) or self.chasing:
-            # Если уже преследуем или видим игрока по прямой
-            next_tile = self.field_object.tracker.get_next_tile(self.tile)
-            if not next_tile:
-                self.chasing = self.continue_chasing
-                return super().get_new_target()
-            else:
-                self.chasing = True
-                return next_tile
-        else:
-            # Если не преследуем и игрок не виден
-            return super().get_new_target()
+    VISION_DIST = 10
 
     SPEED_VALUE = 2.75
     SCORE = 800
@@ -95,17 +106,19 @@ class Ovape(Enemy):
         return self.field_object.tile_at(pos).wallpass
 
 
-class Doria(Minvo, Ovape):
+class Doria(Dahl, Ovape):
     """
     Бежит за игроком также, как Minvo, и при этом
-    умеет ходить сквозь стены, но через стены не видит
+    умеет ходить сквозь стены
     """
+    VISION_DIST = 4
+
     SPEED_VALUE = 0.75
     SCORE = 1000
     COLOR = Color.NAVY
 
 
-class Pass(Minvo):
+class Pass(Enemy):
     """
     Обнаруживвает персонажа также, как Minvo, но при нахождении
     преследует не по прямой, а по какому-нибудь (не обязательно кратчайшему)
@@ -119,7 +132,22 @@ class Pass(Minvo):
     Если путь не единственный, то Pass старается обойти бомбу, а убегать в обратную сторону начинает
     лишь если бомбу заспавнили в 4 или меньше блоках от него на его пути к персонажу
     """
-    continue_chasing = True
+    def __init__(self, field, pos: Point = (0, 0), size: tuple = (1, 1)):
+        super().__init__(field, pos, size)
+        self.chasing = False
+
+    def get_new_target(self):
+        if self.field_object.tracker.get_straight_vision(self.tile) or self.chasing:
+            # Если уже преследуем или видим игрока по прямой
+            next_tile = self.field_object.tracker.get_next_tile(self.tile)
+            if not next_tile:
+                return super().get_new_target()
+            else:
+                self.chasing = True
+                return next_tile
+        else:
+            # Если не преследуем и игрок не виден
+            return super().get_new_target()
 
     SPEED_VALUE = 2.75
     SCORE = 4000
@@ -130,6 +158,7 @@ class Pontan(Doria):
     """
     Как Doria, но быстрый
     """
+    VISION_DIST = 6
     SPEED_VALUE = 2.25
     SCORE = 8000
     SPRITE_NAMES = "coin1", "coin2", "coin3", "coin4"
