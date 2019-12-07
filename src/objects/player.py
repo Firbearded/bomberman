@@ -226,7 +226,7 @@ class Player(Entity):
             self.animation.set_state(self.get_state())
 
     # =============== Обработка нажатий ================
-    def process_event(self, event):
+    def additional_event(self, event):
         if event.type == pygame.KEYDOWN:
             key = event.key
             for keys, i, m in self.KEYS_MOV:
