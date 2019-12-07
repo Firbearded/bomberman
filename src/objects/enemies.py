@@ -59,8 +59,14 @@ class Dahl(Enemy):
             next_tile = None
         return next_tile
 
-    def get_new_target(self): #Как у Пасса, но подстроенный под других мобов
+    def straight_line_check(self): #Находится ли игрок на прямой, нужно для Doria
         if self.field_object.tracker.get_straight_vision(self.tile):
+            return True
+        else:
+            return False
+
+    def get_new_target(self): #Как у Пасса, но подстроенный под других мобов
+        if self.straight_line_check():
             next_tile = self.get_next_tile()
             if not next_tile:
                 return super().get_new_target()
@@ -111,7 +117,13 @@ class Doria(Dahl, Ovape):
     Бежит за игроком также, как Minvo, и при этом
     умеет ходить сквозь стены
     """
-    VISION_DIST = 4
+    VISION_DIST = 5
+
+    def straight_line_check(self):  # Находится ли игрок на прямой, нужно для Doria
+        if self.field_object.transparrent_tracker.get_straight_vision (self.tile):
+            return True
+        else:
+            return False
 
     SPEED_VALUE = 0.75
     SCORE = 1000
