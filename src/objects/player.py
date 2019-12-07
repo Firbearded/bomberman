@@ -299,7 +299,7 @@ class Player(Entity):
 
     def death(self):
         if self._current_lives == 0:
-            self.field_object.game_over()
+            self.field_object._end_game()
         else:
             self._current_lives -= 1
             self.field_object.round_lose()

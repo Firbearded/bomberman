@@ -10,10 +10,21 @@ class GameScene(Scene):
     """ Игровая сцена """
     MAX_FPS = 0
 
-    def on_switch(self, new_game=False, restart=True):
-        if new_game:
-            self.game.mixer.channels[self.game.mixer.BACKGROUND_CHANNEL].add_sound_to_queue(Sounds.Music.round_start.value)
-        self.field.start_game(new_game, restart)
+    STATES = NOTHING, NEW_GAME, CONTINUE_GAME, ROUND_SWITCH = 0, 1, 2, 4
+
+    def on_switch(self, state=NOTHING):
+        self.game.mixer.channels[self.game.mixer.BACKGROUND_CHANNEL].stop()
+        self.game.mixer.channels[self.game.mixer.BACKGROUND_CHANNEL].add_sound_to_queue(Sounds.Music.round_start.value)
+        if state == GameScene.NEW_GAME:
+            self.field.new_game()
+        elif state == GameScene.CONTINUE_GAME:
+            self.field.continue_game()
+        elif state == GameScene.ROUND_SWITCH:
+            self.field.round_switch()
+        elif state == GameScene.NOTHING:
+            pass  # self.field.round_switch()
+        else:
+            raise ValueError
 
     def create_objects(self):
         tile_size = (40, 40)
@@ -37,7 +48,7 @@ class GameScene(Scene):
 
     def update_gui(self):
         t = int((self.field.timer._delay - self.field.timer.remaining) / 1000)
-        if t < 0:
+        if t <= 0:
             t = 0
             self.timer_object.set_color(Color.RED)
         else:

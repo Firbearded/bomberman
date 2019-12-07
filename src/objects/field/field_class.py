@@ -1,5 +1,4 @@
 import os
-import sys
 from random import randint, choice, shuffle
 from time import strftime
 
@@ -275,8 +274,7 @@ class Field(PygameObject, GeometricObject):
 
         return empty_tiles
 
-    def reset_stage(self, full=False):
-        """ Сброс уровня """
+    def _reload_current_stage(self):
         stage = self.current_stage
         self._field_size = stage.field_size
         self._soft_number = stage.soft_wall_number
@@ -285,6 +283,13 @@ class Field(PygameObject, GeometricObject):
         self.timer.delay = stage.time * 1000
         self._extra_enemies = stage.enemies_on_timeout
         self._has_door = False
+        from src.objects.player import Player
+        if Player in self._entities:
+            for p in self._entities[Player]:
+                p.reset(full=False)
+
+    def _reset_entities(self, full_reset_player=False):
+        """ Сброс уровня """
         for cls in self._entities:
             from src.objects.player import Player
             if cls is not Player:
@@ -294,9 +299,9 @@ class Field(PygameObject, GeometricObject):
                 self._entities[cls] = []
             else:
                 for e in self._entities[cls]:
-                    e.reset(full=full)
+                    e.reset(full=full_reset_player)
 
-    def grid_init(self):
+    def _grid_init(self):
         """ Заполнение неразрущаемыми стенами границы и остальное через одну клетку """
 
         # Создание двумерного списка, заполненного пустыми клетками:
@@ -316,7 +321,9 @@ class Field(PygameObject, GeometricObject):
             for j in range(2, self.width, 2):
                 self._grid[i][j] = Field.TILE_WALL
 
-    def generate_soft_walls(self):
+        self.surface = pygame.Surface(self.real_size)
+
+    def _generate_soft_walls(self):
         """ Случайная генерация ломающихся стен """
         empty_tiles = self._get_empty_tiles_without_buffer()
 
@@ -324,7 +331,7 @@ class Field(PygameObject, GeometricObject):
             pos = empty_tiles.pop(randint(0, len(empty_tiles) - 1))
             self.tile_set(pos, Field.TILE_SOFT_WALL)
 
-    def generate_enemies(self, enemies, pos=None):
+    def _generate_enemies(self, enemies, pos=None):
         """ Генерация мобов """
         if pos is None:
             empty_tiles = self._get_empty_tiles_without_buffer()
@@ -341,44 +348,60 @@ class Field(PygameObject, GeometricObject):
                 for _ in range(e_number):
                     ENEMIES[e_type](self, pos)
 
-    def start_game(self, new_game, restart=True):
+    def new_game(self):
+        self._reset_entities(full_reset_player=True)
+        self._current_stage_index = 0
+        self._next_stage(0)
+
+    def continue_game(self):
+        self._load_stage(full=True)
+        self._reset_entities(full_reset_player=False)
+        self._next_stage(0)
+
+    def round_switch(self):
+        self._load_stage(full=False)
+        self._reset_entities(full_reset_player=False)
+        self._next_stage(0)
+
+    def _game_start(self, ):
         """ Метод дял Начала игры """
-        if not new_game:
-            self.load(full=not restart)
-        self.reset_stage(full=new_game)
-        self.grid_init()
-        self.generate_soft_walls()
-        self.generate_enemies(self._enemies)
-        if new_game:
-            self.save_stage()  # TODO: message on start
-        self.timer.start()
-        self.surface = pygame.Surface(self.real_size)
+        self._reload_current_stage()
+        self._grid_init()
+        self._generate_soft_walls()
+        self._generate_enemies(self._enemies)
+
         self.draw_all_tiles()
+        self._background_music()
+
+        self.timer.start()
+
+    def _background_music(self):
         bbs = [i.value for i in Sounds.Background]
         shuffle(bbs)
         for bb in bbs * 10:
             self.game_object.mixer.channels['background'].add_sound_to_queue(bb)
         self.game_object.mixer.channels['background'].unmute()
 
-    def next_stage(self):
+    def _next_stage(self, x=1, *args, **kwargs):
         """ Переключение на следующий уровень """
-        self._current_stage_index += 1
+        self._current_stage_index += x
         if self._current_stage_index + 1 > len(Field.STAGES):
-            self.game_over(win=True)
+            self._end_game(win=True)
             return
-        self.save_stage()
-        self.start_game(new_game=False)
+        self._save_stage()
+        self._game_start()
         self.game_object.set_scene(self.game_object.GAME_SCENE_INDEX, 3000, self.current_stage.name)
 
-    def game_over(self, win=False):
+    def _end_game(self, win=False):
         """ Окончание игры (полный проигрыш или выигрыш) """
         self._current_stage_index = 0
-        self.save_score()
-        self.start_game(True, False)
+        self._save_score()
+        # self._game_start()
         self.game_object.mixer.channels['background'].mute()
 
         if win:
             self.game_object.mixer.channels['music'].stop()
+            self.game_object.mixer.channels['background'].stop()
             self.game_object.mixer.channels['music'].add_sound_to_queue(self.SOUND_GAMEWIN)
         self.game_object.set_scene(self.game_object.MENU_SCENE_INDEX, 3000, (Field.GAMEOVER_MSG, Field.WIN_MSG)[win])
 
@@ -388,7 +411,7 @@ class Field(PygameObject, GeometricObject):
         self.game_object.set_scene(self.game_object.GAME_SCENE_INDEX, 1500, self.current_stage.name)
         # self.game_object.mixer.channels['music'].add_sound_to_queue(self.SOUND_LOSE)
 
-    def save_score(self):
+    def _save_score(self):
         """ Сохранить счёт """
         highscores = get_highscores()
         player = self.main_player
@@ -401,20 +424,17 @@ class Field(PygameObject, GeometricObject):
 
         save_highscores(highscores)
 
-    def save_stage(self, on_exit=False):
+    def _save_stage(self, on_exit=False):
         """ Сохранить уровень """
         check_dir(Path.SAVE_DIR)
         if on_exit:
-            self.load()
+            self._load_stage()
 
         with open(Path.STAGE_SAVE, 'w') as f:
-            sys.stdout = f
-            print(self._current_stage_index)
-            print(self.main_player.to_str())
+            print(self._current_stage_index, file=f)
+            print(self.main_player.to_str(), file=f)
 
-        sys.stdout = sys.__stdout__
-
-    def load(self, full=False):
+    def _load_stage(self, full=False):
         """ Загрузить уровень """
         check_dir(Path.SAVE_DIR)
         if os.path.exists(Path.STAGE_SAVE):
@@ -434,7 +454,7 @@ class Field(PygameObject, GeometricObject):
     def on_timeout(self):
         """ Метод, когда время на таймере закончится """
         self.game_object.mixer.channels['effects'].sound_play(self.SOUND_TIMEOUT)
-        self.generate_enemies(self._extra_enemies)
+        self._generate_enemies(self._extra_enemies)
 
     # ======================== Эвенты ========================
     def additional_event(self, event):
@@ -442,7 +462,7 @@ class Field(PygameObject, GeometricObject):
         if event.type == pygame.KEYDOWN:
             if event.key in Field.KEYS_EXIT:
                 print("Exit from game to menu")
-                self.save_stage(on_exit=True)
+                self._save_stage(on_exit=True)
                 self.game_object.set_scene(self.game_object.MENU_SCENE_INDEX)
                 return
 
