@@ -32,6 +32,7 @@ class SettingsScene(Scene):
         default = 10
 
         sliders = []
+
         to = TextObject(self.game, '-General--', font_name, font_size - 5, color=color, antialiasing=aa)
         _volume = MenuItemSlider(self.game, to, "-{}-", color2, real_length=rl, on_change=self.update_general_volume,
                                  max_value=mx, value=default)
@@ -39,7 +40,6 @@ class SettingsScene(Scene):
         sliders.append(_volume)
         _volume.interval_after = 15
 
-        sliders = []
         to = TextObject(self.game, 'Background', font_name, font_size - 5, color=color, antialiasing=aa)
         bb_volume = MenuItemSlider(self.game, to, "-{}-", color2, real_length=rl, on_change=self.update_bb_volume,
                                    max_value=mx, value=default)
