@@ -43,8 +43,7 @@ class Door(Item):
 
     def on_take(self, player_object):
         self.game_object.mixer.channels['effects'].sound_play(self.SOUND_WIN)
-        # TODO : задержка
-        self.field_object._next_stage()
+        self.field_object.round_win()
 
     def hurt(self, from_e):
         pass  # self.field_object.generate_enemies(self.field_object._enemies_on_door, self.pos)  # TODO: new enemies
