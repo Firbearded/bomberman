@@ -4,35 +4,36 @@ from src.objects.player import Player
 from src.utils.constants import Sounds
 
 
-# TODO:  + детонатор + Bomb-Walk + Wall-Walker + Mystery + Flame-Proof +
-# TODO: инкапсуляция игрока
+# TODO:  + Bomb-Walk + Wall-Walker + Mystery + Flame-Proof +
 
 class BombNumberUp(Item):
     SPRITE_NAMES = ("count_up",)
 
-    def on_take(self, player_object):
-        player_object.bombs_number += 1
+    def on_take(self, player_object): player_object.bomb_up()
 
 
 class SpeedUp(Item):
     SPRITE_NAMES = ("speed_up",)
 
-    def on_take(self, player_object):
-        player_object.speed_value += .2
+    def on_take(self, player_object): player_object.speed_up()
 
 
 class PowerUp(Item):
     SPRITE_NAMES = ("power_up",)
 
-    def on_take(self, player_object):
-        player_object.bombs_power += 1
+    def on_take(self, player_object): player_object.power_up()
 
 
 class LifeUp(Item):
     SPRITE_NAMES = ("life",)
 
-    def on_take(self, player_object):
-        player_object.lives += 1
+    def on_take(self, player_object): player_object.life_up()
+
+
+class Detonator(Item):
+    SPRITE_NAMES = ()  # TODO: нужен спрайт для детонатора
+
+    def on_take(self, player_object): player_object.get_detonator()
 
 
 class Door(Item):
@@ -41,9 +42,9 @@ class Door(Item):
     SIZE = 1, 1
 
     def on_take(self, player_object):
-        self.game_object.mixer['effects'].sound_play(self.SOUND_WIN)
+        self.game_object.mixer.channels['effects'].sound_play(self.SOUND_WIN)
         # TODO : задержка
-        self.field_object.next_stage()
+        self.field_object._next_stage()
 
     def hurt(self, from_e):
         pass  # self.field_object.generate_enemies(self.field_object._enemies_on_door, self.pos)  # TODO: new enemies
@@ -57,4 +58,4 @@ class Door(Item):
                         self.destroy()
 
 
-DROP = (SpeedUp, LifeUp, BombNumberUp, PowerUp)
+DROP_LIST = (BombNumberUp, PowerUp, Detonator, SpeedUp, LifeUp,)

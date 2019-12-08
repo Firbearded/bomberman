@@ -48,6 +48,7 @@ class Game:
 
         self.create_scenes()
 
+        self._timers = []
         self.delta_time = 0
 
     def init(self):
@@ -87,7 +88,7 @@ class Game:
         fps = 0
         while self.running:  # Основной цикл работы программы
             loop_start_time = time()
-            
+
             eventlist = pygame.event.get()
             for event in eventlist:
                 if event.type == pygame.QUIT:
@@ -97,6 +98,10 @@ class Game:
 
             self.scenes[self.current_scene].process_frame(eventlist)
             self.mixer.process_logic()
+            for t in self._timers:
+                t.timer_logic()
+                if t.is_timeout:
+                    self._timers.remove(t)
 
             end_time = time()  # Расчёт delta_time
             self.delta_time = (end_time - loop_start_time)
@@ -107,21 +112,35 @@ class Game:
                 fps_start_time = end_time - (end_time - fps_start_time) % 1
                 fps = 0
 
+        pygame.quit()
         sys.exit(0)  # Выход из программы
 
-    def set_scene(self, index, delay=0, message='', *args, **kwargs):
+    def set_scene(self, index, *args, **kwargs):
+        """ Переключение на другую сцену """
+        print("New scene: from {} to {} without delay".format(self.current_scene, index))
+        self.current_scene = int(index)
+        self.scenes[self.current_scene].on_switch(*args, **kwargs)
+
+    def set_scene_with_transition(self, index, delay, message, *args, **kwargs):
         """
-        Переключение на другую сцену.
-        Если с задержкой, то через сцену перехода.
+        Переключение на другую сцену через сцену перехода.
+        :param index: Индекс сцены
+        :param delay: Задержка в ms
+        :param message: Сообщение
         :type index: int
         :type delay: int
         :type message: str
         """
         print("New scene: from {} to {} (delay={}; message='{}'".format(self.current_scene, index, delay, message))
-        if delay > 0:
-            self.current_scene = int(self.TRANSITION_SCENE_INDEX)
-            self.scenes[self.current_scene].on_switch(*args, **kwargs)
-            self.scenes[self.current_scene].start(index, delay, message)
-        else:
-            self.current_scene = int(index)
-            self.scenes[self.current_scene].on_switch(*args, **kwargs)
+        self.current_scene = int(self.TRANSITION_SCENE_INDEX)
+        self.scenes[self.current_scene].on_switch()
+        self.scenes[self.current_scene].start(index, delay, message, *args, **kwargs)
+
+    def add_timer(self, timer):
+        """
+        Добавить таймер.
+        Сюда можно кидать таймеры, тут Game будет сам вызывать у них process_logic
+        :type timer: TimerObject
+        """
+        timer.start()
+        self._timers.append(timer)

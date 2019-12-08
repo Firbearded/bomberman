@@ -4,7 +4,7 @@
 <dict>
 	<key>frames</key>
 	<dict>
-		<key>bb_h1.png</key>
+		<key>bb_dead1.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{2,2},{200,267}}</string>
@@ -17,7 +17,7 @@
 			<key>sourceSize</key>
 			<string>{200,267}</string>
 		</dict>
-		<key>bb_h2.png</key>
+		<key>bb_dead2.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{2,271},{200,267}}</string>
@@ -30,7 +30,7 @@
 			<key>sourceSize</key>
 			<string>{200,267}</string>
 		</dict>
-		<key>bb_h3.png</key>
+		<key>bb_dead3.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{2,540},{200,267}}</string>
@@ -43,7 +43,7 @@
 			<key>sourceSize</key>
 			<string>{200,267}</string>
 		</dict>
-		<key>bb_h4.png</key>
+		<key>bb_h1.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{204,540},{200,267}}</string>
@@ -56,7 +56,7 @@
 			<key>sourceSize</key>
 			<string>{200,267}</string>
 		</dict>
-		<key>bb_h5.png</key>
+		<key>bb_h2.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{204,2},{200,267}}</string>
@@ -69,7 +69,7 @@
 			<key>sourceSize</key>
 			<string>{200,267}</string>
 		</dict>
-		<key>bb_h6.png</key>
+		<key>bb_h3.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{204,271},{200,267}}</string>
@@ -82,7 +82,7 @@
 			<key>sourceSize</key>
 			<string>{200,267}</string>
 		</dict>
-		<key>bb_h7.png</key>
+		<key>bb_h4.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{406,271},{200,267}}</string>
@@ -95,7 +95,7 @@
 			<key>sourceSize</key>
 			<string>{200,267}</string>
 		</dict>
-		<key>bb_standing_down.png</key>
+		<key>bb_h5.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{406,2},{200,267}}</string>
@@ -108,7 +108,7 @@
 			<key>sourceSize</key>
 			<string>{200,267}</string>
 		</dict>
-		<key>bb_standing_horizontal.png</key>
+		<key>bb_h6.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{608,2},{200,267}}</string>
@@ -121,7 +121,7 @@
 			<key>sourceSize</key>
 			<string>{200,267}</string>
 		</dict>
-		<key>bb_standing_up.png</key>
+		<key>bb_h7.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{810,2},{200,267}}</string>
@@ -134,10 +134,49 @@
 			<key>sourceSize</key>
 			<string>{200,267}</string>
 		</dict>
+		<key>bb_standing_down.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{810,271},{200,267}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{200,267}}</string>
+			<key>sourceSize</key>
+			<string>{200,267}</string>
+		</dict>
+		<key>bb_standing_horizontal.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{608,271},{200,267}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{200,267}}</string>
+			<key>sourceSize</key>
+			<string>{200,267}</string>
+		</dict>
+		<key>bb_standing_up.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{608,540},{200,267}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{200,267}}</string>
+			<key>sourceSize</key>
+			<string>{200,267}</string>
+		</dict>
 		<key>bb_walking1_down.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{810,271},{148,267}}</string>
+			<string>{{406,540},{148,267}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -150,7 +189,7 @@
 		<key>bb_walking1_up.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{608,271},{148,267}}</string>
+			<string>{{810,540},{148,267}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -163,7 +202,7 @@
 		<key>bb_walking2_down.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{608,540},{148,267}}</string>
+			<string>{{1012,2},{148,267}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -176,7 +215,7 @@
 		<key>bb_walking2_up.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{406,540},{148,267}}</string>
+			<string>{{1162,2},{148,267}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -194,7 +233,7 @@
 		<key>realTextureFileName</key>
 		<string>input/bomberman_sprites.png</string>
 		<key>size</key>
-		<string>{1024,1024}</string>
+		<string>{2048,2048}</string>
 		<key>textureFileName</key>
 		<string>input/bomberman_sprites.png</string>
 	</dict>

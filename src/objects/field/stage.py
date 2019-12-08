@@ -1,4 +1,5 @@
 from src.objects.enemies import ENEMIES as ENEMY_LIST
+from src.objects.items import DROP_LIST
 
 
 class Stage:
@@ -7,18 +8,18 @@ class Stage:
     """
     FIELD_SIZE = 31, 13
     NAME = "Untitled stage"
-    ENEMIES = tuple([0 for i in range(len(ENEMY_LIST))])
+    ENEMIES = tuple([0 for _ in range(len(ENEMY_LIST))])
+    UPGRADES = tuple([0 for _ in range(len(DROP_LIST))])
     SOFT_WALL_NUMBER = 60
-    UPGRADES_NUMBER = 1
     TIME = 200
-    ON_TIMEOUT = (0, 0, 0, 0, 0, 0, 0, 10)  # -> после окончания времени появится карательный отряд
+    ON_TIMEOUT = (0, 0, 0, 0, 0, 0, 0, 15)  # -> после окончания времени появится `карательный отряд`
 
     def __init__(self,
                  field_size=FIELD_SIZE,
                  name=NAME,
                  soft_wall_number=SOFT_WALL_NUMBER,
                  enemies=ENEMIES,
-                 upgrades_number=UPGRADES_NUMBER,
+                 upgrades=UPGRADES,
                  time=TIME,
                  on_timeout=ON_TIMEOUT):
         """
@@ -26,7 +27,7 @@ class Stage:
         :param name: Название уровня
         :param soft_wall_number: Количество разрушаемых блоков
         :param enemies: Кортеж с числом врагов каждого типа
-        :param upgrades_number: Количество выпадаемых улучшений
+        :param upgrades: Кортеж с числом выпадаемых предметов каждого типа
         :param time: Время на уровень
         :param on_timeout: Враги, которые появятся после окончания уровня
         """
@@ -35,8 +36,10 @@ class Stage:
         self.soft_wall_number = soft_wall_number
         self.enemies = tuple(enemies)  # смотреть -> src.objects.enemies.ENEMIES
         if len(self.enemies) < len(ENEMY_LIST):
-            self.enemies = self.enemies + tuple([0 for i in range(len(ENEMY_LIST) - len(self.enemies))])
-        self.upgrades_number = upgrades_number
+            self.enemies = self.enemies + tuple([0 for _ in range(len(ENEMY_LIST) - len(self.enemies))])
+        self.upgrades = upgrades
+        if len(self.upgrades) < len(DROP_LIST):
+            self.upgrades = self.upgrades + tuple([0 for _ in range(len(DROP_LIST) - len(self.upgrades))])
         self.time = time
         self.enemies_on_timeout = tuple(on_timeout)
 

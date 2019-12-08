@@ -1,4 +1,4 @@
-from src.utils.sign import sign
+from src.utils.functions import sign
 
 
 class Vector:
@@ -116,6 +116,11 @@ class Vector:
         """
         self._x = sign(self.x)
         self._y = sign(self.y)
+
+    @staticmethod
+    def dot_product(vector1, vector2):
+        """ Скалярное произведение векторов """
+        return vector1.x * vector2.x + vector1.y * vector2.y
 
     def __str__(self):
         return 'Vector{' + "{}; {}".format(*self.get) + '}'

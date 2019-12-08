@@ -23,12 +23,19 @@ class SimpleAnimation:
     def current_image(self):
         return self.animation_dict[self.current_state][1][self.current_index]
 
+    @property
+    def current_delay(self):
+        return self.animation_dict[self.current_state][0]
+
+    @property
+    def current_length(self):
+        return len(self.animation_dict[self.current_state][1])
+
     def set_state(self, key):
         if self.current_state == key:
             return
         self.current_state = key
         self.current_index = 0
-        # print("ANIM {}: {}".format(self, self.current_state))
 
     def process_logic(self):
         delay, image_list = self.current_animation
@@ -36,8 +43,5 @@ class SimpleAnimation:
         delta_time = pygame.time.get_ticks() - self.start_time
         if delta_time >= delay:
             x = delta_time // delay
-            # print("ANIM {}: {} {} {}".format(self, self.current_index, x, len(image_list)))
             self.current_index = (self.current_index + x) % len(image_list)
             self.start_time += x * delay
-            # print("ANIM {}: next image in anim - {}".format(self, self.current_index))
-            # print("ANIM {}: {} {} {}".format(self, self.current_index, x, len(image_list)))

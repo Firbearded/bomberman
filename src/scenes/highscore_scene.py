@@ -63,7 +63,7 @@ class HighscoreScene(Scene):
         self.highscores.sort(reverse=True)
 
     def update_labels(self):
-        hc = self.highscores[:5]
+        hc = self.highscores[:self.MAX_HIGHSCORES]
 
         for i in range(len(hc)):
             hc[i] = "{} - {}".format(*hc[i])

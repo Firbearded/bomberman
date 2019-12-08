@@ -38,7 +38,7 @@ class MenuItemSlider(MenuItemSelectableLabel):
     REAL_LENGTH = 10
 
     def __init__(self, game_object, text_object, selected_text_wrapper="{}", selected_color=None, real_length=10,
-                 min_value=0, max_value=100, value=0, decimals=1, fill='#', unfill='.', on_change=None):
+                 min_value=0, max_value=100, value=0, decimals=1, fill=':', unfill='.', on_change=None):
         """
         :param real_length: Реальная длина слайдера (количество символов)
         :param min_value: Минимальное значение
