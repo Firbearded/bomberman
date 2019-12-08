@@ -29,6 +29,6 @@ class TransitionScene(Scene):
         self.text_object.pos = pos
         self.start_time = pygame.time.get_ticks()
 
-    def process_all_logic(self):
+    def additional_logic(self):
         if pygame.time.get_ticks() - self.start_time >= self.delay:
-            self.game.set_scene(self.next_scene, 0, '', *self.args, **self.kwargs)
+            self.game.set_scene(self.next_scene, *self.args, **self.kwargs)

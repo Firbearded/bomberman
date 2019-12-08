@@ -40,10 +40,10 @@ class TileBreakableWall(Tile):
 
 class TileUnreachableEmpty(TileEmpty):
     walkable = False
+    wallpass = False
     @classmethod
     def is_walkable_for_player(cls, player_object):
         return player_object.has_bombpass
-
 
 TILES = (
     TileEmpty, TileWall, TileBreakableWall, TileUnreachableEmpty

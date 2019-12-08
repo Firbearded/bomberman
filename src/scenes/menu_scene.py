@@ -5,6 +5,7 @@ from src.objects.menu.menu_items.menu_item_button import MenuItemButton
 from src.objects.menu.menu_items.menu_item_label import MenuItemLabel
 from src.objects.supporting.textobject import TextObject
 from src.scenes.base_scene import Scene
+from src.scenes.game_scene import GameScene
 from src.utils.constants import Color, Path, Sounds
 from src.utils.vector import Point
 
@@ -56,11 +57,11 @@ class MenuScene(Scene):
 
     def start(self):
         self.game.mixer.channels[self.game.mixer.MUSIC_CHANNEL].stop()
-        self.game.set_scene(self.game.GAME_SCENE_INDEX, new_game=True, restart=False)
+        self.game.set_scene(self.game.GAME_SCENE_INDEX, state=GameScene.NEW_GAME)
 
     def continue_game(self):
         self.game.mixer.channels[self.game.mixer.MUSIC_CHANNEL].stop()
-        self.game.set_scene(self.game.GAME_SCENE_INDEX, new_game=False, restart=False)
+        self.game.set_scene(self.game.GAME_SCENE_INDEX, state=GameScene.CONTINUE_GAME)
 
     def exit(self):
         sys.exit(0)

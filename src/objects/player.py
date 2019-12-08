@@ -227,7 +227,7 @@ class Player(Entity):
             self.animation.set_state(self.get_state())
 
     # =============== Обработка нажатий ================
-    def process_event(self, event):
+    def additional_event(self, event):
         if event.type == pygame.KEYDOWN:
             key = event.key
             for keys, i, m in self.KEYS_MOV:
@@ -300,7 +300,7 @@ class Player(Entity):
 
     def death(self):
         if self._current_lives == 0:
-            self.field_object.game_over()
+            self.field_object._end_game()
         else:
             self._current_lives -= 1
             self.field_object.round_lose()
