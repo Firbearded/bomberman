@@ -36,7 +36,6 @@ class Field(PygameObject, GeometricObject):
     KEYS_EXIT = (pygame.K_ESCAPE,)  # Кнопки на выход из игры
 
     STAGES = (  # Уровки игры (смотрите класс Stage)
-        Stage(name="Stage zoo", enemies=(3, 2, 1, 1, 1, 1, 1)),
         Stage(name="Stage 1", enemies=(6,), upgrades=(0, 1)),
         Stage(name="Stage 2", enemies=(3, 3), upgrades=(1,)),
         Stage(name="Stage 3", enemies=(2, 2, 2), upgrades=(0, 0, 1)),
