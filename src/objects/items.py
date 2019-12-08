@@ -4,8 +4,6 @@ from src.objects.player import Player
 from src.utils.constants import Sounds
 
 
-# TODO:  + Bomb-Walk + Wall-Walker + Mystery + Flame-Proof +
-
 class BombNumberUp(Item):
     SPRITE_NAMES = ("count_up",)
 
@@ -31,29 +29,34 @@ class LifeUp(Item):
 
 
 class Detonator(Item):
-    SPRITE_NAMES = ("detonator", )
+    SPRITE_NAMES = ("detonator",)
 
     def on_take(self, player_object): player_object.get_detonator()
 
+
 class WallpassUp(Item):
-    SPRITE_NAMES = ()  # TODO: нужен спрайт для wallpass
+    SPRITE_NAMES = ("wallpass", )
 
     def on_take(self, player_object): player_object.get_wallpass()
 
+
 class BombpassUp(Item):
-    SPRITE_NAMES = ()  # TODO: нужен спрайт для bombpass
+    SPRITE_NAMES = ("bombpass", )
 
     def on_take(self, player_object): player_object.get_bombpass()
 
+
 class FlamepassUp(Item):
-    SPRITE_NAMES = ()  # TODO: нужен спрайт для flamepass
+    SPRITE_NAMES = ("flamepass", )
 
     def on_take(self, player_object): player_object.get_flamepass()
 
+
 class MysteryUp(Item):
-    SPRITE_NAMES = ()  # TODO: нужен спрайт для mystery
+    SPRITE_NAMES = ("mystery", )
 
     def on_take(self, player_object): player_object.get_mystery()
+
 
 class Door(Item):
     SPRITE_NAMES = ("door",)
