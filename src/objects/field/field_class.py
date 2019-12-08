@@ -35,11 +35,12 @@ class Field(PygameObject, GeometricObject):
 
     STAGES = (  # Уровки игры (смотрите класс Stage)
         Stage(name="Stage 1", enemies=(6,), upgrades=(0, 1)),
-        Stage(name="Stage 2", enemies=(3, 3), upgrades=(1, )),
+        Stage(name="Stage 2", enemies=(3, 3), upgrades=(1,)),
         Stage(name="Stage 3", enemies=(2, 2, 2), upgrades=(0, 0, 1)),
         Stage(name="Stage 4", enemies=(1, 1, 2, 2), upgrades=(0, 0, 0, 1)),
-        Stage(name="Stage 5", enemies=(0, 4, 3), upgrades=(1, )),
-        Stage(name="Stage HELL", enemies=(1, 0, 0), upgrades=(100, 100, 5, 100, 100), time=10, on_timeout=(5, 5, 10, 15, 15, 20, 25, 30)),
+        Stage(name="Stage 5", enemies=(0, 4, 3), upgrades=(1,)),
+        Stage(name="Stage HELL", enemies=(1, 0, 0), upgrades=(100, 100, 5, 100, 100), time=10,
+              on_timeout=(5, 5, 10, 15, 15, 20, 25, 30)),
     )
 
     GAMEOVER_MSG = "GAME OVER"
@@ -326,6 +327,8 @@ class Field(PygameObject, GeometricObject):
     def _generate_soft_walls(self):
         """ Случайная генерация ломающихся стен """
         empty_tiles = self._get_empty_tiles_without_buffer()
+        if len(empty_tiles) < self._soft_number:
+            self._soft_number = len(empty_tiles)
 
         for _ in range(self._soft_number):
             pos = empty_tiles.pop(randint(0, len(empty_tiles) - 1))
@@ -338,30 +341,36 @@ class Field(PygameObject, GeometricObject):
 
             for e_type, e_number in enumerate(enemies):
                 if e_number <= 0: continue
-
+                if not empty_tiles: break
                 for _ in range(e_number):
                     ENEMIES[e_type](self, empty_tiles.pop(randint(0, len(empty_tiles) - 1)))
         else:
             for e_type, e_number in enumerate(enemies):
                 if e_number <= 0: continue
-
                 for _ in range(e_number):
                     ENEMIES[e_type](self, pos)
 
     def new_game(self):
         self._reset_entities(full_reset_player=True)
         self._current_stage_index = 0
+        self._play_round_start()
         self._next_stage(0)
 
     def continue_game(self):
         self._load_stage(full=True)
         self._reset_entities(full_reset_player=False)
+        self._play_round_start()
         self._next_stage(0)
 
     def round_switch(self):
         self._load_stage(full=False)
         self._reset_entities(full_reset_player=False)
         self._next_stage(0)
+
+    def _play_round_start(self):
+        self.game_object.mixer.channels[self.game_object.mixer.BACKGROUND_CHANNEL].stop()
+        self.game_object.mixer.channels[self.game_object.mixer.BACKGROUND_CHANNEL].add_sound_to_queue(
+            Sounds.Music.round_start.value)
 
     def _game_start(self, ):
         """ Метод дял Начала игры """
@@ -390,26 +399,25 @@ class Field(PygameObject, GeometricObject):
             return
         self._save_stage()
         self._game_start()
-        self.game_object.set_scene(self.game_object.GAME_SCENE_INDEX, 3000, self.current_stage.name)
+        self.game_object.set_scene_with_transition(self.game_object.GAME_SCENE_INDEX, 1500, self.current_stage.name)
 
     def _end_game(self, win=False):
         """ Окончание игры (полный проигрыш или выигрыш) """
         self._current_stage_index = 0
         self._save_score()
         # self._game_start()
-        self.game_object.mixer.channels['background'].mute()
-
+        self.game_object.mixer.channels['background'].stop()
         if win:
             self.game_object.mixer.channels['music'].stop()
-            self.game_object.mixer.channels['background'].stop()
             self.game_object.mixer.channels['music'].add_sound_to_queue(self.SOUND_GAMEWIN)
-        self.game_object.set_scene(self.game_object.MENU_SCENE_INDEX, 3000, (Field.GAMEOVER_MSG, Field.WIN_MSG)[win])
+        self.game_object.set_scene_with_transition(self.game_object.MENU_SCENE_INDEX, 3000,
+                                                   (Field.GAMEOVER_MSG, Field.WIN_MSG)[win])
 
     def round_lose(self):
         """ Проигрыш (не полный, жизни ещё есть) """
-        # self.game_object.mixer.channels['music'].stop()
-        self.game_object.set_scene(self.game_object.GAME_SCENE_INDEX, 1500, self.current_stage.name)
-        # self.game_object.mixer.channels['music'].add_sound_to_queue(self.SOUND_LOSE)
+        from src.scenes.game_scene import GameScene
+        self.game_object.mixer.channels['background'].mute()
+        self.game_object.set_scene(self.game_object.GAME_SCENE_INDEX, state=GameScene.ROUND_SWITCH)
 
     def _save_score(self):
         """ Сохранить счёт """
