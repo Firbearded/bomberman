@@ -17,6 +17,19 @@
 			<key>sourceSize</key>
 			<string>{50,50}</string>
 		</dict>
+		<key>detonator.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{926,104},{50,50}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{50,50}}</string>
+			<key>sourceSize</key>
+			<string>{50,50}</string>
+		</dict>
 		<key>door.png</key>
 		<dict>
 			<key>frame</key>
@@ -33,7 +46,7 @@
 		<key>life.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{926,104},{50,50}}</string>
+			<string>{{926,156},{50,50}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -46,7 +59,7 @@
 		<key>power_up.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{926,156},{50,50}}</string>
+			<string>{{874,156},{50,50}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>

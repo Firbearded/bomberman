@@ -7,11 +7,11 @@
 		<key>ballom1.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{20,2},{16,16}}</string>
+			<string>{{2,2},{16,16}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
-			<true/>
+			<false/>
 			<key>sourceColorRect</key>
 			<string>{{0,0},{16,16}}</string>
 			<key>sourceSize</key>
@@ -20,11 +20,11 @@
 		<key>ballom2.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{37,37},{16,16}}</string>
+			<string>{{20,2},{16,16}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
-			<true/>
+			<false/>
 			<key>sourceColorRect</key>
 			<string>{{0,0},{16,16}}</string>
 			<key>sourceSize</key>
@@ -33,76 +33,193 @@
 		<key>ballom3.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{2,20},{16,15}}</string>
-			<key>offset</key>
-			<string>{0,0}</string>
-			<key>rotated</key>
-			<true/>
-			<key>sourceColorRect</key>
-			<string>{{0,0},{16,15}}</string>
-			<key>sourceSize</key>
-			<string>{16,15}</string>
-		</dict>
-		<key>coin1.png</key>
-		<dict>
-			<key>frame</key>
-			<string>{{55,37},{16,16}}</string>
-			<key>offset</key>
-			<string>{0,0}</string>
-			<key>rotated</key>
-			<true/>
-			<key>sourceColorRect</key>
-			<string>{{0,0},{16,16}}</string>
-			<key>sourceSize</key>
-			<string>{16,16}</string>
-		</dict>
-		<key>coin2.png</key>
-		<dict>
-			<key>frame</key>
-			<string>{{2,38},{15,16}}</string>
+			<string>{{38,2},{16,15}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
 			<false/>
 			<key>sourceColorRect</key>
-			<string>{{0,0},{15,16}}</string>
+			<string>{{0,0},{16,15}}</string>
 			<key>sourceSize</key>
-			<string>{15,16}</string>
+			<string>{16,15}</string>
 		</dict>
-		<key>coin3.png</key>
+		<key>ballomdeath1.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{56,2},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>ballomdeath2.png</key>
 		<dict>
 			<key>frame</key>
 			<string>{{38,19},{16,16}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
-			<true/>
+			<false/>
 			<key>sourceColorRect</key>
 			<string>{{0,0},{16,16}}</string>
 			<key>sourceSize</key>
 			<string>{16,16}</string>
 		</dict>
-		<key>coin4.png</key>
+		<key>ballomdeath3.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{38,2},{15,16}}</string>
+			<string>{{2,20},{16,16}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
-			<true/>
+			<false/>
 			<key>sourceColorRect</key>
-			<string>{{0,0},{15,16}}</string>
+			<string>{{0,0},{16,16}}</string>
 			<key>sourceSize</key>
-			<string>{15,16}</string>
+			<string>{16,16}</string>
+		</dict>
+		<key>ballomdeath4.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{20,20},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>dahl1.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{74,2},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>dahl2.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{92,2},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>dahl3.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{110,2},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>doria1.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{110,20},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>doria2.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{56,20},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>doria3.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{38,37},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>minvo1.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{2,38},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>minvo2.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{20,38},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>minvo3.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{74,20},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
 		</dict>
 		<key>onil1.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{19,20},{16,16}}</string>
+			<string>{{92,20},{16,16}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
-			<true/>
+			<false/>
 			<key>sourceColorRect</key>
 			<string>{{0,0},{16,16}}</string>
 			<key>sourceSize</key>
@@ -111,11 +228,11 @@
 		<key>onil2.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{19,38},{16,16}}</string>
+			<string>{{92,38},{16,16}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
-			<true/>
+			<false/>
 			<key>sourceColorRect</key>
 			<string>{{0,0},{16,16}}</string>
 			<key>sourceSize</key>
@@ -124,11 +241,180 @@
 		<key>onil3.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{2,2},{16,16}}</string>
+			<string>{{110,38},{16,16}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
-			<true/>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>ovape1.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{110,56},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>ovape2.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{56,38},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>pass1.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{38,55},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>pass2.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{74,38},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>pass3.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{74,56},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>pontan1.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{56,56},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>pontan2.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{92,56},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>pontan3.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{92,74},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>pontan4.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{110,74},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>pontanred1.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{110,92},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>pontanred2.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{2,110},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>pontanred3.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{20,110},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,16}}</string>
+			<key>sourceSize</key>
+			<string>{16,16}</string>
+		</dict>
+		<key>pontanred4.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{38,110},{16,16}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
 			<key>sourceColorRect</key>
 			<string>{{0,0},{16,16}}</string>
 			<key>sourceSize</key>
@@ -140,11 +426,11 @@
 		<key>format</key>
 		<integer>2</integer>
 		<key>realTextureFileName</key>
-		<string>test_image0.png</string>
+		<string>input/enemy_sprites.png</string>
 		<key>size</key>
-		<string>{128,64}</string>
+		<string>{128,128}</string>
 		<key>textureFileName</key>
-		<string>test_image0.png</string>
+		<string>input/enemy_sprites.png</string>
 	</dict>
 </dict>
 </plist>

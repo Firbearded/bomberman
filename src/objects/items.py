@@ -31,7 +31,7 @@ class LifeUp(Item):
 
 
 class Detonator(Item):
-    SPRITE_NAMES = ()  # TODO: нужен спрайт для детонатора
+    SPRITE_NAMES = ("detonator", )
 
     def on_take(self, player_object): player_object.get_detonator()
 

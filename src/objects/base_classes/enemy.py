@@ -24,6 +24,7 @@ class Enemy(Entity):
 
         self.target = None  # Цель моба - соседняя клетка, в которую он переходит
         self.direction = None  # Направление движения моба
+        self.is_chasing = False
 
         self.animation = self.create_animation()
 

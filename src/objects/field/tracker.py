@@ -9,7 +9,6 @@ class Tracker:
     """
 
     delta = [Vector(1, 0), Vector(0, 1), Vector(-1, 0), Vector(0, -1)]
-    STRAIGHT_VISION_DIST = 10
 
     def __init__(self, field_object):
         self.field_object = field_object
@@ -18,8 +17,6 @@ class Tracker:
         # Матрицы путей
         self.parent = []
         self.straight = []
-
-        self._player_last_pos = None
 
     def can_walk_at(self, tile):
         """ Функция разрешенности клетки """
@@ -45,7 +42,7 @@ class Tracker:
                 self.straight[i][j] = False
         # Расчет путей до игрока обходом в ширину
         player_pos = self.player.tile
-        self._player_last_pos = player_pos
+        self._last_pos = player_pos
         queue = Queue()
         if self.can_walk_at(player_pos):
             self.parent[player_pos.x][player_pos.y] = player_pos
@@ -61,7 +58,7 @@ class Tracker:
         self.straight[player_pos.x][player_pos.y] = True
         for v in self.delta:
             current_pos = player_pos
-            for i in range(self.STRAIGHT_VISION_DIST):
+            while True:
                 current_pos += v
                 if not self.can_walk_at(current_pos):
                     break
@@ -75,8 +72,22 @@ class Tracker:
         """ Есть ли прямая видимость игрока из клетки """
         return self.straight[tile.x][tile.y]
 
-    def _update_player(self):
+    def _update_player_object(self):
         self.player = self.field_object.main_player
+        self._update_player_status()
+
+    def _update_player_status(self):
+        if not self.player: return
+
+        self._last_pos = self.player.tile
+        self._last_bomb_count = self.player._active_bombs_number
+
+    def _need_to_update(self):
+        if self._last_pos != self.player.tile:
+            return True
+        if self.player._active_bombs_number != self._last_bomb_count:
+            return True
+        return False
 
     def process_logic(self):
         """ Логика работы Tracker'а - расчет путей """
@@ -84,8 +95,9 @@ class Tracker:
         if self.field_object.width != len(self.parent) or self.field_object.height != len(self.parent[0]):
             self.init_matrix()
 
-        if not self.player:
-            self._update_player()
+        if not self.player: self._update_player_object()
+
         # Cобственно расчет
-        if not self._player_last_pos or self._player_last_pos != self.player.tile:
+        if self._need_to_update():
+            self._update_player_status()
             self.calculate_ways()
