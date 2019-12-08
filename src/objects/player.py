@@ -281,12 +281,22 @@ class Player(Entity):
     def get_flamepass(self):
         self._has_flamepass = True
 
-    def get_mystery(self):
+    def get_mystery(self, mystery_time=7000):
         self._has_mystery = True
+        self.mystery_timer = TimerObject(mystery_time)
+        self.mystery_timer.start()
 
     # =============== Остальное ================
     def hurt(self, from_enemy):
         """ Когда больно """
+
+        if self._has_mystery:
+            self.mystery_timer.timer_logic()
+            self._has_mystery = self.mystery_timer.is_running
+
+        if self._has_mystery:
+            return
+
         if self._has_flamepass and isinstance(from_enemy, Fire):
             return
 
