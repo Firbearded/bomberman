@@ -36,6 +36,7 @@ class TileBreakableWall(Tile):
 
 class TileUnreachableEmpty(TileEmpty):
     walkable = False
+    wallpass = False
 
 
 TILES = (

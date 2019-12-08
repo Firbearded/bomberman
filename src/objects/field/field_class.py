@@ -12,6 +12,7 @@ from src.objects.field.breaking_wall import BreakingWall
 from src.objects.field.stage import Stage
 from src.objects.field.tiles import TILES, CATEGORY
 from src.objects.items import Door, DROP_LIST
+from src.objects.field.transparrent_tracker import TransparrentTracker
 from src.objects.field.tracker import Tracker
 from src.utils.constants import Path, Sounds
 from src.utils.vector import Point
@@ -86,6 +87,7 @@ class Field(PygameObject, GeometricObject):
         self.load_images()
 
         self.tracker = Tracker(self)
+        self.transparrent_tracker = TransparrentTracker(self)
 
     # ======================== Свойства ========================
     @property
@@ -491,6 +493,7 @@ class Field(PygameObject, GeometricObject):
         """ Логика таймера, обработка логики и добавление сущностей из очереди """
         self.timer.timer_logic()
         self.tracker.process_logic()
+        self.transparrent_tracker.process_logic()
         for cls in self._entities:
             for e in self._entities[cls]:
                 e.process_logic()
