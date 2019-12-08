@@ -328,6 +328,10 @@ class Player(Entity):
     def has_wallpass(self):
         return self._has_wallpass
 
+    @property
+    def has_bombpass(self):
+        return self._has_bombpass
+
     def inc_active_bombs_number(self):
         self._active_bombs_number += 1
 
