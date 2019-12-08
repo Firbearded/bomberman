@@ -11,9 +11,9 @@ from src.objects.enemies import ENEMIES
 from src.objects.field.breaking_wall import BreakingWall
 from src.objects.field.stage import Stage
 from src.objects.field.tiles import TILES, CATEGORY
-from src.objects.items import Door, DROP_LIST
-from src.objects.field.transparrent_tracker import TransparrentTracker
 from src.objects.field.tracker import Tracker
+from src.objects.field.transparrent_tracker import TransparrentTracker
+from src.objects.items import Door, DROP_LIST
 from src.utils.constants import Path, Sounds
 from src.utils.vector import Point
 
@@ -36,14 +36,14 @@ class Field(PygameObject, GeometricObject):
     KEYS_EXIT = (pygame.K_ESCAPE,)  # Кнопки на выход из игры
 
     STAGES = (  # Уровки игры (смотрите класс Stage)
-        Stage(name="Stage 0", enemies=(1, 0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage zoo", enemies=(3, 2, 1, 1, 1, 1, 1)),
         Stage(name="Stage 1", enemies=(6,), upgrades=(0, 1)),
         Stage(name="Stage 2", enemies=(3, 3), upgrades=(1,)),
         Stage(name="Stage 3", enemies=(2, 2, 2), upgrades=(0, 0, 1)),
         Stage(name="Stage 4", enemies=(1, 1, 2, 2), upgrades=(0, 0, 0, 1)),
         Stage(name="Stage 5", enemies=(0, 4, 3), upgrades=(1,)),
         Stage(name="Stage HELL", enemies=(1, 0, 0), upgrades=(100, 100, 5, 100, 100), time=10,
-              on_timeout=(5, 5, 10, 15, 15, 20, 25, 30)),
+              on_timeout=(5, 5, 5, 5, 5, 5, 5, 10)),
     )
 
     GAMEOVER_MSG = "GAME OVER"

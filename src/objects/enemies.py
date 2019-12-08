@@ -1,7 +1,7 @@
 from src.objects.base_classes.enemy import Enemy
 from src.objects.player import Player
 from src.utils.constants import Color
-from src.utils.vector import Vector, Point
+from src.utils.vector import Point
 
 """
     Внимание! При создании логики в мобах переопределять следующие методы:
@@ -21,7 +21,8 @@ from src.utils.vector import Vector, Point
   моба.
 """
 
-class Ballom (Enemy):
+
+class Ballom(Enemy):
     SPEED_VALUE = 1
     SCORE = 100
     COLOR = Color.ORANGE
@@ -44,28 +45,23 @@ class Dahl(Enemy):
     """
     VISION_DIST = 6
 
-    def get_next_tile(self): #Находит, с какой стороны игрок, и возвращает тайл по направлению в его сторону
-        target = self.field_object.get_entities (Player)[0].tile
-        next_tile = self.tile
-        if self.tile.x - target.x > 0 and self.tile.x - target.x <= self.VISION_DIST and self.tile.y == target.y:
-            next_tile += Vector (-1, 0)
-        elif self.tile.x - target.x < 0 and self.tile.x - target.x >= -self.VISION_DIST and self.tile.y == target.y:
-            next_tile += Vector (1, 0)
-        elif self.tile.y - target.y > 0 and self.tile.y - target.y <= self.VISION_DIST and self.tile.x == target.x:
-            next_tile += Vector (0, -1)
-        elif self.tile.y - target.y < 0 and self.tile.y - target.y >= -self.VISION_DIST and self.tile.x == target.x:
-            next_tile += Vector (0, 1)
-        else:
-            next_tile = None
+    def get_next_tile(self):  # Находит, с какой стороны игрок, и возвращает тайл по направлению в его сторону
+        target = self.field_object.get_entities(Player)[0].tile
+        next_tile = None
+
+        for i in range(2):
+            if abs(target.x - self.tile.x) <= self.VISION_DIST and self.tile[i] == target[i]:
+                next_tile = self.tile + (target - self.tile).united
+
         return next_tile
 
-    def straight_line_check(self): #Находится ли игрок на прямой, нужно для Doria
+    def straight_line_check(self):  # Находится ли игрок на прямой, нужно для Doria
         if self.field_object.tracker.get_straight_vision(self.tile):
             return True
         else:
             return False
 
-    def get_new_target(self): #Как у Пасса, но подстроенный под других мобов
+    def get_new_target(self):  # Как у Пасса, но подстроенный под других мобов
         if self.straight_line_check():
             next_tile = self.get_next_tile()
             if not next_tile:
@@ -120,7 +116,7 @@ class Doria(Dahl, Ovape):
     VISION_DIST = 5
 
     def straight_line_check(self):  # Находится ли игрок на прямой, нужно для Doria
-        if self.field_object.transparrent_tracker.get_straight_vision (self.tile):
+        if self.field_object.transparrent_tracker.get_straight_vision(self.tile):
             return True
         else:
             return False
@@ -144,18 +140,20 @@ class Pass(Enemy):
     Если путь не единственный, то Pass старается обойти бомбу, а убегать в обратную сторону начинает
     лишь если бомбу заспавнили в 4 или меньше блоках от него на его пути к персонажу
     """
+
     def __init__(self, field, pos: Point = (0, 0), size: tuple = (1, 1)):
         super().__init__(field, pos, size)
-        self.chasing = False
+        self.is_chasing = False
 
     def get_new_target(self):
-        if self.field_object.tracker.get_straight_vision(self.tile) or self.chasing:
+        if self.field_object.tracker.get_straight_vision(self.tile) or self.is_chasing:
             # Если уже преследуем или видим игрока по прямой
             next_tile = self.field_object.tracker.get_next_tile(self.tile)
             if not next_tile:
+                self.is_chasing = False
                 return super().get_new_target()
             else:
-                self.chasing = True
+                self.is_chasing = True
                 return next_tile
         else:
             # Если не преследуем и игрок не виден

@@ -9,12 +9,12 @@ from src.utils.vector import Point, Vector
 
 class Enemy(Entity):
     """ Класс мобов """
-    SPEED_VALUE = .5  # Скорость моба
-    SCORE = 100  # Очки, выпадаемые с моба
+    SPEED_VALUE = 1  # Скорость моба в (клетка/сек)
+    SCORE = 0  # Очки, выпадаемые с моба
     CHANCE_TURN_ASIDE = 0.2  # Вероятность поворота в сторону
     CHANCE_TURN_BACK = 0.03  # Вероятность разворота
 
-    delta = [Vector(1, 0), Vector(0, 1), Vector(-1, 0), Vector(0, -1)]
+    delta = (Vector(1, 0), Vector(0, 1), Vector(-1, 0), Vector(0, -1))
     SPRITE_CATEGORY = "enemy_sprites"
     SPRITE_DELAY = 500
     COLOR = Color.MAGENTA
@@ -30,10 +30,6 @@ class Enemy(Entity):
     def can_walk_at(self, tile):
         """ Может ли моб ходить по клетке tile? """
         return self.field_object.tile_at(tile).walkable
-
-    def dot_product(self, vector1, vector2):
-        """ Скалярное произведение векторов """
-        return vector1.x * vector2.x + vector1.y * vector2.y
 
     def get_new_target(self):
         """ Обновление цели моба """
@@ -66,7 +62,7 @@ class Enemy(Entity):
     def update_target_and_direction(self):
         """ Обновление цели и направления (вызов получения цели и вычисление направления) """
         self.target = self.get_new_target()
-        self.direction = self.target - self.tile if self.target else None
+        self.direction = (self.target - self.tile) if self.target else None
 
     def move(self):
         """ Движение моба """
@@ -79,7 +75,7 @@ class Enemy(Entity):
             speed_vector = self.direction.normalized * self.real_speed_value
             self.pos += speed_vector
             # Достигнута ли цель?
-            if self.dot_product(speed_vector, self.target - self.pos) <= 0:
+            if Vector.dot_product(speed_vector, self.target - self.pos) <= 0:
                 self.pos = self.target
                 self.update_target_and_direction()
 
