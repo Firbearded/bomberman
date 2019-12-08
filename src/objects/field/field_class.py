@@ -187,6 +187,9 @@ class Field(PygameObject, GeometricObject):
 
     def can_place_bomb(self, pos):
         """ Проверка на то, можно ли поставить бомбу в клетку на позиции pos """
+        if not self.tile_at(pos).empty:
+            return False
+
         from src.objects.bomb import Bomb
 
         pos = tuple(pos)

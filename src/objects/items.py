@@ -35,6 +35,10 @@ class Detonator(Item):
 
     def on_take(self, player_object): player_object.get_detonator()
 
+class WallpassUp(Item):
+    SPRITE_NAMES = ()  # TODO: нужен спрайт для wallpass
+
+    def on_take(self, player_object): player_object.get_wallpass()
 
 class Door(Item):
     SPRITE_NAMES = ("door",)
@@ -58,4 +62,4 @@ class Door(Item):
                         self.destroy()
 
 
-DROP_LIST = (BombNumberUp, PowerUp, Detonator, SpeedUp, LifeUp,)
+DROP_LIST = (BombNumberUp, PowerUp, Detonator, SpeedUp, LifeUp, WallpassUp, )

@@ -62,7 +62,7 @@ class Fire(Entity, TimerObject):
         self.start()
         if start_time is not None:
             self._start_time = start_time
-        
+
         self.generate_next_fire()
         
         self.animation = self.create_animation()
