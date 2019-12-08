@@ -45,6 +45,11 @@ class BombpassUp(Item):
 
     def on_take(self, player_object): player_object.get_bombpass()
 
+class FlamepassUp(Item):
+    SPRITE_NAMES = ()  # TODO: нужен спрайт для flamepass
+
+    def on_take(self, player_object): player_object.get_flamepass()
+
 class Door(Item):
     SPRITE_NAMES = ("door",)
     SOUND_WIN = Sounds.Music.round_win.value
@@ -67,4 +72,4 @@ class Door(Item):
 
 
 DROP_LIST = (BombNumberUp, PowerUp, Detonator, SpeedUp, LifeUp,
-             WallpassUp, BombpassUp, )
+             WallpassUp, BombpassUp, FlamepassUp, )

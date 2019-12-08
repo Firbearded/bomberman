@@ -9,7 +9,7 @@ from src.utils.decorators import protect
 from src.utils.functions import sign
 from src.utils.intersections import collide_rect
 from src.utils.vector import Vector, Point
-
+from src.objects.bomb import Fire
 
 class Player(Entity):
     SPRITE_CATEGORY = "bomberman_sprites"
@@ -287,6 +287,9 @@ class Player(Entity):
     # =============== Остальное ================
     def hurt(self, from_enemy):
         """ Когда больно """
+        if self._has_flamepass and isinstance(from_enemy, Fire):
+            return
+
         self.disable()
         self.game_object.mixer.channels['music'].stop()
         self.game_object.mixer.channels['background'].stop()
