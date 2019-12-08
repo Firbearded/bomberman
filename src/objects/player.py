@@ -9,7 +9,7 @@ from src.utils.decorators import protect
 from src.utils.functions import sign
 from src.utils.intersections import collide_rect
 from src.utils.vector import Vector, Point
-
+from src.objects.bomb import Fire
 
 class Player(Entity):
     SPRITE_CATEGORY = "bomberman_sprites"
@@ -159,8 +159,8 @@ class Player(Entity):
                         f = True
                 if f: continue
 
-                up, nx, dn = [not self.field_object.tile_at(tile_x + d[j][k], tile_y + d[i][k]).walkable for k in
-                              range(3)]
+                up, nx, dn = [not self.field_object.tile_at(tile_x + d[j][k],
+                                        tile_y + d[i][k]).is_walkable_for_player(self)for k in range(3)]
                 if not nx:
                     if (speed_vector[i] > 0 and (self.right, self.bottom)[i] == (tile_x + 1, tile_y + 1)[i]) or \
                             (speed_vector[i] < 0 and (self.left, self.top)[i] == (tile_x, tile_y)[i]):
@@ -195,7 +195,8 @@ class Player(Entity):
                     # Проверка на то, подходит ли нам клетка для проверки
                     if dx == dy == 0: continue
                     if (dx, dy)[i] != sign(tmp_speed_vector[i]): continue
-                    if self.field_object.tile_at(tile_x + dx, tile_y + dy).walkable: continue
+                    if self.field_object.tile_at(tile_x + dx,
+                            tile_y + dy).is_walkable_for_player(self): continue
                     fw, fh = self.field_object.size
                     if not (0 <= tile_y + dy < fh and 0 <= tile_x + dx < fw): continue
 
@@ -280,12 +281,25 @@ class Player(Entity):
     def get_flamepass(self):
         self._has_flamepass = True
 
-    def get_mystery(self):
+    def get_mystery(self, mystery_time=7000):
         self._has_mystery = True
+        self.mystery_timer = TimerObject(mystery_time)
+        self.mystery_timer.start()
 
     # =============== Остальное ================
     def hurt(self, from_enemy):
         """ Когда больно """
+
+        if self._has_mystery:
+            self.mystery_timer.timer_logic()
+            self._has_mystery = self.mystery_timer.is_running
+
+        if self._has_mystery:
+            return
+
+        if self._has_flamepass and isinstance(from_enemy, Fire):
+            return
+
         self.disable()
         self.game_object.mixer.channels['music'].stop()
         self.game_object.mixer.channels['background'].stop()
@@ -322,6 +336,14 @@ class Player(Entity):
     @property
     def bombs_power(self):
         return self._bombs_power
+
+    @property
+    def has_wallpass(self):
+        return self._has_wallpass
+
+    @property
+    def has_bombpass(self):
+        return self._has_bombpass
 
     def inc_active_bombs_number(self):
         self._active_bombs_number += 1
