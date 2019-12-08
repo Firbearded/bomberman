@@ -359,25 +359,25 @@ class Field(PygameObject, GeometricObject):
         self._reset_entities(full_reset_player=True)
         self._current_stage_index = 0
         self._play_round_start()
-        self._next_stage(0)
+        self._start_stage()
 
     def continue_game(self):
         self._load_stage(full=True)
         self._reset_entities(full_reset_player=False)
         self._play_round_start()
-        self._next_stage(0)
+        self._start_stage()
 
     def round_switch(self):
         self._load_stage(full=False)
         self._reset_entities(full_reset_player=False)
-        self._next_stage(0)
+        self._start_stage()
 
     def _play_round_start(self):
         self.game_object.mixer.channels[self.game_object.mixer.BACKGROUND_CHANNEL].stop()
         self.game_object.mixer.channels[self.game_object.mixer.BACKGROUND_CHANNEL].add_sound_to_queue(
             Sounds.Music.round_start.value)
 
-    def _game_start(self, ):
+    def _round_init(self, ):
         """ Метод дял Начала игры """
         self._reload_current_stage()
         self._grid_init()
@@ -396,15 +396,22 @@ class Field(PygameObject, GeometricObject):
             self.game_object.mixer.channels['background'].add_sound_to_queue(bb)
         self.game_object.mixer.channels['background'].unmute()
 
-    def _next_stage(self, x=1, *args, **kwargs):
+    def _start_stage(self):
+        self._save_stage()
+        self.game_object.set_scene_with_transition(self.game_object.GAME_SCENE_INDEX, 1500, self.current_stage.name)
+        self._round_init()
+
+    def _next_stage(self, x=1):
         """ Переключение на следующий уровень """
         self._current_stage_index += x
         if self._current_stage_index + 1 > len(Field.STAGES):
             self._end_game(win=True)
             return
         self._save_stage()
-        self._game_start()
-        self.game_object.set_scene_with_transition(self.game_object.GAME_SCENE_INDEX, 1500, self.current_stage.name)
+        self.round_switch()
+
+    def round_win(self):
+        self._next_stage()
 
     def _end_game(self, win=False):
         """ Окончание игры (полный проигрыш или выигрыш) """
