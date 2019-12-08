@@ -86,6 +86,7 @@ class Game:
         self.running = True
         fps_start_time = time()  # Для счёта FPS
         fps = 0
+        pygame.event.clear()
         while self.running:  # Основной цикл работы программы
             loop_start_time = time()
 
