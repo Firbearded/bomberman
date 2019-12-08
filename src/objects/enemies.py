@@ -1,6 +1,19 @@
 from src.objects.base_classes.enemy import Enemy
 from src.utils.constants import Color
+from src.utils.vector import Vector, Point
 
+"""
+    Внимание! При создании логики в мобах переопределять следующие методы:
+1)can_walk_at(self, pos) возвращает, может ли моб ходить по клетке, заданной позицией (по
+  умолчанию метод не разрешает ходить по стенам);
+2)get_new_target(self) возвращает цель моба - соседнюю мобом клетку, в которую он должен
+  перейти.
+  
+  Внимание! При создании логики в мобах использовать значения из следующих полей класса:
+1)self.target - текущая цель моба (None, если моб стоит на месте);
+2)self.direction - направление движения моба (единичный вектор; None, если моб стоит на месте).
+Информация в этих полях всегда корректна при вызове can_walk_at и get_new_target.
+"""
 
 class Ballom (Enemy):
     SPEED_VALUE = 1
@@ -52,7 +65,7 @@ class Ovape(Enemy):
     COLOR = Color.LIGHT_GREY
 
     def can_walk_at(self, pos):
-        return self.field_object.tile_at(pos).wallpass
+        return self.field_object.tile_at(pos).get_wallpass
 
 
 class Doria(Minvo, Ovape):
@@ -82,6 +95,16 @@ class Pass(Minvo):
     SPEED_VALUE = 2.75
     SCORE = 4000
     COLOR = Color.APRICOT
+
+    CHANCE_TURN_ASIDE = 0.2
+    CHANCE_TURN_BACK = 0.03
+
+    def get_new_target(self):
+        next_tile = self.field_object.tracker.get_next_tile(self.tile)
+        if not next_tile:
+            return super().get_new_target()
+        else:
+            return next_tile
 
 
 class Pontan(Doria):

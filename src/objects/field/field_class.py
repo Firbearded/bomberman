@@ -12,6 +12,7 @@ from src.objects.field.breaking_wall import BreakingWall
 from src.objects.field.stage import Stage
 from src.objects.field.tiles import TILES, CATEGORY
 from src.objects.items import Door, DROP_LIST
+from src.objects.field.tracker import Tracker
 from src.utils.constants import Path, Sounds
 from src.utils.vector import Point
 
@@ -34,6 +35,7 @@ class Field(PygameObject, GeometricObject):
     KEYS_EXIT = (pygame.K_ESCAPE,)  # Кнопки на выход из игры
 
     STAGES = (  # Уровки игры (смотрите класс Stage)
+        Stage(name="Stage 0", enemies=(1, 0, 0, 0, 0, 0, 1)),
         Stage(name="Stage 1", enemies=(6,), upgrades=(0, 1)),
         Stage(name="Stage 2", enemies=(3, 3), upgrades=(1,)),
         Stage(name="Stage 3", enemies=(2, 2, 2), upgrades=(0, 0, 1)),
@@ -82,6 +84,8 @@ class Field(PygameObject, GeometricObject):
         self.timer.on_timeout = self.on_timeout
 
         self.load_images()
+
+        self.tracker = Tracker(self)
 
     # ======================== Свойства ========================
     @property
@@ -486,6 +490,7 @@ class Field(PygameObject, GeometricObject):
     def process_logic(self):
         """ Логика таймера, обработка логики и добавление сущностей из очереди """
         self.timer.timer_logic()
+        self.tracker.process_logic()
         for cls in self._entities:
             for e in self._entities[cls]:
                 e.process_logic()
