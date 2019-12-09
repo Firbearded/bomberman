@@ -13,6 +13,7 @@ from src.scenes.loading_scene import LoadingScene
 from src.scenes.menu_scene import MenuScene
 from src.scenes.settings_scene import SettingsScene
 from src.scenes.transition_scene import TransitionScene
+from src.utils.constants import Path
 from src.utils.decorators import benchmark
 from src.utils.loader import load_textures, load_sounds
 
@@ -57,6 +58,7 @@ class Game:
         pygame.font.init()
 
         self.resize_screen(self.size)
+        pygame.display.set_icon(pygame.image.load(Path.ICON_PATH))
         pygame.display.set_caption(self.title)
 
     def load_resources(self):
@@ -137,7 +139,7 @@ class Game:
         self.scenes[self.current_scene].on_switch()
         self.scenes[self.current_scene].start(index, delay, message, *args, **kwargs)
 
-    def add_timer(self, timer):
+    def add_global_timer(self, timer):
         """
         Добавить таймер.
         Сюда можно кидать таймеры, тут Game будет сам вызывать у них process_logic
@@ -145,3 +147,6 @@ class Game:
         """
         timer.start()
         self._timers.append(timer)
+
+    def clear_global_timers(self):
+        self._timers.clear()

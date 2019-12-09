@@ -80,6 +80,8 @@ class Path:
 
     IMAGE_DIR = join(RESOURCES_DIR, "images")
     TEXTURES_DIR = IMAGE_DIR
+
+    ICON_PATH = join(IMAGE_DIR, "icon64.png")
     TEXTURES_EXTENSION_PIC = '.png'
     TEXTURES_EXTENSION_LIST = '.plist'
 

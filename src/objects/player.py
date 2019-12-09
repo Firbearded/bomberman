@@ -3,13 +3,14 @@ import pygame
 from src.objects.base_classes.base_objects.timer_object import TimerObject
 from src.objects.base_classes.entity import Entity
 from src.objects.bomb import Bomb, BombRemote
+from src.objects.bomb import Fire
 from src.objects.supporting.animation import SimpleAnimation
 from src.utils.constants import Color, Sounds
 from src.utils.decorators import protect
 from src.utils.functions import sign
 from src.utils.intersections import collide_rect
 from src.utils.vector import Vector, Point
-from src.objects.bomb import Fire
+
 
 class Player(Entity):
     SPRITE_CATEGORY = "bomberman_sprites"
@@ -309,7 +310,7 @@ class Player(Entity):
         timer = TimerObject(self.animation.current_length * self.animation.current_delay)
         timer.on_timeout = self.death
 
-        self.game_object.add_timer(timer)
+        self.game_object.add_global_timer(timer)
 
     def death(self):
         if self._current_lives == 0:

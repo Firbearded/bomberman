@@ -359,23 +359,6 @@ class Field(PygameObject, GeometricObject):
                 for _ in range(e_number):
                     ENEMIES[e_type](self, pos)
 
-    def new_game(self):
-        self._reset_entities(full_reset_player=True)
-        self._current_stage_index = 0
-        self._play_round_start()
-        self._start_stage()
-
-    def continue_game(self):
-        self._load_stage(full=True)
-        self._reset_entities(full_reset_player=False)
-        self._play_round_start()
-        self._start_stage()
-
-    def round_switch(self):
-        self._load_stage(full=False)
-        self._reset_entities(full_reset_player=False)
-        self._start_stage()
-
     def _play_round_start(self):
         self.game_object.mixer.channels[self.game_object.mixer.BACKGROUND_CHANNEL].stop()
         self.game_object.mixer.channels[self.game_object.mixer.BACKGROUND_CHANNEL].add_sound_to_queue(
@@ -414,9 +397,6 @@ class Field(PygameObject, GeometricObject):
         self._save_stage()
         self.round_switch()
 
-    def round_win(self):
-        self._next_stage()
-
     def _end_game(self, win=False):
         """ Окончание игры (полный проигрыш или выигрыш) """
         self._current_stage_index = 0
@@ -428,12 +408,6 @@ class Field(PygameObject, GeometricObject):
             self.game_object.mixer.channels['music'].add_sound_to_queue(self.SOUND_GAMEWIN)
         self.game_object.set_scene_with_transition(self.game_object.MENU_SCENE_INDEX, 3000,
                                                    (Field.GAMEOVER_MSG, Field.WIN_MSG)[win])
-
-    def round_lose(self):
-        """ Проигрыш (не полный, жизни ещё есть) """
-        from src.scenes.game_scene import GameScene
-        self.game_object.mixer.channels['background'].mute()
-        self.game_object.set_scene(self.game_object.GAME_SCENE_INDEX, state=GameScene.ROUND_SWITCH)
 
     def _save_score(self):
         """ Сохранить счёт """
@@ -475,10 +449,57 @@ class Field(PygameObject, GeometricObject):
                     if not full:
                         player._current_lives = _lives
 
+    def _camera_move(self):
+        new_pos = Point()
+
+        for i in range(2):
+            new_pos[i] = (-self.main_player.center[i] * self.tile_size[i] + self.game_object.size[i] / 2)
+            if self.size[i] * self.tile_size[i] < self.game_object.size[i]:
+                new_pos[i] = (self.game_object.size[i] - self.size[i] * self.tile_size[i]) / 2
+            else:
+                new_pos[i] = min(new_pos[i], 0)
+                new_pos[i] = max(new_pos[i], self.game_object.size[i] - self.size[i] * self.tile_size[i])
+
+        self.pos = new_pos
+
     def on_timeout(self):
         """ Метод, когда время на таймере закончится """
         self.game_object.mixer.channels['effects'].sound_play(self.SOUND_TIMEOUT)
         self._generate_enemies(self._extra_enemies)
+
+    # ===================== Публичные методы ========================
+    def new_game(self):
+        """ Начинаем новую игру """
+        self._reset_entities(full_reset_player=True)
+        self._current_stage_index = 0
+        self._play_round_start()
+        self._start_stage()
+
+    def continue_game(self):
+        """ Продолжаем игру """
+        self._load_stage(full=True)
+        self._reset_entities(full_reset_player=False)
+        self._play_round_start()
+        self._start_stage()
+
+    def round_switch(self):
+        """ Перезагрузка уровня """
+        self._load_stage(full=False)
+        self._reset_entities(full_reset_player=False)
+        self._start_stage()
+
+    def round_win(self):
+        """ Выигран уровень """
+        self._next_stage()
+
+    def round_lose(self):
+        """ Проигрыш (не полный, жизни ещё есть) """
+        from src.scenes.game_scene import GameScene
+        self.game_object.mixer.channels['background'].mute()
+        self.game_object.set_scene(self.game_object.GAME_SCENE_INDEX, state=GameScene.ROUND_SWITCH)
+
+    def door_explosion(self, door_pos):
+        self._generate_enemies(self._enemies_on_door, door_pos)
 
     # ======================== Эвенты ========================
     def additional_event(self, event):
@@ -487,7 +508,7 @@ class Field(PygameObject, GeometricObject):
             if event.key in Field.KEYS_EXIT:
                 print("Exit from game to menu")
                 self._save_stage(on_exit=True)
-                self.game_object._timers.clear()
+                self.game_object.clear_global_timers()
                 self.game_object.set_scene(self.game_object.MENU_SCENE_INDEX)
                 return
 
@@ -509,17 +530,7 @@ class Field(PygameObject, GeometricObject):
             for e in self._entities[cls]:
                 e.process_logic()
 
-        new_pos = Point()
-
-        for i in range(2):
-            new_pos[i] = (-self.main_player.center[i] * self.tile_size[i] + self.game_object.size[i] / 2)
-            if self.size[i] * self.tile_size[i] < self.game_object.size[i]:
-                new_pos[i] = (self.game_object.size[i] - self.size[i] * self.tile_size[i]) / 2
-            else:
-                new_pos[i] = min(new_pos[i], 0)
-                new_pos[i] = max(new_pos[i], self.game_object.size[i] - self.size[i] * self.tile_size[i])
-
-        self.pos = new_pos
+        self._camera_move()
 
         self._flush_enitites()
 
@@ -527,7 +538,7 @@ class Field(PygameObject, GeometricObject):
     def draw_tile(self, x, y):
         tile_real_pos = (x * self.tile_size[0], y * self.tile_size[1])
 
-        rect = tile_real_pos, self.tile_size
+        rect = *tile_real_pos, *self.tile_size
 
         tile = self.tile_at(x, y)
         if self.tile_images and tile.image_name and Field._BACKGROUND_TILE.image_name:
@@ -544,21 +555,7 @@ class Field(PygameObject, GeometricObject):
     def draw_all_tiles(self):
         for y in range(self.height):
             for x in range(self.width):
-                tile_real_pos = (x * self.tile_size[0], y * self.tile_size[1])
-
-                rect = tile_real_pos, self.tile_size
-
-                tile = self.tile_at(x, y)
-                if self.tile_images and tile.image_name and Field._BACKGROUND_TILE.image_name:
-                    # Если есть спрайты и названия спайтов у клеток, то рисуем текстуры
-                    self.surface.blit(self.tile_images[Field._BACKGROUND_TILE.image_name], rect)
-                    if tile is not Field._BACKGROUND_TILE:
-                        self.surface.blit(self.tile_images[tile.image_name], rect)
-                else:  # Иначе запасной план: рисуем квадраты
-                    pygame.draw.rect(self.surface, tile.color, rect, 0)
-
-                if Field.LINE_WIDTH > 0:
-                    pygame.draw.rect(self.surface, (0, 0, 0), rect, Field.LINE_WIDTH)
+                self.draw_tile(x, y)
 
     def process_draw_entities(self):
         """ Отрисовка всех сущностей, принадлежащих этому полю """
@@ -570,7 +567,6 @@ class Field(PygameObject, GeometricObject):
 
     def process_draw(self):
         self.game_object.screen.blit(self.surface, tuple(self.pos))
-        # self.process_draw_tiles()
         self.process_draw_entities()
 
 
