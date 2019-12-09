@@ -1,13 +1,13 @@
 import os
 from configparser import ConfigParser
 
-from src.objects.menu.menu import Menu
-from src.objects.menu.menu_items.menu_item_button import MenuItemButton
-from src.objects.menu.menu_items.menu_item_label import MenuItemLabel
-from src.objects.menu.menu_items.menu_item_slider import MenuItemSlider
-from src.objects.supporting.textobject import TextObject
+from src.game.menu.menu import Menu
+from src.game.menu.menu_items.menu_item_button import MenuItemButton
+from src.game.menu.menu_items.menu_item_label import MenuItemLabel
+from src.game.menu.menu_items.menu_item_slider import MenuItemSlider
+from src.game.supporting.constants import Path, Color
+from src.game.supporting.textobject import TextObject
 from src.scenes.base_scene import Scene
-from src.utils.constants import Path, Color
 from src.utils.vector import Point
 
 

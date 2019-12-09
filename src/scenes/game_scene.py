@@ -1,8 +1,8 @@
-from src.objects.field.field_class import Field
-from src.objects.player import Player
-from src.objects.supporting.textobject import TextObject
+from src.game.entities.player import Player
+from src.game.field.field_class import Field
+from src.game.supporting.constants import Color, Path
+from src.game.supporting.textobject import TextObject
 from src.scenes.base_scene import Scene
-from src.utils.constants import Color, Path
 from src.utils.vector import Point
 
 

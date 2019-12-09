@@ -1,12 +1,12 @@
 import sys
 
-from src.objects.menu.menu import Menu
-from src.objects.menu.menu_items.menu_item_button import MenuItemButton
-from src.objects.menu.menu_items.menu_item_label import MenuItemLabel
-from src.objects.supporting.textobject import TextObject
+from src.game.menu.menu import Menu
+from src.game.menu.menu_items.menu_item_button import MenuItemButton
+from src.game.menu.menu_items.menu_item_label import MenuItemLabel
+from src.game.supporting.constants import Color, Path, Sounds
+from src.game.supporting.textobject import TextObject
 from src.scenes.base_scene import Scene
 from src.scenes.game_scene import GameScene
-from src.utils.constants import Color, Path, Sounds
 from src.utils.vector import Point
 
 

@@ -2,12 +2,12 @@ import threading
 
 import pygame
 
-from src.objects.supporting.progress_bar import ProgressBar
-from src.objects.supporting.textobject import TextObject
+from src.game.supporting.constants import Color, Path
+from src.game.supporting.loader import TOTAL_NUMBER
+from src.game.supporting.progress_bar import ProgressBar
+from src.game.supporting.textobject import TextObject
 from src.scenes.base_scene import Scene
-from src.utils.constants import Color, Path
 from src.utils.decorators import protect
-from src.utils.loader import TOTAL_NUMBER
 from src.utils.vector import Point
 
 

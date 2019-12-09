@@ -1,8 +1,8 @@
 import pygame
 
-from src.objects.supporting.textobject import TextObject
+from src.game.supporting.constants import Color, Path
+from src.game.supporting.textobject import TextObject
 from src.scenes.base_scene import Scene
-from src.utils.constants import Color, Path
 
 
 class TransitionScene(Scene):
