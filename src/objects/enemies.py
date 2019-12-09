@@ -1,7 +1,5 @@
 from src.objects.base_classes.enemy import Enemy
-from src.objects.player import Player
 from src.utils.constants import Color
-from src.utils.vector import Point
 
 """
     Внимание! При создании логики в мобах переопределять следующие методы:
@@ -41,35 +39,9 @@ class Onil(Enemy):
 class Dahl(Enemy):
     """
     Чаще всего бегает слева направо, иногда меняя направление на сверху вниз
-    Оказывается, ещё и бегает за игроком, как Minvo, пожтому теперь всё наследуется из него
+    Оказывается, ещё и бегает за игроком, как Minvo, поэтому теперь всё наследуется из него
     """
     VISION_DIST = 6
-
-    def get_next_tile(self):  # Находит, с какой стороны игрок, и возвращает тайл по направлению в его сторону
-        target = self.field_object.get_entities(Player)[0].tile
-        next_tile = None
-
-        for i in range(2):
-            if abs(target.x - self.tile.x) <= self.VISION_DIST and self.tile[i] == target[i]:
-                next_tile = self.tile + (target - self.tile).united
-
-        return next_tile
-
-    def straight_line_check(self):  # Находится ли игрок на прямой, нужно для Doria
-        if self.field_object.tracker.get_straight_vision(self.tile):
-            return True
-        else:
-            return False
-
-    def get_new_target(self):  # Как у Пасса, но подстроенный под других мобов
-        if self.straight_line_check():
-            next_tile = self.get_next_tile()
-            if not next_tile:
-                return super().get_new_target()
-            else:
-                return next_tile
-        else:
-            return super().get_new_target()
 
     SPEED_VALUE = 1.75
     SCORE = 400
@@ -78,6 +50,24 @@ class Dahl(Enemy):
     CHANCE_TURN_BACK = 0.05
 
     COLOR = Color.BROWN
+
+    SPRITE_NAMES = "dahl1", "dahl2", "dahl3"
+    SPRITE_DELAY = 350
+
+    def get_new_target(self):
+        if self.is_chasing or (self.field_object.tracker.get_straight_vision(self.tile) and
+                               (self.field_object.main_player.tile - self.tile).length <= self.VISION_DIST):
+            # Если уже преследуем или видим игрока по прямой
+            next_tile = self.field_object.tracker.get_next_tile(self.tile)
+            if not next_tile:
+                self.is_chasing = False
+                return super().get_new_target()
+            else:
+                self.is_chasing = True
+                return next_tile
+        else:
+            # Если не преследуем и игрок не виден
+            return super().get_new_target()
 
 
 class Minvo(Dahl):
@@ -94,6 +84,8 @@ class Minvo(Dahl):
     SPEED_VALUE = 2.75
     SCORE = 800
     COLOR = Color.ORANGE
+    SPRITE_NAMES = "minvo1", "minvo2", "minvo3"
+    SPRITE_DELAY = 350
 
 
 class Ovape(Enemy):
@@ -103,6 +95,9 @@ class Ovape(Enemy):
     SPEED_VALUE = 1.5
     SCORE = 2000
     COLOR = Color.LIGHT_GREY
+
+    SPRITE_NAMES = "ovape1", "ovape2",
+    SPRITE_DELAY = 350
 
     def can_walk_at(self, pos):
         return self.field_object.tile_at(pos).wallpass
@@ -115,18 +110,15 @@ class Doria(Dahl, Ovape):
     """
     VISION_DIST = 5
 
-    def straight_line_check(self):  # Находится ли игрок на прямой, нужно для Doria
-        if self.field_object.transparrent_tracker.get_straight_vision(self.tile):
-            return True
-        else:
-            return False
-
     SPEED_VALUE = 0.75
     SCORE = 1000
     COLOR = Color.NAVY
 
+    SPRITE_NAMES = "doria1", "doria2", "doria3"
+    SPRITE_DELAY = 350
 
-class Pass(Enemy):
+
+class Pass(Minvo):
     """
     Обнаруживвает персонажа также, как Minvo, но при нахождении
     преследует не по прямой, а по какому-нибудь (не обязательно кратчайшему)
@@ -141,16 +133,18 @@ class Pass(Enemy):
     лишь если бомбу заспавнили в 4 или меньше блоках от него на его пути к персонажу
     """
 
-    def __init__(self, field, pos: Point = (0, 0), size: tuple = (1, 1)):
-        super().__init__(field, pos, size)
-        self.is_chasing = False
+    SPEED_VALUE = 2.75
+    SCORE = 4000
+    COLOR = Color.APRICOT
+
+    SPRITE_NAMES = "pass1", "pass2", "pass3"
+    SPRITE_DELAY = 250
 
     def get_new_target(self):
         if self.field_object.tracker.get_straight_vision(self.tile) or self.is_chasing:
             # Если уже преследуем или видим игрока по прямой
             next_tile = self.field_object.tracker.get_next_tile(self.tile)
             if not next_tile:
-                self.is_chasing = False
                 return super().get_new_target()
             else:
                 self.is_chasing = True
@@ -159,19 +153,15 @@ class Pass(Enemy):
             # Если не преследуем и игрок не виден
             return super().get_new_target()
 
-    SPEED_VALUE = 2.75
-    SCORE = 4000
-    COLOR = Color.APRICOT
-
 
 class Pontan(Doria):
     """
     Как Doria, но быстрый
     """
     VISION_DIST = 6
-    SPEED_VALUE = 2.25
+    SPEED_VALUE = 3.25
     SCORE = 8000
-    SPRITE_NAMES = "coin1", "coin2", "coin3", "coin4"
+    SPRITE_NAMES = "pontan1", "pontanred2", "pontan3", "pontanred4", "pontanred1", "pontan2", "pontanred3", "pontan4"
     SPRITE_DELAY = 100
     COLOR = Color.RED
 

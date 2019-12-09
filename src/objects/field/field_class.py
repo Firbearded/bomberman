@@ -36,6 +36,7 @@ class Field(PygameObject, GeometricObject):
     KEYS_EXIT = (pygame.K_ESCAPE,)  # Кнопки на выход из игры
 
     STAGES = (  # Уровки игры (смотрите класс Stage)
+        Stage(name="Stage zoo", enemies=(1, 1, 1, 1, 1, 1, 1, 1,), upgrades=(0, 0, 0, 0, 0, 10, 10, 10, 10)),
         Stage(name="Stage 1", enemies=(6,), upgrades=(0, 1)),
         Stage(name="Stage 2", enemies=(3, 3), upgrades=(1,)),
         Stage(name="Stage 3", enemies=(2, 2, 2), upgrades=(0, 0, 1)),
@@ -486,6 +487,7 @@ class Field(PygameObject, GeometricObject):
             if event.key in Field.KEYS_EXIT:
                 print("Exit from game to menu")
                 self._save_stage(on_exit=True)
+                self.game_object._timers.clear()
                 self.game_object.set_scene(self.game_object.MENU_SCENE_INDEX)
                 return
 
@@ -522,41 +524,6 @@ class Field(PygameObject, GeometricObject):
         self._flush_enitites()
 
     # ======================= Отрисовка ======================
-    # def process_draw_tiles(self):
-    #     """ Отрисовка самого поля, т.е. его клеток. """
-    #     for h in range(self.height):
-    #         for w in range(self.width):
-    #
-    #             new_pos = Point()
-    #
-    #             for i in range(2):
-    #                 new_pos[i] = (-self.main_player.center[i] * self.tile_size[i] + self.game_object.size[i] / 2)
-    #                 if self.size[i] * self.tile_size[i] < self.game_object.size[i]:
-    #                     new_pos[i] = (self.game_object.size[i] - self.size[i] * self.tile_size[i]) / 2
-    #                 else:
-    #                     new_pos[i] = min(new_pos[i], 0)
-    #                     new_pos[i] = max(new_pos[i], self.game_object.size[i] - self.size[i] * self.tile_size[i])
-    #
-    #             self.pos = new_pos
-    #             tile_real_pos = (self.pos[0] + w * self.tile_size[0], self.pos[1] + h * self.tile_size[1])
-    #
-    #             rect = tile_real_pos, self.tile_size
-    #
-    #             if not is_collide_rect(Point(0, 0), self.game_object.size, Point(tile_real_pos), self.tile_size):
-    #                 continue
-    #
-    #             tile = self.tile_at(w, h)
-    #             if self.tile_images and tile.image_name and Field._BACKGROUND_TILE.image_name:
-    #                 # Если есть спрайты и названия спайтов у клеток, то рисуем текстуры
-    #                 self.game_object.screen.blit(self.tile_images[Field._BACKGROUND_TILE.image_name], rect)
-    #                 if tile is not Field._BACKGROUND_TILE:
-    #                     self.game_object.screen.blit(self.tile_images[tile.image_name], rect)
-    #             else:  # Иначе запасной план: рисуем квадраты
-    #                 pygame.draw.rect(self.game_object.screen, tile.color, rect, 0)
-    #
-    #             if Field.LINE_WIDTH > 0:
-    #                 pygame.draw.rect(self.game_object.screen, (0, 0, 0), rect, Field.LINE_WIDTH)
-
     def draw_tile(self, x, y):
         tile_real_pos = (x * self.tile_size[0], y * self.tile_size[1])
 
