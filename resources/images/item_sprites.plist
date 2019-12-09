@@ -20,7 +20,7 @@
 		<key>count_up.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{1784,2},{50,50}}</string>
+			<string>{{1986,2},{50,50}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -33,20 +33,20 @@
 		<key>detonator.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{1836,2},{50,50}}</string>
+			<string>{{1076,2},{200,200}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
 			<false/>
 			<key>sourceColorRect</key>
-			<string>{{0,0},{50,50}}</string>
+			<string>{{0,0},{200,200}}</string>
 			<key>sourceSize</key>
-			<string>{50,50}</string>
+			<string>{200,200}</string>
 		</dict>
 		<key>door.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{1682,2},{100,100}}</string>
+			<string>{{1884,2},{100,100}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -59,7 +59,7 @@
 		<key>flamepass.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{1076,2},{200,200}}</string>
+			<string>{{1278,2},{200,200}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -72,7 +72,7 @@
 		<key>life.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{1888,2},{50,50}}</string>
+			<string>{{1986,54},{50,50}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -85,7 +85,7 @@
 		<key>mystery.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{1278,2},{200,200}}</string>
+			<string>{{1480,2},{200,200}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -98,7 +98,7 @@
 		<key>power_up.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{1940,2},{50,50}}</string>
+			<string>{{1884,104},{50,50}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
@@ -124,7 +124,7 @@
 		<key>wallpass.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{1480,2},{200,200}}</string>
+			<string>{{1682,2},{200,200}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>

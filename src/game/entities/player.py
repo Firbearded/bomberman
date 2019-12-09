@@ -22,7 +22,7 @@ class Player(Entity):
         },
         'walking': {
             'up': (200, ('bb_walking1_up', 'bb_walking2_up',)),
-            'down': (200, ('bb_walking1_down', 'bb_walking2_down',)),
+            'down': (150, ('bb_walking1_down', 'bb_walking2_down', 'bb_walking3_down', 'bb_walking4_down')),
             'horizontal': (100, ('bb_h1', 'bb_h2', 'bb_h3', 'bb_h4', 'bb_h5', 'bb_h6', 'bb_h7',)),
         },
         'other': {
@@ -116,7 +116,7 @@ class Player(Entity):
 
                     if not had_image_size:
                         w, h = sprite.get_rect().size
-                        k = w / (self.real_size[0] * 1.4)
+                        k = w / (self.real_size[0] * 1.35)
                         new_size = (int(w // k), int(h // k))
                         self.image_size = new_size
                         had_image_size = True

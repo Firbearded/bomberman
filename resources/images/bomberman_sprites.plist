@@ -176,54 +176,80 @@
 		<key>bb_walking1_down.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{406,540},{148,267}}</string>
+			<string>{{406,540},{200,267}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
 			<false/>
 			<key>sourceColorRect</key>
-			<string>{{0,0},{148,267}}</string>
+			<string>{{0,0},{200,267}}</string>
 			<key>sourceSize</key>
-			<string>{148,267}</string>
+			<string>{200,267}</string>
 		</dict>
 		<key>bb_walking1_up.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{810,540},{148,267}}</string>
+			<string>{{810,540},{200,267}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
 			<false/>
 			<key>sourceColorRect</key>
-			<string>{{0,0},{148,267}}</string>
+			<string>{{0,0},{200,267}}</string>
 			<key>sourceSize</key>
-			<string>{148,267}</string>
+			<string>{200,267}</string>
 		</dict>
 		<key>bb_walking2_down.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{1012,2},{148,267}}</string>
+			<string>{{1012,2},{200,267}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
 			<false/>
 			<key>sourceColorRect</key>
-			<string>{{0,0},{148,267}}</string>
+			<string>{{0,0},{200,267}}</string>
 			<key>sourceSize</key>
-			<string>{148,267}</string>
+			<string>{200,267}</string>
 		</dict>
 		<key>bb_walking2_up.png</key>
 		<dict>
 			<key>frame</key>
-			<string>{{1162,2},{148,267}}</string>
+			<string>{{1214,2},{200,267}}</string>
 			<key>offset</key>
 			<string>{0,0}</string>
 			<key>rotated</key>
 			<false/>
 			<key>sourceColorRect</key>
-			<string>{{0,0},{148,267}}</string>
+			<string>{{0,0},{200,267}}</string>
 			<key>sourceSize</key>
-			<string>{148,267}</string>
+			<string>{200,267}</string>
+		</dict>
+		<key>bb_walking3_down.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{1416,2},{200,267}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{200,267}}</string>
+			<key>sourceSize</key>
+			<string>{200,267}</string>
+		</dict>
+		<key>bb_walking4_down.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{1618,2},{200,267}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{200,267}}</string>
+			<key>sourceSize</key>
+			<string>{200,267}</string>
 		</dict>
 	</dict>
 	<key>metadata</key>

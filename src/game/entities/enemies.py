@@ -24,7 +24,7 @@ class Ballom(Enemy):
     SPEED_VALUE = 1
     SCORE = 100
     COLOR = Color.ORANGE
-    SPRITE_NAMES = "ballom1", "ballom2", "ballom3"
+    SPRITE_NAMES = "ballom1", "ballom2",
     SPRITE_DELAY = 350
 
 
@@ -32,7 +32,7 @@ class Onil(Enemy):
     SPEED_VALUE = 1.5
     SCORE = 200
     COLOR = Color.BLUE
-    SPRITE_NAMES = "onil1", "onil2", "onil3"
+    SPRITE_NAMES = "onil1", "onil2",
     SPRITE_DELAY = 350
 
 
@@ -51,7 +51,7 @@ class Dahl(Enemy):
 
     COLOR = Color.BROWN
 
-    SPRITE_NAMES = "dahl1", "dahl2", "dahl3"
+    SPRITE_NAMES = "dahl1", "dahl2",
     SPRITE_DELAY = 350
 
     def get_new_target(self):
@@ -84,7 +84,7 @@ class Minvo(Dahl):
     SPEED_VALUE = 2.75
     SCORE = 800
     COLOR = Color.ORANGE
-    SPRITE_NAMES = "minvo1", "minvo2", "minvo3"
+    SPRITE_NAMES = "minvo1", "minvo2",
     SPRITE_DELAY = 350
 
 
