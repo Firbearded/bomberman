@@ -36,14 +36,67 @@ class Field(PygameObject, GeometricObject):
     KEYS_EXIT = (pygame.K_ESCAPE,)  # Кнопки на выход из игры
 
     STAGES = (  # Уровки игры (смотрите класс Stage)
-        Stage(name="Stage 1", enemies=(6,), upgrades=(0, 1)),
-        Stage(name="Stage 2", enemies=(3, 3), upgrades=(1,)),
-        Stage(name="Stage 3", enemies=(2, 2, 2), upgrades=(0, 0, 1)),
-        Stage(name="Stage 4", enemies=(1, 1, 2, 2), upgrades=(0, 0, 0, 1)),
-        Stage(name="Stage 5", enemies=(0, 4, 3), upgrades=(1,)),
-        Stage(name="Stage zoo", enemies=(1, 1, 1, 1, 1, 1, 1, 1,), upgrades=(0, 0, 0, 0, 0, 10, 10, 10, 10)),
-        Stage(name="Stage HELL", enemies=(1, 0, 0), upgrades=(100, 100, 5, 100, 100), time=10,
-              on_timeout=(5, 5, 5, 5, 5, 5, 5, 10)),
+        Stage(name="Stage 1", enemies=(6, 0, 0, 0, 0, 0, 0, 0), upgrades=(0, 1)),
+        Stage(name="Stage 2", enemies=(3, 3, 0, 0, 0, 0, 0, 0), upgrades=(1,)),
+        Stage(name="Stage 3", enemies=(2, 2, 2, 0, 0, 0, 0, 0), upgrades=(0, 0, 1)),
+        Stage(name="Stage 4", enemies=(1, 1, 2, 2, 0, 0, 0, 0), upgrades=(0, 0, 0, 1)),
+        Stage(name="Stage 5", enemies=(0, 4, 3, 0, 0, 0, 0, 0), upgrades=(1,)),
+
+        Stage(name="Stage 6", enemies=(0, 2, 3, 2, 0, 0, 0, 0), upgrades=(1,)),
+        Stage(name="Stage 7", enemies=(0, 2, 3, 0, 2, 0, 0, 0), upgrades=(0, 1)),
+        Stage(name="Stage 8", enemies=(0, 1, 2, 4, 0, 0, 0, 0), upgrades=(0, 0, 1)),
+        Stage(name="Stage 9", enemies=(0, 1, 1, 4, 0, 1, 0, 0), upgrades=(0, 0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage 10", enemies=(0, 1, 1, 1, 1, 3, 0, 0), upgrades=(0, 0, 0, 0, 0, 1)),
+
+        Stage(name="Stage 11", enemies=(0, 1, 2, 3, 1, 1, 0, 0), upgrades=(1,)),
+        Stage(name="Stage 12", enemies=(0, 1, 1, 1, 1, 4, 0, 0), upgrades=(1,)),
+        Stage(name="Stage 13", enemies=(0, 0, 3, 3, 0, 2, 0, 0), upgrades=(0, 0, 1)),
+        Stage(name="Stage 14", enemies=(0, 0, 0, 0, 7, 0, 1, 0), upgrades=(0, 0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage 15", enemies=(0, 0, 1, 3, 0, 3, 1, 0), upgrades=(0, 1)),
+
+        Stage(name="Stage 16", enemies=(0, 0, 0, 3, 0, 4, 1, 0), upgrades=(0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage 17", enemies=(0, 0, 5, 0, 0, 2, 1, 0), upgrades=(1,)),
+        Stage(name="Stage 18", enemies=(3, 3, 0, 0, 0, 0, 2, 0), upgrades=(0, 0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage 19", enemies=(1, 1, 3, 0, 1, 0, 2, 0), upgrades=(1,)),
+        Stage(name="Stage 20", enemies=(0, 1, 1, 1, 1, 2, 2, 0), upgrades=(0, 0, 1)),
+
+        Stage(name="Stage 21", enemies=(0, 0, 0, 0, 3, 4, 2, 0), upgrades=(0, 0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage 22", enemies=(0, 0, 4, 3, 0, 1, 1, 0), upgrades=(0, 0, 1)),
+        Stage(name="Stage 23", enemies=(0, 0, 2, 2, 2, 2, 1, 0), upgrades=(1,)),
+        Stage(name="Stage 24", enemies=(0, 0, 1, 1, 2, 4, 1, 0), upgrades=(0, 0, 1)),
+        Stage(name="Stage 25", enemies=(0, 2, 1, 1, 2, 2, 1, 0), upgrades=(0, 0, 0, 0, 0, 0, 1)),
+
+        Stage(name="Stage 26", enemies=(1, 1, 1, 1, 1, 2, 1, 0), upgrades=(0, 0, 0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage 27", enemies=(1, 1, 0, 0, 1, 5, 1, 0), upgrades=(0, 1)),
+        Stage(name="Stage 28", enemies=(0, 1, 3, 3, 0, 1, 1, 0), upgrades=(1,)),
+        Stage(name="Stage 29", enemies=(0, 0, 0, 0, 5, 2, 2, 0), upgrades=(0, 0, 1)),
+        Stage(name="Stage 30", enemies=(0, 0, 3, 2, 2, 1, 1, 0), upgrades=(0, 0, 0, 0, 0, 0, 0, 1)),
+
+        Stage(name="Stage 31", enemies=(0, 2, 2, 2, 2, 2, 0, 0), upgrades=(0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage 32", enemies=(0, 1, 1, 3, 0, 4, 1, 0), upgrades=(1,)),
+        Stage(name="Stage 33", enemies=(0, 0, 2, 2, 1, 3, 2, 0), upgrades=(0, 0, 1)),
+        Stage(name="Stage 34", enemies=(0, 0, 2, 3, 0, 3, 2, 0), upgrades=(0, 0, 0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage 35", enemies=(0, 0, 2, 1, 1, 3, 2, 0), upgrades=(0, 0, 0, 0, 0, 0, 1)),
+
+        Stage(name="Stage 36", enemies=(0, 0, 2, 2, 0, 3, 3, 0), upgrades=(0, 0, 0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage 37", enemies=(0, 0, 2, 1, 1, 3, 3, 0), upgrades=(0, 0, 1)),
+        Stage(name="Stage 38", enemies=(0, 0, 2, 2, 0, 3, 3, 0), upgrades=(0, 1)),
+        Stage(name="Stage 39", enemies=(0, 0, 1, 1, 2, 2, 4, 0), upgrades=(0, 0, 0, 0, 0, 1)),
+
+        Stage(name="Stage 40", enemies=(0, 0, 1, 2, 0, 3, 4, 0), upgrades=(0, 0, 0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage 41", enemies=(0, 0, 1, 1, 1, 3, 4, 0), upgrades=(0, 0, 1)),
+        Stage(name="Stage 42", enemies=(0, 0, 0, 1, 1, 3, 5, 0), upgrades=(0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage 43", enemies=(0, 0, 0, 1, 1, 2, 6, 0), upgrades=(0, 0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage 44", enemies=(0, 0, 0, 1, 1, 2, 6, 0), upgrades=(0, 0, 1)),
+
+        Stage(name="Stage 45", enemies=(0, 0, 0, 0, 2, 2, 6, 0), upgrades=(0, 0, 0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage 46", enemies=(0, 0, 0, 0, 2, 2, 6, 0), upgrades=(0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage 47", enemies=(0, 0, 0, 0, 2, 2, 6, 0), upgrades=(0, 0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage 48", enemies=(0, 0, 0, 0, 1, 2, 6, 1), upgrades=(0, 0, 1)),
+        Stage(name="Stage 49", enemies=(0, 0, 0, 0, 2, 1, 6, 1), upgrades=(0, 0, 0, 0, 0, 0, 0, 1)),
+
+        Stage(name="Stage 50", enemies=(0, 0, 0, 0, 2, 1, 5, 2), upgrades=(0, 0, 0, 0, 0, 0, 0, 1)),
+        Stage(name="Stage HELL", enemies=(1, 0, 0), time=10, on_timeout=(5, 5, 5, 5, 5, 10, 10, 10)),
     )
 
     GAMEOVER_MSG = "GAME OVER"
@@ -400,7 +453,9 @@ class Field(PygameObject, GeometricObject):
     def _end_game(self, win=False):
         """ Окончание игры (полный проигрыш или выигрыш) """
         self._current_stage_index = 0
+        self._reset_entities(full_reset_player=True)
         self._save_score()
+        self._save_stage()
         # self._game_start()
         self.game_object.mixer.channels['background'].stop()
         if win:
