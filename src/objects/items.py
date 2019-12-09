@@ -74,15 +74,15 @@ class Door(Item):
         self.game_object.mixer.channels['effects'].sound_play(self.SOUND_WIN)
         self.field_object.round_win()
 
-    def func(self): #функция, выполняющаяся при подрыве двери
+    def on_explosion(self): #функция, выполняющаяся при подрыве двери
         self.is_exploded = False
-        self.field_object._generate_enemies (self.field_object._enemies_on_door, self.pos)
+        self.field_object._generate_enemies (self.field_object._enemies_on_door, self.tile)
 
     def hurt(self, from_e):
-        if (not self.is_exploded):
+        if not self.is_exploded:
             self.is_exploded = True
-            spawn_timer = TimerObject(505)          # Создание таймера,
-            spawn_timer.on_timeout = self.func      # призывающего мобов
+            spawn_timer = TimerObject(from_e.delay + 5)          # Создание таймера,
+            spawn_timer.on_timeout = self.on_explosion      # призывающего мобов
             self.game_object.add_timer(spawn_timer) # при подрыве двери
 
     def additional_logic(self):

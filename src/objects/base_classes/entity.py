@@ -82,6 +82,12 @@ class Entity(PygameObject, GeometricObject, EnableableObject, VisibleObject):
         w = self.width * self.field_object.tile_size[0]
         h = self.height * self.field_object.tile_size[1]
         return w, h
+    
+    @property
+    def real_rect(self):
+        x, y = self.real_pos
+        w, h = self.real_size
+        return x, y, w, h
 
     @property
     def real_speed_value(self):
@@ -178,4 +184,4 @@ class Entity(PygameObject, GeometricObject, EnableableObject, VisibleObject):
 
     def process_draw_reserve(self):
         """ Метод запасной отрисовки. """
-        pygame.draw.rect(self.game_object.screen, self.COLOR, (self.real_pos, self.real_size), 0)
+        pygame.draw.rect(self.game_object.screen, self.COLOR, self.real_rect, 0)

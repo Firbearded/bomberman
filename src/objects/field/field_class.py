@@ -33,7 +33,7 @@ class Field(PygameObject, GeometricObject):
     _BACKGROUND_TILE_TYPE = TILE_EMPTY  # Клетка, которая на заднем фоне
     _BACKGROUND_TILE = TILES[_BACKGROUND_TILE_TYPE]
 
-    KEYS_EXIT = (pygame.K_ESCAPE,)  # Кнопки на выход из игры
+    KEYS_EXIT = (pygame.K_ESCAPE, pygame.K_AC_BACK,)  # Кнопки на выход из игры
 
     STAGES = (  # Уровки игры (смотрите класс Stage)
         Stage(name="Stage zoo", enemies=(1, 1, 1, 1, 1, 1, 1, 1,), upgrades=(0, 0, 0, 0, 0, 10, 10, 10, 10)),
@@ -527,7 +527,7 @@ class Field(PygameObject, GeometricObject):
     def draw_tile(self, x, y):
         tile_real_pos = (x * self.tile_size[0], y * self.tile_size[1])
 
-        rect = tile_real_pos, self.tile_size
+        rect = *tile_real_pos, *self.tile_size
 
         tile = self.tile_at(x, y)
         if self.tile_images and tile.image_name and Field._BACKGROUND_TILE.image_name:
@@ -546,7 +546,7 @@ class Field(PygameObject, GeometricObject):
             for x in range(self.width):
                 tile_real_pos = (x * self.tile_size[0], y * self.tile_size[1])
 
-                rect = tile_real_pos, self.tile_size
+                rect = *tile_real_pos, *self.tile_size
 
                 tile = self.tile_at(x, y)
                 if self.tile_images and tile.image_name and Field._BACKGROUND_TILE.image_name:

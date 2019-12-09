@@ -147,7 +147,7 @@ class Fire(Entity, TimerObject):
         return SimpleAnimation(animation_dict, 'standard')
 
     def process_draw_reserve(self):
-        pygame.draw.rect(self.game_object.screen, self.COLOR[self._fire_type], (self.real_pos, self.real_size), 0)
+        pygame.draw.rect(self.game_object.screen, self.COLOR[self._fire_type], self.real_rect, 0)
 
 
 class Bomb(Entity, TimerObject):

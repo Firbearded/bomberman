@@ -58,7 +58,7 @@ def load_textures(game_object, directory=TEXTURE_DIR, filenames=TEXTURE_FILENAME
             size = result_image.size
             data = result_image.tobytes()
             name = splitext(name)[0]
-
+            
             result[filename][name] = pygame.image.fromstring(data, size, mode)
 
             print("TEXTURE LOADING: from '{}' loaded '{}' ".format(png_filename, name))

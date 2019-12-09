@@ -50,11 +50,11 @@ class ProgressBar(PygameObject):
         self.max_value = mx
 
     def process_draw(self):
-        rect1 = tuple(self.pos), self.size
+        rect1 = *tuple(self.pos), *self.size
 
         w, h = self.size
         w = self.value * w / self.max_value
-        rect2 = tuple(self.pos), (w, h)
+        rect2 = *tuple(self.pos), w, h
 
         pygame.draw.rect(self.game_object.screen, self.color1, rect1)
         pygame.draw.rect(self.game_object.screen, self.color2, rect2)

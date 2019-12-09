@@ -13,7 +13,7 @@ class Menu(PygameObject):
     """
     KEYS = {
         'down':
-            (pygame.K_DOWN, pygame.K_s),
+            (pygame.K_DOWN, pygame.K_s, pygame.K_AC_BACK),
         'up':
             (pygame.K_UP, pygame.K_w),
     }

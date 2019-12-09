@@ -33,4 +33,6 @@ class MenuItemButton(MenuItemSelectableLabel):
         if event.type == pygame.KEYDOWN:
             if event.key in self.KEYS_PRESS:
                 self.press()
-                return
+        if self.game_object.android:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self.press()

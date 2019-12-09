@@ -27,9 +27,10 @@ class Game:
     CAPTIONS_SCENE_INDEX = 6
 
     @benchmark
-    def __init__(self, window_size=(800, 600), title='Bomberman'):
+    def __init__(self, window_size=(800, 600), title='Bomberman', android=False):
         self.size = self.width, self.height = window_size
         self.title = title
+        self.android = android
 
         self.mixer = SoundMixer()
 
@@ -61,7 +62,7 @@ class Game:
 
     def load_resources(self):
         """ Загрузка ресурсов """
-        self.images = load_textures(self)
+        self.images = None if self.android else load_textures(self)
         self.mixer.init(load_sounds(self))
 
     def create_scenes(self):
@@ -94,6 +95,7 @@ class Game:
             for event in eventlist:
                 if event.type == pygame.QUIT:
                     self.running = False
+                #1073742094
             if not self.running:
                 break
 

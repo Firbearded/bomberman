@@ -1,8 +1,8 @@
 from src.game import Game
 
 
-def main():
-    g = Game()
+def main(*args, **kwargs):
+    g = Game(*args, **kwargs)
     g.main_loop()
 
 

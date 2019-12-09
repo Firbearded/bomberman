@@ -74,7 +74,8 @@ class Player(Entity):
             self._bombs_number = self.BOMBS_NUMBER
             self._has_detonator = False
 
-        self.speed_vector = Vector()  # TODO: fix bug on start
+        self.speed_vector = Vector()
+        self.mouse_pressed = False
         self.pos = Point(1, self.field_object.height - 2)
         self._direction = Vector(0, 1)
         self._is_moving = False
@@ -228,6 +229,22 @@ class Player(Entity):
 
     # =============== Обработка нажатий ================
     def additional_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEMOTION and self.mouse_pressed:
+            self.mouse_pressed = 1
+            pos = pygame.mouse.get_pos()
+            self.speed_vector = Vector(pos) - Vector(self.real_pos)
+            if self.speed_vector.length < 50:
+                self.speed_vector = Vector()
+                self._bomb_place()
+            if abs(self.speed_vector[0]) > abs(self.speed_vector[1]):
+                self.speed_vector[1] = 0
+            else:
+                self.speed_vector[0] = 0
+            self.speed_vector.unit()
+        if event.type == pygame.MOUSEBUTTONUP:
+            self.mouse_pressed = 0
+            self.speed_vector = Vector()
+        
         if event.type == pygame.KEYDOWN:
             key = event.key
             for keys, i, m in self.KEYS_MOV:
@@ -236,14 +253,7 @@ class Player(Entity):
                     self.speed_vector[i] = sign(self.speed_vector[i])
                     break
             if event.key in self.KEYS_BOMB:
-                if self._active_bombs_number < self._bombs_number:
-                    if self.field_object.can_place_bomb(self.tile):
-                        self.game_object.mixer.channels['effects'].sound_play(self.SOUND_BOMB)
-                        if self._has_detonator:
-                            self._bombs_remote.append(
-                                BombRemote(self, self.tile, self.bombs_power))
-                        else:
-                            Bomb(self, self.tile, self._bombs_power)
+                self._bomb_place()
             if event.key in self.KEYS_DETONATE_BOMB:
                 if self._has_detonator and self._bombs_remote:
                     self._bombs_remote.pop(0).on_timeout()
@@ -258,16 +268,16 @@ class Player(Entity):
 
     # =============== Улучшения ================
     def bomb_up(self):
-        self._bombs_number = min(self._bombs_number + 1, self.MAX_BOMBS_NUMBER)
+        self._bombs_number = min(self._bombs_number + 1, self.mouse_pressedAX_BOMBS_NUMBER)
 
     def power_up(self):
-        self._bombs_power = min(self._bombs_power + 1, self.MAX_BOMBS_POWER)
+        self._bombs_power = min(self._bombs_power + 1, self.mouse_pressedAX_BOMBS_POWER)
 
     def speed_up(self):
-        self.speed_value = min(self.speed_value + self.SPEED_DELTA, self.MAX_SPEED_VALUE)
+        self.speed_value = min(self.speed_value + self.SPEED_DELTA, self.mouse_pressedAX_SPEED_VALUE)
 
     def life_up(self):
-        self._current_lives = min(self._current_lives + 1, self.MAX_LIVES)
+        self._current_lives = min(self._current_lives + 1, self.mouse_pressedAX_LIVES)
 
     def get_detonator(self):
         self._has_detonator = True
@@ -283,16 +293,26 @@ class Player(Entity):
 
     def get_mystery(self, mystery_time=7000):
         self._has_mystery = True
-        self.mystery_timer = TimerObject(mystery_time)
-        self.mystery_timer.start()
+        self.mouse_pressedystery_timer = TimerObject(mystery_time)
+        self.mouse_pressedystery_timer.start()
 
     # =============== Остальное ================
+    def _bomb_place(self):
+        if self._active_bombs_number < self._bombs_number:
+                    if self.field_object.can_place_bomb(self.tile):
+                        self.game_object.mixer.channels['effects'].sound_play(self.SOUND_BOMB)
+                        if self._has_detonator:
+                            self._bombs_remote.append(
+                                BombRemote(self, self.tile, self.bombs_power))
+                        else:
+                            Bomb(self, self.tile, self._bombs_power)
+    
     def hurt(self, from_enemy):
         """ Когда больно """
 
         if self._has_mystery:
-            self.mystery_timer.timer_logic()
-            self._has_mystery = self.mystery_timer.is_running
+            self.mouse_pressedystery_timer.timer_logic()
+            self._has_mystery = self.mouse_pressedystery_timer.is_running
 
         if self._has_mystery:
             return
@@ -304,12 +324,15 @@ class Player(Entity):
         self.game_object.mixer.channels['music'].stop()
         self.game_object.mixer.channels['background'].stop()
         self.game_object.mixer.channels['music'].add_sound_to_queue('lose')
-        self.animation.set_state('other_death')
+        if self.animation:
+            self.animation.set_state('other_death')
 
-        timer = TimerObject(self.animation.current_length * self.animation.current_delay)
-        timer.on_timeout = self.death
+            timer = TimerObject(self.animation.current_length * self.animation.current_delay)
+            timer.on_timeout = self.death
 
-        self.game_object.add_timer(timer)
+            self.game_object.add_timer(timer)
+        else:
+            self.death()
 
     def death(self):
         if self._current_lives == 0:
