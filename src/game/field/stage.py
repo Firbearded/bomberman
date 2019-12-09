@@ -1,5 +1,5 @@
-from src.objects.enemies import ENEMIES as ENEMY_LIST
-from src.objects.items import DROP_LIST
+from src.game.entities.enemies import ENEMIES as ENEMY_LIST
+from src.game.entities.items import DROP_LIST
 
 
 class Stage:
@@ -34,7 +34,7 @@ class Stage:
         self.field_size = tuple(field_size)
         self.name = name
         self.soft_wall_number = soft_wall_number
-        self.enemies = tuple(enemies)  # смотреть -> src.objects.enemies.ENEMIES
+        self.enemies = tuple(enemies)  # смотреть -> src.game.enemies.ENEMIES
         if len(self.enemies) < len(ENEMY_LIST):
             self.enemies = self.enemies + tuple([0 for _ in range(len(ENEMY_LIST) - len(self.enemies))])
         self.upgrades = upgrades

@@ -4,7 +4,9 @@ from time import time
 
 import pygame
 
-from src.objects.supporting.sound_mixer import SoundMixer
+from src.game.supporting.constants import Path
+from src.game.supporting.loader import load_textures, load_sounds
+from src.game.supporting.sound_mixer import SoundMixer
 from src.scenes.captions_scene import CaptionsScene
 from src.scenes.game_over_scene import GameoverScene
 from src.scenes.game_scene import GameScene
@@ -13,9 +15,7 @@ from src.scenes.loading_scene import LoadingScene
 from src.scenes.menu_scene import MenuScene
 from src.scenes.settings_scene import SettingsScene
 from src.scenes.transition_scene import TransitionScene
-from src.utils.constants import Path
 from src.utils.decorators import benchmark
-from src.utils.loader import load_textures, load_sounds
 
 
 class Game:

@@ -1,4 +1,4 @@
-import pygame
+from time import time
 
 
 class SimpleAnimation:
@@ -13,7 +13,7 @@ class SimpleAnimation:
         self.animation_dict = animation_dict
         self.current_state = current_state
         self.current_index = 0
-        self.start_time = pygame.time.get_ticks()
+        self.start_time = time() * 1000
 
     @property
     def current_animation(self):
@@ -40,8 +40,8 @@ class SimpleAnimation:
     def process_logic(self):
         delay, image_list = self.current_animation
         if delay <= 0: return
-        delta_time = pygame.time.get_ticks() - self.start_time
+        delta_time = time() * 1000 - self.start_time
         if delta_time >= delay:
-            x = delta_time // delay
+            x = int(delta_time // delay)
             self.current_index = (self.current_index + x) % len(image_list)
             self.start_time += x * delay

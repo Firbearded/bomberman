@@ -1,6 +1,6 @@
 import pygame
 
-from src.objects.menu.menu_items.menu_item_selectable_label import MenuItemSelectableLabel
+from src.game.menu.menu_items.menu_item_selectable_label import MenuItemSelectableLabel
 
 
 # def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█', printEnd="\r"):

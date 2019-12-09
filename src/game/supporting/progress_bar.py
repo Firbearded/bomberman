@@ -1,7 +1,7 @@
 import pygame
 
-from src.objects.base_classes.base_objects.pygame_object import PygameObject
-from src.utils.constants import Color
+from src.game.base_classes.pygame_object import PygameObject
+from src.game.supporting.constants import Color
 from src.utils.vector import Point
 
 

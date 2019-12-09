@@ -1,4 +1,4 @@
-from src.objects.menu.menu_items.base_menu_item import MenuBaseItem
+from src.game.menu.menu_items.base_menu_item import MenuBaseItem
 
 
 class MenuItemLabel(MenuBaseItem):

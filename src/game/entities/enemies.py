@@ -1,5 +1,5 @@
-from src.objects.base_classes.enemy import Enemy
-from src.utils.constants import Color
+from src.game.entities.base.enemy import Enemy
+from src.game.supporting.constants import Color
 
 """
     Внимание! При создании логики в мобах переопределять следующие методы:
@@ -14,7 +14,7 @@ from src.utils.constants import Color
 Информация в этих полях всегда корректна при вызове can_walk_at и get_new_target.
 
   Внимание! При создании логики в мобах могут понадобиться следующие инструменты:
-1)self.field_object.tracker - класс, следящий за игроком (см. src.objects.field.tracker.py);
+1)self.field_object.tracker - класс, следящий за игроком (см. src.game.field.tracker.py);
 2)super.get_next_target() - метод, возвращающий следующую цель при встроенном глупом поведении
   моба.
 """

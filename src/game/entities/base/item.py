@@ -1,5 +1,5 @@
-from src.objects.base_classes.entity import Entity
-from src.utils.constants import Color, Sounds
+from src.game.entities.base.entity import Entity
+from src.game.supporting.constants import Color, Sounds
 from src.utils.intersections import is_collide_rect
 from src.utils.vector import Point
 
@@ -36,7 +36,7 @@ class Item(Entity):
         self.destroy()
 
     def additional_logic(self):
-        from src.objects.player import Player
+        from src.game.entities.player import Player
         for e in self.field_object.get_entities(Player):             # Проверка на коллизии с игроком
             if is_collide_rect(self.pos, self.size, e.pos, e.size):
                 self.game_object.mixer.channels['effects'].sound_play(self.SOUND_PICK_UP)

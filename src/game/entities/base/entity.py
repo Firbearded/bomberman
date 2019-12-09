@@ -1,11 +1,11 @@
 import pygame
 
-from src.objects.base_classes.base_objects.enableable_object import EnableableObject
-from src.objects.base_classes.base_objects.geometric_object import GeometricObject
-from src.objects.base_classes.base_objects.pygame_object import PygameObject
-from src.objects.base_classes.base_objects.visible_object import VisibleObject
-from src.objects.supporting.animation import SimpleAnimation
-from src.utils.constants import Color
+from src.game.base_classes.enableable_object import EnableableObject
+from src.game.base_classes.geometric_object import GeometricObject
+from src.game.base_classes.pygame_object import PygameObject
+from src.game.base_classes.visible_object import VisibleObject
+from src.game.supporting.constants import Color
+from src.utils.animations import SimpleAnimation
 from src.utils.decorators import protect
 from src.utils.intersections import is_collide_rect
 from src.utils.vector import Vector, Point

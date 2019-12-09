@@ -2,7 +2,7 @@ from time import time
 
 import pygame
 
-from src.utils.constants import Color
+from src.game.supporting.constants import Color
 
 
 class Scene:

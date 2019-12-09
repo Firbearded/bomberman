@@ -1,8 +1,8 @@
-from src.objects.base_classes.base_objects.timer_object import TimerObject
-from src.objects.base_classes.enemy import Enemy
-from src.objects.base_classes.item import Item
-from src.objects.player import Player
-from src.utils.constants import Sounds
+from src.game.base_classes.timer_object import TimerObject
+from src.game.entities.base.enemy import Enemy
+from src.game.entities.base.item import Item
+from src.game.entities.player import Player
+from src.game.supporting.constants import Sounds
 from src.utils.vector import Point
 
 

@@ -1,11 +1,11 @@
 import pygame
 
-from src.objects.base_classes.base_objects.timer_object import TimerObject
-from src.objects.base_classes.entity import Entity
-from src.objects.bomb import Bomb, BombRemote
-from src.objects.bomb import Fire
-from src.objects.supporting.animation import SimpleAnimation
-from src.utils.constants import Color, Sounds
+from src.game.base_classes.timer_object import TimerObject
+from src.game.entities.base.entity import Entity
+from src.game.entities.bomb import Bomb, BombRemote
+from src.game.entities.bomb import Fire
+from src.game.supporting.constants import Color, Sounds
+from src.utils.animations import SimpleAnimation
 from src.utils.decorators import protect
 from src.utils.functions import sign
 from src.utils.intersections import collide_rect

@@ -1,4 +1,4 @@
-from src.objects.field.tracker import Tracker
+from src.game.field.tracker import Tracker
 
 
 class TransparrentTracker(Tracker):  # Нужен, чтобы проходящие сквозь стены мобы могли видеть игрока сквозь стены

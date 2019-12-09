@@ -1,8 +1,8 @@
 from random import random, choice
 
-from src.objects.base_classes.entity import Entity
-from src.objects.player import Player
-from src.utils.constants import Color
+from src.game.entities.base.entity import Entity
+from src.game.entities.player import Player
+from src.game.supporting.constants import Color
 from src.utils.intersections import is_circles_intersect
 from src.utils.vector import Point, Vector
 

@@ -1,10 +1,10 @@
 import pygame
 
-from src.objects.base_classes.base_objects.timer_object import TimerObject
-from src.objects.base_classes.entity import Entity
-from src.objects.base_classes.item import Item
-from src.objects.supporting.animation import SimpleAnimation
-from src.utils.constants import Color
+from src.game.base_classes.timer_object import TimerObject
+from src.game.entities.base.entity import Entity
+from src.game.entities.base.item import Item
+from src.game.supporting.constants import Color
+from src.utils.animations import SimpleAnimation
 from src.utils.decorators import protect
 from src.utils.vector import Vector, Point
 
@@ -110,8 +110,8 @@ class Fire(Entity, TimerObject):
                 self._fire_type = Fire.FIRE_END
 
     def additional_logic(self):
-        from src.objects.player import Player
-        from src.objects.base_classes.enemy import Enemy
+        from src.game.entities.player import Player
+        from src.game.entities.base.enemy import Enemy
 
         self.timer_logic()
 

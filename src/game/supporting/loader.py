@@ -4,7 +4,7 @@ from xml.etree import ElementTree
 import pygame
 from PIL import Image
 
-from src.utils.constants import Path
+from src.game.supporting.constants import Path
 
 TEXTURE_FILENAMES = Path.TEXTURES
 TEXTURE_DIR = Path.TEXTURES_DIR

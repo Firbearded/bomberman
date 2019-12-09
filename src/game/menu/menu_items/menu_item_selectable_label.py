@@ -1,5 +1,5 @@
-from src.objects.menu.menu_items.base_menu_item import MenuBaseSelectableItem
-from src.objects.menu.menu_items.menu_item_label import MenuItemLabel
+from src.game.menu.menu_items.base_menu_item import MenuBaseSelectableItem
+from src.game.menu.menu_items.menu_item_label import MenuItemLabel
 
 
 class MenuItemSelectableLabel(MenuItemLabel, MenuBaseSelectableItem):

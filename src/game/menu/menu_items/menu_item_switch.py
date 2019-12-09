@@ -1,4 +1,4 @@
-from src.objects.menu.menu_items.menu_item_button import MenuItemButton
+from src.game.menu.menu_items.menu_item_button import MenuItemButton
 
 
 class MenuItemSwitch(MenuItemButton):

@@ -1,4 +1,4 @@
-from src.objects.base_classes.base_objects.pygame_object import PygameObject
+from src.game.base_classes.pygame_object import PygameObject
 
 
 class MenuBaseItem(PygameObject):

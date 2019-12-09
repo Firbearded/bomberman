@@ -1,7 +1,7 @@
-from src.objects.base_classes.base_objects.timer_object import TimerObject
-from src.objects.base_classes.entity import Entity
-from src.objects.field.tiles import CATEGORY, TILES
-from src.objects.supporting.animation import SimpleAnimation
+from src.game.base_classes.timer_object import TimerObject
+from src.game.entities.base.entity import Entity
+from src.game.field.tiles import CATEGORY, TILES
+from src.utils.animations import SimpleAnimation
 from src.utils.decorators import protect
 from src.utils.vector import Point
 
@@ -16,7 +16,7 @@ class BreakingWall(Entity, TimerObject):
     COLOR = TILES[2].color
 
     def __init__(self, field_object, pos: Point, delay):
-        from src.objects.field.field_class import Field
+        from src.game.field.field_class import Field
 
         Entity.__init__(self, field_object, round(pos))
         TimerObject.__init__(self, delay)
@@ -35,7 +35,7 @@ class BreakingWall(Entity, TimerObject):
         return SimpleAnimation(animation_dict, 'standard')
 
     def on_timeout(self):
-        from src.objects.field.field_class import Field
+        from src.game.field.field_class import Field
 
         self.field_object.tile_set(self.pos, Field.TILE_EMPTY)  # Когда время выходит, то убираем невидимую клетку
         self.field_object.try_drop_item(self.pos)               # Пытаемся дропнуть вещь

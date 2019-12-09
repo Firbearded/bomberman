@@ -4,17 +4,17 @@ from time import strftime
 
 import pygame
 
-from src.objects.base_classes.base_objects.geometric_object import GeometricObject
-from src.objects.base_classes.base_objects.pygame_object import PygameObject
-from src.objects.base_classes.base_objects.timer_object import TimerObject
-from src.objects.enemies import ENEMIES
-from src.objects.field.breaking_wall import BreakingWall
-from src.objects.field.stage import Stage
-from src.objects.field.tiles import TILES, CATEGORY
-from src.objects.field.tracker import Tracker
-from src.objects.field.transparrent_tracker import TransparrentTracker
-from src.objects.items import Door, DROP_LIST
-from src.utils.constants import Path, Sounds
+from src.game.base_classes.geometric_object import GeometricObject
+from src.game.base_classes.pygame_object import PygameObject
+from src.game.base_classes.timer_object import TimerObject
+from src.game.entities.enemies import ENEMIES
+from src.game.entities.items import Door, DROP_LIST
+from src.game.field.breaking_wall import BreakingWall
+from src.game.field.stage import Stage
+from src.game.field.tiles import TILES, CATEGORY
+from src.game.field.tracker import Tracker
+from src.game.field.transparrent_tracker import TransparrentTracker
+from src.game.supporting.constants import Path, Sounds
 from src.utils.vector import Point
 
 
@@ -57,11 +57,11 @@ class Field(PygameObject, GeometricObject):
         GeometricObject.__init__(self)
 
         self._tile_size = tuple(tile_size)
-        from src.objects.bomb import Fire
-        from src.objects.bomb import Bomb
-        from src.objects.base_classes.item import Item
-        from src.objects.base_classes.enemy import Enemy
-        from src.objects.player import Player
+        from src.game.entities.bomb import Fire
+        from src.game.entities.bomb import Bomb
+        from src.game.entities.base.item import Item
+        from src.game.entities.base.enemy import Enemy
+        from src.game.entities.player import Player
 
         self._grid = None  # Двумерный список — типы клеток
         self._field_size = (1, 1)  # Размеры поля
@@ -152,7 +152,7 @@ class Field(PygameObject, GeometricObject):
     def main_player(self):
         """ Основной игрок (если будет мультиплеер, то там будет один основной, а остальные - дополнительные для
         каждого клиента) """
-        from src.objects.player import Player
+        from src.game.entities.player import Player
         return self._entities[Player][0]
 
     def tile_at(self, *args):
@@ -196,7 +196,7 @@ class Field(PygameObject, GeometricObject):
         if not self.tile_at(pos).empty:
             return False
 
-        from src.objects.bomb import Bomb
+        from src.game.entities.bomb import Bomb
 
         pos = tuple(pos)
 
@@ -262,7 +262,7 @@ class Field(PygameObject, GeometricObject):
 
     def _get_player_buffer(self):
         """ Получить клетки, которые входят в буффер игроков """
-        from src.objects.player import Player
+        from src.game.entities.player import Player
 
         buffer = []
         for player in self.get_entities(Player):
@@ -293,7 +293,7 @@ class Field(PygameObject, GeometricObject):
         self.timer.delay = stage.time * 1000
         self._extra_enemies = stage.enemies_on_timeout
         self._has_door = False
-        from src.objects.player import Player
+        from src.game.entities.player import Player
         if Player in self._entities:
             for p in self._entities[Player]:
                 p.reset(full=False)
@@ -301,7 +301,7 @@ class Field(PygameObject, GeometricObject):
     def _reset_entities(self, full_reset_player=False):
         """ Сброс уровня """
         for cls in self._entities:
-            from src.objects.player import Player
+            from src.game.entities.player import Player
             if cls is not Player:
                 for e in self._entities[cls]:
                     e.disable()
